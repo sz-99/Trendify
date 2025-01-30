@@ -1,5 +1,6 @@
 ﻿using Backend;
 using Backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend
 {
@@ -20,12 +21,16 @@ namespace Backend
 
         public List<ClothingItem> FindAllClothingItems()
         {
-            return _dbContext.ClothingItems.ToList();
+            return _dbContext.ClothingItems
+                            .Include(clothingItem => clothingItem.Colours)
+                            .ToList();
         }
 
         public ClothingItem? FindClothingItemById(int id)
         {
-            var clothingItem = FindAllClothingItems().FirstOrDefault(item => item.Id == id);
+            var clothingItem = _dbContext.ClothingItems
+                                         .Include(clothingItem => clothingItem.Colours)
+                                         .FirstOrDefault(clothingItem => clothingItem.Id == id);
             return clothingItem;
         }
     }
