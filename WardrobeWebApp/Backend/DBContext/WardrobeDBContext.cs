@@ -18,12 +18,12 @@ namespace Backend.DBContext
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
+            //if (!optionsBuilder.IsConfigured)
+            //{
                 var constring = Configuration.GetConnectionString("Wardrobe");
                 optionsBuilder.UseSqlServer(constring);
 
-            }
+            //}
         }
 
 
