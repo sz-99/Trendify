@@ -20,7 +20,5 @@ namespace Backend.Models
 
         public Occasion Occasion { get; set }
 
-        public int TimesWorn { get; set; }
-
     }
 }
