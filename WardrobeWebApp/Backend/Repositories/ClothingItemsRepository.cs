@@ -22,14 +22,14 @@ namespace Backend
         public List<ClothingItem> FindAllClothingItems()
         {
             return _dbContext.ClothingItems
-                            .Include(clothingItem => clothingItem.Colour)
+                            //.Include(clothingItem => clothingItem.Colour)
                             .ToList();
         }
 
         public ClothingItem? FindClothingItemById(int id)
         {
             var clothingItem = _dbContext.ClothingItems
-                                         .Include(clothingItem => clothingItem.Colour)
+                                         //.Include(clothingItem => clothingItem.Colour)
                                          .FirstOrDefault(clothingItem => clothingItem.Id == id);
             return clothingItem;
         }
