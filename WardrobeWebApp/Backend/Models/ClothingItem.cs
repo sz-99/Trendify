@@ -18,7 +18,7 @@ namespace Backend.Models
         public string Brand { get; set; }
         public List<Color> Colours { get; set; }
 
-        public Occasion Occasion { get; set }
+        public Occasion Occasion { get; set; }
 
     }
 }
