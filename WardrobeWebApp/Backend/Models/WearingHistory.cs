@@ -1,6 +1,6 @@
 ﻿namespace Backend.Models
 {
-    public class WearingEvent
+    public class WearingHistory
     {
         public int OutfitID { get; set; }
 

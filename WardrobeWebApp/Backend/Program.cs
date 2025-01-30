@@ -1,4 +1,8 @@
+using Backend.DBContext;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+string connectionString = builder.Configuration.GetConnectionString("Wardrobe");
 
 // Add services to the container.
 
@@ -6,6 +10,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<WardrobeDBContext>(
+                        options => options.UseSqlServer(connectionString: connectionString));
 
 var app = builder.Build();
 
