@@ -2,7 +2,7 @@
 using Backend.Models;
 using Microsoft.Extensions.Configuration;
 
-namespace Backend.DBContext
+namespace Backend
 {
     public class WardrobeDBContext: DbContext
     {
@@ -10,7 +10,7 @@ namespace Backend.DBContext
         public WardrobeDBContext(DbContextOptions<WardrobeDBContext> options) : base(options)
         {
         }
-        public DbSet<ClothingItem> Clothings { get; set; }
+        public DbSet<ClothingItem> ClothingItems { get; set; }
         public DbSet<UserLogin> UserLogins { get; set; }
         public DbSet<UserProfile> Profiles { get; set; }
         public DbSet<WearingHistory> WearingHistories { get; set; }

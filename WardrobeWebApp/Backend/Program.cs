@@ -1,4 +1,5 @@
-using Backend.DBContext;
+
+using Backend;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,10 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<WardrobeDBContext>(
                         options => options.UseSqlServer(connectionString));
+
+
+builder.Services.AddScoped<IClothingItemsService, ClothingItemsService>();
+builder.Services.AddScoped<IClothingItemsRepository, ClothingItemsRepository>();
 
 var app = builder.Build();
 
