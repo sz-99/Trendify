@@ -2,7 +2,7 @@ using Backend.DBContext;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-string connectionString = builder.Configuration.GetConnectionString("Wardrobe");
+string connectionString = builder.Configuration.GetConnectionString("WardrobeApp");
 
 // Add services to the container.
 
@@ -12,7 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<WardrobeDBContext>(
-                        options => options.UseSqlServer(connectionString: connectionString));
+                        options => options.UseSqlServer(connectionString));
 
 var app = builder.Build();
 
