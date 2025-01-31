@@ -16,5 +16,14 @@ namespace Backend
         public DbSet<WearingHistory> WearingHistories { get; set; }
         public DbSet<Outfit> Outfits { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                var connectionString = Configuration.GetConnectionString("WardrobeApp");
+                optionsBuilder.UseSqlServer(connectionString);
+            }
+        }
+
     }
 }
