@@ -3,7 +3,9 @@ using Backend;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-string connectionString = builder.Configuration.GetConnectionString("WardrobeApp");
+
+
+var dbType = DbType.InMemory;
 
 // Add services to the container.
 
@@ -12,9 +14,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<WardrobeDBContext>(
+if (builder.Environment.IsDevelopment())
+{
+    if (dbType == DbType.InMemory)
+    {
+        builder.Services.AddDbContext<WardrobeDBContext>(
+                        options => options.UseInMemoryDatabase(databaseName: "WardrobeInMemory"));
+    }
+    else if (dbType == DbType.SqlServer)
+    {
+        string connectionString = builder.Configuration.GetConnectionString("WardrobeApp");
+        builder.Services.AddDbContext<WardrobeDBContext>(
                         options => options.UseSqlServer(connectionString));
-
+    }
+}
 
 builder.Services.AddScoped<IClothingItemsService, ClothingItemsService>();
 builder.Services.AddScoped<IClothingItemsRepository, ClothingItemsRepository>();
