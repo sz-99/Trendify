@@ -18,14 +18,14 @@
     @if (!isHidden)
     {
         <div class="w-full max-w-sm pt-4 bg-gray-200">
-            <h1 class="text-xl font-bold text-center">Title</h1>
+            <h1 class="text-xl font-bold text-center">@clothing.Name</h1>
             <div class="w-full">
                 <ul class="w-full space-y-2">
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Item 1</li>
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Item 2</li>
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Item 3</li>
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Item 4</li>
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Item 5</li>
+                    <li class="bg-gray-200 p-2 rounded-lg w-full">Category: @clothing.Category</li>
+                    <li class="bg-gray-200 p-2 rounded-lg w-full">Colour: @clothing.Colour</li>
+                    <li class="bg-gray-200 p-2 rounded-lg w-full">Season: @clothing.Season</li>
+                    <li class="bg-gray-200 p-2 rounded-lg w-full">Occasion: @clothing.Occasion</li>
+                    <li class="bg-gray-200 p-2 rounded-lg w-full">Brand: @clothing.Brand</li>
                 </ul>
             </div>
         </div>
@@ -49,5 +49,8 @@
         isHidden = !isHidden;
         StateHasChanged(); 
     }
+
+    [Parameter]
+    public Backend.Models.ClothingItem clothing { get; set; }
 }
 

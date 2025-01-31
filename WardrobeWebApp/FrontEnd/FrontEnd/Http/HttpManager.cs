@@ -14,7 +14,7 @@ namespace FrontEnd.Http
         };
         public static HttpClient HttpClient { get; set; } = new HttpClient(socketsHandler)
         {
-            BaseAddress = new Uri("https://localhost:xxxx/")
+            //BaseAddress = new Uri("https://localhost:7062/")
         };
 
         public static async Task<Response<List<ClothingItem>>> GetAllClothing()
@@ -22,7 +22,7 @@ namespace FrontEnd.Http
             var result = new Response<List<ClothingItem>>();
             try
             {
-                HttpResponseMessage response = await HttpClient.GetAsync("clothing");
+                HttpResponseMessage response = await HttpClient.GetAsync("https://localhost:7062/Clothingitems");
                 result.StatusCode = response.StatusCode;
 
                 if(!response.IsSuccessStatusCode)
@@ -140,7 +140,7 @@ namespace FrontEnd.Http
             var result = new Response<ClothingItem>();
             try
             {
-                HttpResponseMessage response = await HttpClient.PutAsJsonAsync($"clothing{id}"/, updatedItem);
+                HttpResponseMessage response = await HttpClient.PutAsJsonAsync($"clothing/{id}", updatedItem);
                 result.StatusCode = response.StatusCode;
 
                 if (!response.IsSuccessStatusCode)

@@ -1,10 +1,21 @@
 ﻿@page "/mycollection"
 @rendermode InteractiveServer
+@using FrontEnd.Components
 
 <PageTitle>My Collection</PageTitle>
 
-<ClothingItem></ClothingItem>
+@* @foreach (var clothing in clothingList)
+{
+    <ClothingItem clothing="clothing" />
+} *@
+<h1>clothing item 1</h1>
+
 
 @code {
-   
+    
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        List<Backend.Models.ClothingItem> clothingList = HttpManager.GetAllClothing().Result.ResponseObject;
+    }
 }
