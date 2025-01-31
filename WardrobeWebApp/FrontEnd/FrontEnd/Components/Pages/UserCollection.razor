@@ -4,18 +4,23 @@
 
 <PageTitle>My Collection</PageTitle>
 
-@* @foreach (var clothing in clothingList)
+ @foreach (var clothing in clothingList)
 {
     <ClothingItem clothing="clothing" />
-} *@
+} 
 <h1>clothing item 1</h1>
+<h2>status: @statuscode</h2>
 
 
 @code {
-    
-
-    protected async override Task OnAfterRenderAsync(bool firstRender)
+    public List<Backend.Models.ClothingItem> clothingList { get; set; } = new();
+    public string statuscode = "";
+    protected async override Task OnInitializedAsync()
     {
-        List<Backend.Models.ClothingItem> clothingList = HttpManager.GetAllClothing().Result.ResponseObject;
+        var response = await HttpManager.GetAllClothing();
+        clothingList = response.ResponseObject;
+        statuscode = response.StatusCode.ToString();
+        
     }
+
 }
