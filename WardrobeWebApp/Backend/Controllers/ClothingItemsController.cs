@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
-using RecordShop.Model;
+using Backend.Models.Enums;
 
 namespace Backend.Controllers
 {

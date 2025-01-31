@@ -1,7 +1,6 @@
 ﻿using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 using Backend.Models.Enums;
-using RecordShop.Model;
 
 namespace Backend
 {
@@ -43,15 +42,7 @@ namespace Backend
                 if (clothingItemToUpdate == null)
                     return (ExecutionStatus.NOT_FOUND, null);
 
-                clothingItemToUpdate.UserId = id;
-                clothingItemToUpdate.ImageId = clothingItem.ImageId;
-                clothingItemToUpdate.Name = clothingItem.Name;
-                clothingItemToUpdate.Category = clothingItem.Category;
-                clothingItemToUpdate.Size= clothingItem.Size;
-                clothingItemToUpdate.Brand = clothingItem.Brand;
-                clothingItemToUpdate.Colour = clothingItem.Colour;
-                clothingItemToUpdate.Occasion = clothingItem.Occasion;
-                clothingItemToUpdate.Season = clothingItem.Season;
+                clothingItemToUpdate.UpdateWithValuesFrom(clothingItem);
 
                 var updatedClothingItem = _repository.ReplaceClothingItem(clothingItemToUpdate);
 

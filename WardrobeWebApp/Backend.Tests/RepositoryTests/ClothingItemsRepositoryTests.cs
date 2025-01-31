@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Backend;
 using Backend.Models;
 using Backend.Models.Enums;
+using Backend.Tests;
+using System.Dynamic;
 
 namespace Backend.Tests.RepositoryTests
 {
@@ -30,18 +32,8 @@ namespace Backend.Tests.RepositoryTests
         public void InjectInitialTestDataIntoDb(WardrobeDBContext dbContext)
         {
 
-            _initialClothingItem = new ClothingItem() { 
-                Id = 0, 
-                UserId = 1, 
-                ImageId = 1, 
-                Name = "White T-shirt", 
-                Category = ClothingCategory.TShirt,
-                Size = ClothingSize.M,
-                Brand = "Fantastic T-shirts",
-                Colour = "Blue",
-                Occasion = Occasion.Sport,
-                Season = Season.Summer
-            };
+            _initialClothingItem = TestExamples.GetInitialClothingItem();
+
 
             if (dbContext != null)
             {
@@ -61,19 +53,7 @@ namespace Backend.Tests.RepositoryTests
             InjectInitialTestDataIntoDb(_dbContext);
             _repository = new ClothingItemsRepository(_dbContext);
 
-            _testClothingItem = new ClothingItem()
-            {
-                Id = 0,
-                UserId = 2,
-                ImageId = 2,
-                Name = "Pink shirt",
-                Category = ClothingCategory.Shirt,
-                Size = ClothingSize.L,
-                Brand = "Amazing Shirts",
-                Colour = "Pink",
-                Occasion = Occasion.Evening,
-                Season = Season.Winter
-            };
+            _testClothingItem = TestExamples.GetADifferentClothingItem();
         }
 
 
@@ -124,8 +104,8 @@ namespace Backend.Tests.RepositoryTests
             var clothingItems = _repository.FindAllClothingItems();
 
             // Assert
-            Assert.That(clothingItems is not null);
-            Assert.That(clothingItems.GetType() is List<ClothingItem>);
+            Assert.That(clothingItems, Is.Not.Null);
+            Assert.That(clothingItems.GetType() == typeof(List<ClothingItem>));
         }
 
         [Test]
@@ -142,31 +122,19 @@ namespace Backend.Tests.RepositoryTests
         }
 
         [Test]
-        public void UpdateClothingItem_Returns_Not_Null()
+        public void ReplaceClothingItem_Returns_ClothingItemWithUpdatedProperties()
         {
             // Arrange
-            var id = _repository.FindAllClothingItems().FirstOrDefault()?.Id;
-            var clothingItemToDelete = _repository.FindClothingItemById((int)id);
+            var clothingItem = _repository.FindAllClothingItems().First();
+            var originalSize = clothingItem.Size;
+            clothingItem.Size = ClothingSize.L;
 
             // Act
-            var returnAlbum = _repository.ReplaceClothingItem(clothingItemToDelete);
+            var updatedClothingItem = _repository.ReplaceClothingItem(clothingItem);
 
             // Assert
-            Assert.That(returnAlbum != null);
-        }
-
-        [Test]
-        public void UpdateAlbumById_Returns_Album_With_Correct_Id()
-        {
-            // Arrange
-            var album = new Album() { Title = "Fantastic album", Artist = "Fantastic artist" };
-            var id = _model.FindAllAlbums().First().Id;
-
-            // Act
-            var returnAlbum = _model.UpdateAlbumById(id, album);
-
-            // Assert
-            Assert.That(returnAlbum != null && returnAlbum.Artist == album.Artist);
+            Assert.That(updatedClothingItem, Is.Not.Null);
+            Assert.That(updatedClothingItem.Size == ClothingSize.L && updatedClothingItem.Size != originalSize);
         }
     }
 }

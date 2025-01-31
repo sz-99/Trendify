@@ -26,5 +26,32 @@ namespace Backend.Models
         [EnumDataType(typeof(Season))]
         public Season Season { get; set; }
 
+        public ClothingItem UpdateWithValuesFrom(ClothingItem other)
+        {
+            this.UserId = other.UserId;
+            this.ImageId = other.ImageId;
+            this.Name = other.Name;
+            this.Category = other.Category;
+            this.Size = other.Size;
+            this.Brand = other.Brand;
+            this.Colour = other.Colour;
+            this.Occasion = other.Occasion;
+            this.Season = other.Season;
+
+            return this;
+        }
+
+        public bool HasSameValuesAs(ClothingItem other)
+        {
+            return  this.UserId == other.UserId &&
+                    this.ImageId == other.ImageId &&
+                    this.Name == other.Name &&
+                    this.Category == other.Category &&
+                    this.Size == other.Size &&
+                    this.Brand == other.Brand &&
+                    this.Colour == other.Colour &&
+                    this.Occasion == other.Occasion &&
+                    this.Season == other.Season;
+        }
     }
 }
