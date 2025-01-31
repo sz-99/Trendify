@@ -15,6 +15,10 @@ namespace Backend.Tests.RepositoryTests
     {
         WardrobeDBContext _dbContext;
         ClothingItemsRepository _repository;
+        ClothingItem _initialClothingItem;
+        ClothingItem _testClothingItem;
+
+
 
         [TearDown]
         public void TeardownDb()
@@ -23,9 +27,10 @@ namespace Backend.Tests.RepositoryTests
             _dbContext.Dispose();
         }
 
-        public static void InjectInitialTestDataIntoDb(WardrobeDBContext dbContext)
+        public void InjectInitialTestDataIntoDb(WardrobeDBContext dbContext)
         {
-            var tShirt = new ClothingItem() { 
+
+            _initialClothingItem = new ClothingItem() { 
                 Id = 0, 
                 UserId = 1, 
                 ImageId = 1, 
@@ -40,7 +45,7 @@ namespace Backend.Tests.RepositoryTests
 
             if (dbContext != null)
             {
-                dbContext.ClothingItems.Add(tShirt);
+                dbContext.ClothingItems.Add(_initialClothingItem);
                 dbContext.SaveChanges();
                 return;
             }
@@ -55,100 +60,96 @@ namespace Backend.Tests.RepositoryTests
             _dbContext = new WardrobeDBContext(optionsBuilder.Options);
             InjectInitialTestDataIntoDb(_dbContext);
             _repository = new ClothingItemsRepository(_dbContext);
+
+            _testClothingItem = new ClothingItem()
+            {
+                Id = 0,
+                UserId = 2,
+                ImageId = 2,
+                Name = "Pink shirt",
+                Category = ClothingCategory.Shirt,
+                Size = ClothingSize.L,
+                Brand = "Amazing Shirts",
+                Colour = "Pink",
+                Occasion = Occasion.Evening,
+                Season = Season.Winter
+            };
         }
 
 
         [Test]
-        public void AddNewAlbum_Increases_Count_Of_Albums_By_One()
+        public void AddNewClothingItem_Increases_Count_Of_ClothingItems_By_One()
         {
             // Arrange
-            var  = new Album() { Title = "Fantastic album", Artist = "Fantastic artist" };
-            var albumsCount = _model.FindAllAlbums().Count();
+            var clothingItemsCount = _repository.FindAllClothingItems().Count();
 
             // Act
-            var album_ = _model.AddNewAlbum(album);
+            var addedClothingItem = _repository.AddClothingItem(_testClothingItem);
 
             // Assert
-            Assert.That(_model.FindAllAlbums().Count() == albumsCount + 1);
+            Assert.That(_repository.FindAllClothingItems().Count() == clothingItemsCount + 1);
         }
 
+
         [Test]
-        public void AddNewAlbum_Returns_Album_With_Correct_Id()
+        public void DeleteClothingItem_Returns_Null_If_Album_Does_Not_Exist()
         {
+
             // Arrange
-            var album = new Album() { Title = "Fantastic album", Artist = "Fantastic artist" };
-            var albumsCount = _model.FindAllAlbums().Count();
-            var newId = _model.FindFirstUnusedId();
+            var initialClothingItem = _repository.FindAllClothingItems().FirstOrDefault();
+            var id = initialClothingItem?.Id;
 
             // Act
-            var album_ = _model.AddNewAlbum(album);
+             _repository.DeleteClothingItem(_initialClothingItem);
 
-            // Assert
-            Assert.That(album.Id == newId);
+            // Asserta
+            if (id is null)
+            {
+                Assert.That(false);
+            }
+            else 
+            {
+                Assert.That(_repository.FindClothingItemById((int)id), Is.Null);
+            };
+           
         }
 
         [Test]
-        public void DeleteAlbumById_Returns_Null_If_Album_Does_Not_Exist()
-        {
-
-            // Act
-            var returnAlbum = _model.DeleteAlbumById(2);
-
-            // Assert
-            Assert.That(returnAlbum == null);
-        }
-
-        [Test]
-        public void DeleteAlbumById_Returns_True_If_Album_Does_Exist_And_Is_Deleted()
-        {
-
-            // Act
-            var returnAlbum = _model.DeleteAlbumById(1);
-
-            // Assert
-            Assert.That(returnAlbum == true);
-        }
-
-        [Test]
-        public void FindFirstUnusedId_Returns_2()
-        {
-            Assert.That(_model.FindFirstUnusedId() == 2);
-        }
-
-        [Test]
-        public void GetAllAlbums_Returns_List_of_Albums_Not_Null()
+        public void FindAllClothingItems_Returns_List_of_Albums_Not_Null()
         {
             // Arrange
 
 
             // Act
-            var albums = _model.FindAllAlbums();
+            var clothingItems = _repository.FindAllClothingItems();
 
             // Assert
-            Assert.That(albums != null);
+            Assert.That(clothingItems is not null);
+            Assert.That(clothingItems.GetType() is List<ClothingItem>);
         }
 
         [Test]
-        public void GetAlbumById_Returns_Not_Null()
+        public void FindClothingItemById_Returns_Not_Null()
         {
             // Arrange
 
 
             // Act
-            var album = _model.FindAlbumById(1);
+            var album = _repository.FindClothingItemById(1);
 
             // Assert
             Assert.That(album != null);
         }
 
         [Test]
-        public void UpdateAlbumById_Returns_Not_Null()
+        public void UpdateClothingItem_Returns_Not_Null()
         {
             // Arrange
-            var album = new Album() { Title = "Fantastic album", Artist = "Fantastic artist" };
-            var id = _model.FindAllAlbums().First().Id;
+            var id = _repository.FindAllClothingItems().FirstOrDefault()?.Id;
+            var clothingItemToDelete = _repository.FindClothingItemById((int)id);
+
             // Act
-            var returnAlbum = _model.UpdateAlbumById(id, album);
+            var returnAlbum = _repository.ReplaceClothingItem(clothingItemToDelete);
 
             // Assert
             Assert.That(returnAlbum != null);
