@@ -1,7 +1,10 @@
-﻿namespace Backend.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Backend.Models
 {
-    public class WearingEvent
+    public class WearingHistory
     {
+        [Key]
         public int OutfitID { get; set; }
 
         public int UserID { get; set; }

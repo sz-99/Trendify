@@ -1,8 +1,11 @@
-﻿namespace Backend.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Backend.Models
 {
     public class Outfit
     {
-        public int OutfitID { get; set; }
+        [Key]
+        public int OutfitId { get; set; }
 
         public List<int> ClothingItemsIds { get; set; }
 
