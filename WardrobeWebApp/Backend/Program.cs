@@ -5,8 +5,8 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 
-var dbType = DbType.InMemory;
-
+var dbType = builder.Configuration["DbType"].ToDbType();
+string connectionString = builder.Configuration.GetConnectionString("WardrobeApp");
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -23,10 +23,14 @@ if (builder.Environment.IsDevelopment())
     }
     else if (dbType == DbType.SqlServer)
     {
-        string connectionString = builder.Configuration.GetConnectionString("WardrobeApp");
         builder.Services.AddDbContext<WardrobeDBContext>(
                         options => options.UseSqlServer(connectionString));
     }
+} 
+else 
+{
+    builder.Services.AddDbContext<WardrobeDBContext>(
+                    options => options.UseSqlServer(connectionString));
 }
 
 builder.Services.AddScoped<IClothingItemsService, ClothingItemsService>();
