@@ -1,4 +1,4 @@
-﻿using Backend.Models.Enums;
+using Backend.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 
