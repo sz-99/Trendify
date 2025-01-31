@@ -9,7 +9,6 @@ namespace Backend.Controllers
     public class ClothingItemsController : Controller
     {
         IClothingItemsService _clothingItemsService;
-
         public ClothingItemsController(IClothingItemsService clothingItemsService) 
         {
             _clothingItemsService = clothingItemsService;
@@ -34,7 +33,7 @@ namespace Backend.Controllers
             return Ok(newItem);
         }
         [HttpPut("{id}")]
-        public IActionResult PutAlbum(int id, ClothingItem clothingItem)
+        public IActionResult PutClothingItem(int id, ClothingItem clothingItem)
         {
             if (!ModelState.IsValid)
             {
@@ -69,7 +68,7 @@ namespace Backend.Controllers
             {
                 ExecutionStatus.SUCCESS => Ok(),
                 ExecutionStatus.INTERNAL_SERVER_ERROR => StatusCode(500, "Internal Server Error. Try again Later"),
-                ExecutionStatus.NOT_FOUND => NotFound("Album does not exist."),
+                ExecutionStatus.NOT_FOUND => NotFound("Clothing Item does not exist."),
                 _ => StatusCode(500, "Internal Server Error. Try again Later")
             };
         }
