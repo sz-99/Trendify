@@ -18,7 +18,18 @@ namespace Backend
             _dbContext.SaveChanges();
             return clothingItem;
         }
+        public ClothingItem? ReplaceClothingItem(ClothingItem clothingWithNewValues)
+        {
+            _dbContext.Update(clothingWithNewValues);
+            _dbContext.SaveChanges();
 
+            return clothingWithNewValues;
+        }
+        public void DeleteClothingItem(ClothingItem clothingItem)
+        {
+            _dbContext.ClothingItems.Remove(clothingItem);
+            _dbContext.SaveChanges();
+        }
         public List<ClothingItem> FindAllClothingItems()
         {
             return _dbContext.ClothingItems

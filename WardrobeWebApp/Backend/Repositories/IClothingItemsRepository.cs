@@ -10,6 +10,8 @@ namespace Backend
 
 
         ClothingItem? FindClothingItemById(int id);
+        ClothingItem? ReplaceClothingItem(ClothingItem clothingItem);
+        void DeleteClothingItem(ClothingItem clothingItem);
 
     }
 }

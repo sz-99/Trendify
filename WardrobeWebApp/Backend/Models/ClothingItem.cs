@@ -23,7 +23,7 @@ namespace Backend.Models
         public string Colour { get; set; }
 
         public Occasion Occasion { get; set; }
-
+        
         public Season Season { get; set; }
 
     }
