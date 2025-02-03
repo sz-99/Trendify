@@ -15,7 +15,28 @@ namespace Backend.Services
         public (ExecutionStatus, Outfit) MakeOutfit()
         {
             Outfit newOutfit = new Outfit();
-            var clothingIdList = _repository.FindAllClothingItems().Select(c=>c.Id).ToList();
+            //decide top+bottom OR single
+            //filter list based on EITHER single 
+            //OR random top+ random bottom
+            //temperature + jumper and coat
+            var clothingList = _repository.FindAllClothingItems();
+            var rand = new Random().Next(0, 2);
+            List<int> filteredList = new();
+
+
+            if(rand == 0) //single
+            {
+                filteredList = clothingList
+                    .Where(c => ClothingKindMapper.GetClothingKind(c.Category) == ClothingKind.Single)
+                    .Select(c => c.Id)
+                    .ToList();
+                
+            }
+            else if(rand == 1) //top + bottom
+            {
+                 
+            }
+
             List<int> chosenIds = new List<int>();
             for(int i = 0; i < 3; i ++)
             {

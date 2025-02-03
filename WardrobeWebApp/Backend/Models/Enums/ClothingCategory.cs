@@ -10,6 +10,7 @@
         Jumper,
         Blouse,
         Sari,
-        Skirt
+        Skirt, 
+        Dungaree
     }
 }
