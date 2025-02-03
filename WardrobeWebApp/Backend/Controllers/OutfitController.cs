@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Backend.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
 {
@@ -6,10 +7,19 @@ namespace Backend.Controllers
     [Route("[controller]")]
     public class OutfitController : ControllerBase
     {
+        IOutfitService _outfitService;
+        public OutfitController(IOutfitService outfitService)
+        {
+            _outfitService = outfitService;
+        }
         [HttpGet]
         public IActionResult GetOutfit()
         {
-            return Ok();
+            var (status, outfit) = _outfitService.MakeOutfitToList();
+            if(status == Models.Enums.ExecutionStatus.SUCCESS) 
+            return Ok(outfit);
+
+            return BadRequest();
         }
     }
 }
