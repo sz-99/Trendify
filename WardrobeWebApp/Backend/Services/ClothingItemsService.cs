@@ -34,7 +34,15 @@ namespace Backend
                 return ExecutionStatus.INTERNAL_SERVER_ERROR;
             }
         }
-        public (ExecutionStatus status, ClothingItem clothingItem) ReplaceClothingItem(int id, ClothingItem clothingItem) 
+
+        /// <summary>
+        /// Takes an Id and a clothing Item. Finds the item with Id id, and replaces with the values
+        /// in clothingItem. Updates the database.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="replacementClothingItem"></param>
+        /// <returns></returns>
+        public (ExecutionStatus status, ClothingItem updatedClothingItem) ReplaceClothingItem(int id, ClothingItem replacementClothingItem) 
         {
             try
             {
@@ -43,17 +51,9 @@ namespace Backend
                 if (clothingItemToUpdate == null)
                     return (ExecutionStatus.NOT_FOUND, null);
 
-                clothingItemToUpdate.UserId = id;
-                clothingItemToUpdate.ImageId = clothingItem.ImageId;
-                clothingItemToUpdate.Name = clothingItem.Name;
-                clothingItemToUpdate.Category = clothingItem.Category;
-                clothingItemToUpdate.Size= clothingItem.Size;
-                clothingItemToUpdate.Brand = clothingItem.Brand;
-                clothingItemToUpdate.Colour = clothingItem.Colour;
-                clothingItemToUpdate.Occasion = clothingItem.Occasion;
-                clothingItemToUpdate.Season = clothingItem.Season;
+                var updated = clothingItemToUpdate.UpdateWithValuesFrom(replacementClothingItem);
 
-                var updatedClothingItem = _repository.ReplaceClothingItem(clothingItemToUpdate);
+                var updatedClothingItem = _repository.ReplaceClothingItem(updated);
 
                 return (ExecutionStatus.SUCCESS, updatedClothingItem);
 
