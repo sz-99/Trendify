@@ -1,5 +1,6 @@
 
 using Backend;
+using Backend.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +36,7 @@ else
 
 builder.Services.AddScoped<IClothingItemsService, ClothingItemsService>();
 builder.Services.AddScoped<IClothingItemsRepository, ClothingItemsRepository>();
+builder.Services.AddScoped<IOutfitService, OutfitService>();
 
 var app = builder.Build();
 
