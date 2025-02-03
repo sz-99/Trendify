@@ -13,9 +13,17 @@ namespace Backend
             _repository = repository;
         }
 
-        public ClothingItem? AddClothingItem(ClothingItem clothingItem)
+        public (ExecutionStatus status, ClothingItem newClothingItem) AddClothingItem(ClothingItem clothingItem)
         {
-            return _repository.AddClothingItem(clothingItem);
+            try
+            {                
+                ClothingItem newClothingItem= _repository.AddClothingItem(clothingItem); 
+                return (ExecutionStatus.SUCCESS, newClothingItem);
+            }
+            catch (Exception ex)
+            {
+                return (ExecutionStatus.INTERNAL_SERVER_ERROR, null);
+            }
         }
         public ExecutionStatus DeleteClothingItem(int id)
         {
@@ -51,6 +59,7 @@ namespace Backend
                 if (clothingItemToUpdate == null)
                     return (ExecutionStatus.NOT_FOUND, null);
 
+
                 var updated = clothingItemToUpdate.UpdateWithValuesFrom(replacementClothingItem);
 
                 var updatedClothingItem = _repository.ReplaceClothingItem(updated);
@@ -68,13 +77,13 @@ namespace Backend
         {
             try
             {
-                var filteredClothingItems = _repository.FindAllClothingItems();
-                if (filteredClothingItems == null)
+                var clothingItems = _repository.FindAllClothingItems();
+                if (clothingItems == null)
                 {
                     return (ExecutionStatus.NOT_FOUND, null);
                 }
 
-                return (ExecutionStatus.SUCCESS, filteredClothingItems);
+                return (ExecutionStatus.SUCCESS, clothingItems);
             }
             catch (Exception ex)
             {
@@ -86,18 +95,18 @@ namespace Backend
         {
                 try
                 {
-                    var filteredClothingItems = _repository.FindClothingItemById(id);
-                if (filteredClothingItems == null)
-                {
-                    return (ExecutionStatus.NOT_FOUND, null);
-                }
+                    var filteredClothingItem = _repository.FindClothingItemById(id);
+                    if (filteredClothingItem == null)
+                    {
+                        return (ExecutionStatus.NOT_FOUND, null);
+                    }
 
-                return (ExecutionStatus.SUCCESS, filteredClothingItems);
-            }
-            catch (Exception ex)
-            {
-                return (ExecutionStatus.INTERNAL_SERVER_ERROR, null);
-            }
+                    return (ExecutionStatus.SUCCESS, filteredClothingItem);
+                }
+                catch (Exception ex)
+                {
+                    return (ExecutionStatus.INTERNAL_SERVER_ERROR, null);
+                }
         }
 
         public (ExecutionStatus status, List<ClothingItem> clothingItems) GetFilteredClothingItems(ClothingItemFilter filter)
@@ -119,7 +128,7 @@ namespace Backend
             }
 
         }
-
+/*********
         public (ExecutionStatus status, List<ClothingItem> clothingItems) FindClothingItemByCategory(int category)
         {
             try
@@ -206,5 +215,6 @@ namespace Backend
                 return (ExecutionStatus.INTERNAL_SERVER_ERROR, null);
             }
         }
+*******/
     }
 }

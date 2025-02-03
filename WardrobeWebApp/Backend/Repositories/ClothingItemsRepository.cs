@@ -70,7 +70,7 @@ namespace Backend
 
             return  query.ToList();
         }
-
+        /**********
         public List<ClothingItem> FindClothingItemByCategory(int category)
         {
             return _dbContext.ClothingItems
@@ -105,5 +105,6 @@ namespace Backend
                                          .Where(clothingItem => (int)clothingItem.Size == size)
                                          .ToList();        
         }
+        ***************/
     }
 }
