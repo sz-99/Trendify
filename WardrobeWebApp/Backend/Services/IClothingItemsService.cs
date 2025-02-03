@@ -6,7 +6,7 @@ namespace Backend
 {
     public interface IClothingItemsService
     {
-        ClothingItem? AddClothingItem(ClothingItem clothingItem);
+        (ExecutionStatus status, ClothingItem? newClothingItem) AddClothingItem(ClothingItem clothingItem);
         (ExecutionStatus status, List<ClothingItem> clothingItems) FindAllClothingItems();
         (ExecutionStatus status, ClothingItem ClothingItem) FindClothingItemById(int id);
         ExecutionStatus DeleteClothingItem(int id);
