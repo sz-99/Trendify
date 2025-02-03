@@ -1,26 +1,14 @@
 ﻿@page "/mycollection"
 @rendermode InteractiveServer
 @using FrontEnd.Components
+@using FrontEnd.Components.ClothingItemComponents
 
 <PageTitle>My Collection</PageTitle>
 
- @foreach (var clothing in clothingList)
-{
-    <ClothingItem clothing="clothing" />
-} 
-<h1>clothing item 1</h1>
-<h2>status: @statuscode</h2>
+<ClothingDataLoader></ClothingDataLoader>
 
 
 @code {
-    public List<Backend.Models.ClothingItem> clothingList { get; set; } = new();
-    public string statuscode = "";
-    protected async override Task OnInitializedAsync()
-    {
-        var response = await HttpManager.GetAllClothing();
-        clothingList = response.ResponseObject;
-        statuscode = response.StatusCode.ToString();
-        
-    }
+ 
 
 }

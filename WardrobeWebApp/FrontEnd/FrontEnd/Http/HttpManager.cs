@@ -1,8 +1,6 @@
 ﻿using Backend.Models;
-using System.Text.Json;
-using System.Text;
-using System.Net.Http;
 using System.Net;
+using System.Text.Json;
 
 namespace FrontEnd.Http
 {
@@ -25,17 +23,18 @@ namespace FrontEnd.Http
                 HttpResponseMessage response = await HttpClient.GetAsync("https://localhost:7062/Clothingitems");
                 result.StatusCode = response.StatusCode;
 
-                if(!response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
                 {
                     result.HasError = true;
                     result.ErrorMessage = $"Http Error: {response.StatusCode}";
                 }
+
                 string httpContent = await response.Content.ReadAsStringAsync();
                 var list = JsonSerializer.Deserialize<List<ClothingItem>>(httpContent);
 
                 result.ResponseObject = list ?? new List<ClothingItem>();
             }
-               
+
             catch (HttpRequestException ex)
             {
                 Console.WriteLine($"Http Request Failed: {ex.Message}");
@@ -43,12 +42,12 @@ namespace FrontEnd.Http
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
                 result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
-                
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Unknown Exception: {ex.Message}");
-                
+
                 {
                     result.HasError = true;
                     result.ErrorMessage = ex.Message;

@@ -26,8 +26,8 @@ if (builder.Environment.IsDevelopment())
         builder.Services.AddDbContext<WardrobeDBContext>(
                         options => options.UseSqlServer(connectionString));
     }
-} 
-else 
+}
+else
 {
     builder.Services.AddDbContext<WardrobeDBContext>(
                     options => options.UseSqlServer(connectionString));
