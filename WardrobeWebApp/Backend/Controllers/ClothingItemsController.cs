@@ -82,7 +82,7 @@ namespace Backend.Controllers
             }
 
             var response = _clothingItemsService.ReplaceClothingItem(id, clothingItem);
-            ClothingItem updatedclothingItem = response.clothingItem;
+            ClothingItem updatedclothingItem = response.updatedClothingItem;
             return response.status switch
             {
                 ExecutionStatus.SUCCESS => Ok(updatedclothingItem),
