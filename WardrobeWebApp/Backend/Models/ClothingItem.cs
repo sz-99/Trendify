@@ -26,6 +26,20 @@ namespace Backend.Models
         [EnumDataType(typeof(Season))]
         public Season Season { get; set; }
 
+        public static ClothingItem Copy(ClothingItem other)
+        {
+            var clothingItem = new ClothingItem();
+            clothingItem.Id = other.Id;
+            clothingItem.UpdateWithValuesFrom(other);
+            return clothingItem;
+        }
+
+
+        /// <summary>
+        /// Copy all values apart from Id
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         public ClothingItem UpdateWithValuesFrom(ClothingItem other)
         {
             this.UserId = other.UserId;

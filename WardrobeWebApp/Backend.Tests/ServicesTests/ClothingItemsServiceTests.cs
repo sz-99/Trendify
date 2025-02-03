@@ -50,26 +50,22 @@ namespace Backend.Tests.ServicesTests
             // Arrange
             var firstClothingItemInDb = _initialClothingItem;
             var replacementClothingItem = _testClothingItem;
-            var id = 1;
-            firstClothingItemInDb.Id = id;
-            replacementClothingItem.Id = 3;
-            var updatedItem = firstClothingItemInDb.UpdateWithValuesFrom
-            clothingItemToUpdate.UpdateWithValuesFrom(clothingItem);
+            var updatedFirstClothingItem = firstClothingItemInDb.UpdateWithValuesFrom(replacementClothingItem);
 
             _mockRepository
-                .Setup(repo => repo.FindClothingItemById(id))
+                .Setup(repo => repo.FindClothingItemById(1))
                 .Returns(firstClothingItemInDb);
 
             _mockRepository
-                .Setup(repo => repo.ReplaceClothingItem(_testClothingItem))
-                .Returns(_testClothingItem);
+                .Setup(repo => repo.ReplaceClothingItem(updatedFirstClothingItem))
+                .Returns(updatedFirstClothingItem);
 
             // Act
-            var (status, updatedItem) = _service.ReplaceClothingItem(id, _testClothingItem);
+            var (status, returnedReplacedItem) = _service.ReplaceClothingItem(1, replacementClothingItem);
 
             // Assert
             Assert.That(status, Is.EqualTo(ExecutionStatus.SUCCESS));
-            Assert.That(updatedItem.HasSameValuesAs(_testClothingItem));
+            Assert.That(returnedReplacedItem.HasSameValuesAs(replacementClothingItem));
         }
     }
 }

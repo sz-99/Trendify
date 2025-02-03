@@ -127,6 +127,8 @@ namespace Backend.Tests.RepositoryTests
             // Arrange
             var clothingItem = _repository.FindAllClothingItems().First();
             var originalSize = clothingItem.Size;
+            var originalId = clothingItem.Id;
+
             clothingItem.Size = ClothingSize.L;
 
             // Act
@@ -134,7 +136,9 @@ namespace Backend.Tests.RepositoryTests
 
             // Assert
             Assert.That(updatedClothingItem, Is.Not.Null);
-            Assert.That(updatedClothingItem.Size == ClothingSize.L && updatedClothingItem.Size != originalSize);
+            Assert.That(updatedClothingItem.Size == ClothingSize.L &&
+                            updatedClothingItem.Size != originalSize &&
+                            updatedClothingItem.Id == originalId);
         }
     }
 }
