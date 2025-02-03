@@ -16,22 +16,24 @@ namespace Backend.Services
         {
             Outfit newOutfit = new Outfit();
             var clothingIdList = _repository.FindAllClothingItems().Select(c=>c.Id).ToList();
-            List<int> clothingListIndex = new List<int>()
+            List<int> chosenIds = new List<int>();
+            for(int i = 0; i < 3; i ++)
             {
-                new Random().Next(0, clothingIdList.Count),
-                new Random().Next(0, clothingIdList.Count),
-                new Random().Next(0, clothingIdList.Count)
-            };
+                var newId = GetUniqueId(clothingIdList, chosenIds);
+                chosenIds.Add(newId);
+            }
 
-            newOutfit.ClothingItemsIds = new List<int>()
-            {
-               clothingIdList[clothingListIndex[0]],
-               clothingIdList[clothingListIndex[1]],
-               clothingIdList[clothingListIndex[2]]
-            };
+            newOutfit.ClothingItemsIds = chosenIds;
 
             return(ExecutionStatus.SUCCESS, newOutfit);
 
+        }
+
+        public int GetUniqueId(List<int> clothingIdList, List<int> chosenIds)
+        {
+            List<int> candidateIds = clothingIdList.Where(id=>!chosenIds.Contains(id)).ToList();
+            int idx = new Random().Next(0, candidateIds.Count);
+            return candidateIds[idx];
         }
 
         public (ExecutionStatus, List<ClothingItem>) MakeOutfitToList()
