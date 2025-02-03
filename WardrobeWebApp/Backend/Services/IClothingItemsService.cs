@@ -9,7 +9,7 @@ namespace Backend
         (ExecutionStatus status, List<ClothingItem> clothingItems) FindAllClothingItems();
         (ExecutionStatus status, ClothingItem ClothingItem) FindClothingItemById(int id);
         ExecutionStatus DeleteClothingItem(int id);
-        (ExecutionStatus status, ClothingItem clothingItem) ReplaceClothingItem(int id, ClothingItem clothingItem);
+        (ExecutionStatus status, ClothingItem updatedClothingItem) ReplaceClothingItem(int id, ClothingItem replacementClothingItem);
         (ExecutionStatus status, List<ClothingItem> clothingItems) GetFilteredClothingItems(ClothingItemFilter filter);
     }
 }
