@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Backend.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
 {
@@ -6,9 +7,24 @@ namespace Backend.Controllers
     [Route("[controller]")]
     public class ImageController : ControllerBase
     {
-        public ImageController() { }
+        IImageService _imageService;
 
-        [HttpGet]
+        public ImageController(IImageService imageService) 
+        { 
+            _imageService = imageService;
+        }
 
+        [HttpPost]
+        public IActionResult PostImage(IFormFile file)
+        {
+            var result = _imageService.SaveImage("newFile.png", file);
+            return Ok(result);
+        }
+
+        //[HttpGet("{id}")]
+        //public IActionResult GetImage(int id)
+        //{
+
+        //}
     }
 }
