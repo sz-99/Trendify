@@ -1,14 +1,16 @@
 ﻿using Backend.Models;
-using RecordShop.Model;
+using Backend.Models.Enums;
+
 
 namespace Backend
 {
     public interface IClothingItemsService
     {
         ClothingItem? AddClothingItem(ClothingItem clothingItem);
-        List<ClothingItem> FindAllClothingItems();
-        ClothingItem? FindClothingItemById(int id);
+        (ExecutionStatus status, List<ClothingItem> clothingItems) FindAllClothingItems();
+        (ExecutionStatus status, ClothingItem ClothingItem) FindClothingItemById(int id);
         ExecutionStatus DeleteClothingItem(int id);
-        (ExecutionStatus status, ClothingItem updatedClothingItem) ReplaceClothingItem(int id, ClothingItem clothingItem);
+        (ExecutionStatus status, ClothingItem clothingItem) ReplaceClothingItem(int id, ClothingItem clothingItem);
+        (ExecutionStatus status, List<ClothingItem> clothingItems) GetFilteredClothingItems(ClothingItemFilter filter);
     }
 }

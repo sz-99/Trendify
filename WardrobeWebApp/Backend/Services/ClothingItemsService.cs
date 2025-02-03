@@ -1,8 +1,8 @@
-﻿using Backend.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Backend.Models.Enums;
-using RecordShop.Model;
+using Backend.Models;
 
+//using ClothingItemResult = (Backend.Models.Enums.ExecutionStatus Status, List<ClothingItem> Items);
 namespace Backend
 {
     public class ClothingItemsService : IClothingItemsService
@@ -34,7 +34,7 @@ namespace Backend
                 return ExecutionStatus.INTERNAL_SERVER_ERROR;
             }
         }
-        public (ExecutionStatus status, ClothingItem updatedClothingItem) ReplaceClothingItem(int id, ClothingItem clothingItem) 
+        public (ExecutionStatus status, ClothingItem clothingItem) ReplaceClothingItem(int id, ClothingItem clothingItem) 
         {
             try
             {
@@ -64,14 +64,147 @@ namespace Backend
                 return (ExecutionStatus.INTERNAL_SERVER_ERROR, null);
             }
         }
-        public List<ClothingItem> FindAllClothingItems()
+        public (ExecutionStatus status, List<ClothingItem> clothingItems) FindAllClothingItems()
         {
-            return _repository.FindAllClothingItems();
+            try
+            {
+                var filteredClothingItems = _repository.FindAllClothingItems();
+                if (filteredClothingItems == null)
+                {
+                    return (ExecutionStatus.NOT_FOUND, null);
+                }
+
+                return (ExecutionStatus.SUCCESS, filteredClothingItems);
+            }
+            catch (Exception ex)
+            {
+                return (ExecutionStatus.INTERNAL_SERVER_ERROR, null);
+            }
         }
 
-        public ClothingItem? FindClothingItemById(int id)
+        public (ExecutionStatus status, ClothingItem ClothingItem) FindClothingItemById(int id)
         {
-            return _repository.FindClothingItemById(id);
+                try
+                {
+                    var filteredClothingItems = _repository.FindClothingItemById(id);
+                if (filteredClothingItems == null)
+                {
+                    return (ExecutionStatus.NOT_FOUND, null);
+                }
+
+                return (ExecutionStatus.SUCCESS, filteredClothingItems);
+            }
+            catch (Exception ex)
+            {
+                return (ExecutionStatus.INTERNAL_SERVER_ERROR, null);
+            }
+        }
+
+        public (ExecutionStatus status, List<ClothingItem> clothingItems) GetFilteredClothingItems(ClothingItemFilter filter)
+        {
+            try
+            {
+                var filteredClothingItems = _repository.FindFilteredClothingItems(filter);
+                if (filteredClothingItems == null)
+                {
+                    return (ExecutionStatus.NOT_FOUND, null);
+                }
+
+                return (ExecutionStatus.SUCCESS, filteredClothingItems);
+            }
+            catch (Exception ex)
+            {
+
+                return (ExecutionStatus.INTERNAL_SERVER_ERROR, null);
+            }
+
+        }
+
+        public (ExecutionStatus status, List<ClothingItem> clothingItems) FindClothingItemByCategory(int category)
+        {
+            try
+            {
+                var filteredClothingItems = _repository.FindClothingItemByCategory(category);
+                if (filteredClothingItems == null)
+                {
+                    return (ExecutionStatus.NOT_FOUND, null);
+                }
+
+                return (ExecutionStatus.SUCCESS, filteredClothingItems);
+            }
+            catch (Exception ex)
+            {
+
+                return (ExecutionStatus.INTERNAL_SERVER_ERROR, null);
+            }
+        }
+        public (ExecutionStatus status, List<ClothingItem>) FindAllClothingItemsByBrand(string brand)
+        {
+            try
+            {
+                var filteredClothingItems = _repository.FindClothingItemByBrand(brand);
+                if (filteredClothingItems == null)
+                {
+                    return (ExecutionStatus.NOT_FOUND, null);
+                }
+
+                return (ExecutionStatus.SUCCESS, filteredClothingItems);
+            }
+            catch (Exception ex)
+            {
+                return (ExecutionStatus.INTERNAL_SERVER_ERROR, null);
+            }
+        }
+        public (ExecutionStatus status, List<ClothingItem>) FindAllClothingItemsByOccasion(int occasion)
+        {
+            try
+            {
+                var filteredClothingItems = _repository.FindClothingItemByOccasion(occasion);
+                if (filteredClothingItems == null)
+                {
+                    return (ExecutionStatus.NOT_FOUND, null);
+                }
+
+                return (ExecutionStatus.SUCCESS, filteredClothingItems);
+            }
+            catch (Exception ex)
+            {
+                return (ExecutionStatus.INTERNAL_SERVER_ERROR, null);
+            }
+        }
+        public (ExecutionStatus status, List<ClothingItem>) FindAllClothingItemsBySeason(int season)
+        {
+            try
+            {
+                var filteredClothingItems = _repository.FindClothingItemBySeason(season);
+                if (filteredClothingItems == null)
+                {
+                    return (ExecutionStatus.NOT_FOUND, null);
+                }
+
+                return (ExecutionStatus.SUCCESS, filteredClothingItems);
+            }
+            catch (Exception ex)
+            {
+                return (ExecutionStatus.INTERNAL_SERVER_ERROR, null);
+            }
+        }
+        public (ExecutionStatus status, List<ClothingItem>) FindAllClothingItemsBySize(int size)
+        {
+            try
+            {
+                var filteredClothingItems = _repository.FindClothingItemBySize(size);
+                if (filteredClothingItems == null)
+                {
+                    return (ExecutionStatus.NOT_FOUND, null);
+                }
+
+                return (ExecutionStatus.SUCCESS, filteredClothingItems);
+            }
+            catch (Exception ex)
+            {
+                return (ExecutionStatus.INTERNAL_SERVER_ERROR, null);
+            }
         }
     }
 }
