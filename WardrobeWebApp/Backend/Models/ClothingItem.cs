@@ -1,4 +1,4 @@
-﻿using Backend.Models.Enums;
+using Backend.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 
@@ -26,5 +26,46 @@ namespace Backend.Models
         [EnumDataType(typeof(Season))]
         public Season Season { get; set; }
 
+        public static ClothingItem Copy(ClothingItem other)
+        {
+            var clothingItem = new ClothingItem();
+            clothingItem.Id = other.Id;
+            clothingItem.UpdateWithValuesFrom(other);
+            return clothingItem;
+        }
+
+
+        /// <summary>
+        /// Copy all values apart from Id
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public ClothingItem UpdateWithValuesFrom(ClothingItem other)
+        {
+            this.UserId = other.UserId;
+            this.ImageId = other.ImageId;
+            this.Name = other.Name;
+            this.Category = other.Category;
+            this.Size = other.Size;
+            this.Brand = other.Brand;
+            this.Colour = other.Colour;
+            this.Occasion = other.Occasion;
+            this.Season = other.Season;
+
+            return this;
+        }
+
+        public bool HasSameValuesAs(ClothingItem other)
+        {
+            return  this.UserId == other.UserId &&
+                    this.ImageId == other.ImageId &&
+                    this.Name == other.Name &&
+                    this.Category == other.Category &&
+                    this.Size == other.Size &&
+                    this.Brand == other.Brand &&
+                    this.Colour == other.Colour &&
+                    this.Occasion == other.Occasion &&
+                    this.Season == other.Season;
+        }
     }
 }

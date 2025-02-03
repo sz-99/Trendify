@@ -1,6 +1,5 @@
-﻿using Backend.Models;
+using Backend.Models;
 using Backend.Models.Enums;
-
 
 namespace Backend
 {
