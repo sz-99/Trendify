@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrontEnd", "FrontEnd\FrontEnd\FrontEnd.csproj", "{135B19DE-BEEE-44AB-A4CC-221F1E232662}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrontEnd", "FrontEnd\FrontEnd\FrontEnd.csproj", "{135B19DE-BEEE-44AB-A4CC-221F1E232662}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrontEnd.Client", "FrontEnd\FrontEnd.Client\FrontEnd.Client.csproj", "{8DB947E8-3D17-471F-88AC-322DC250C345}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrontEnd.Client", "FrontEnd\FrontEnd.Client\FrontEnd.Client.csproj", "{8DB947E8-3D17-471F-88AC-322DC250C345}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend", "Backend\Backend.csproj", "{07949159-4C65-4C86-A591-F8DBE11DA5B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backend", "Backend\Backend.csproj", "{07949159-4C65-4C86-A591-F8DBE11DA5B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Tests", "Backend.Tests\Backend.Tests.csproj", "{F694C53C-CDF2-4CD5-954C-EE9906C1622F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backend.Tests", "Backend.Tests\Backend.Tests.csproj", "{F694C53C-CDF2-4CD5-954C-EE9906C1622F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

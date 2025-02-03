@@ -14,7 +14,7 @@ namespace Backend.Controllers
             _clothingItemsService = clothingItemsService;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         public IActionResult GetAllClothingItems()
         {
             return Ok(_clothingItemsService.FindAllClothingItems());
@@ -49,7 +49,7 @@ namespace Backend.Controllers
             }
 
             var response = _clothingItemsService.ReplaceClothingItem(id, clothingItem);
-            ClothingItem updatedclothingItem = response.updatedClothingItem;
+            ClothingItem updatedclothingItem = response.clothingItem;
             return response.status switch
             {
                 ExecutionStatus.SUCCESS => Ok(updatedclothingItem),
@@ -72,5 +72,36 @@ namespace Backend.Controllers
                 _ => StatusCode(500, "Internal Server Error. Try again Later")
             };
         }
+
+        [HttpGet]
+        public IActionResult GetClothingItems(
+                                                [FromQuery] int? category,
+                                                [FromQuery] int? size,
+                                                [FromQuery] string? brand,
+                                                [FromQuery] string? colour,
+                                                [FromQuery] int? occasion,
+                                                [FromQuery] int? season
+                                              )
+         {
+            var filter = new ClothingItemFilter
+            {
+                Category = category,
+                Size = size,
+                Brand = brand,
+                Colour = colour,
+                Occasion = occasion,
+                Season = season
+            };
+
+            var response = _clothingItemsService.GetFilteredClothingItems(filter);
+            return response.status switch
+            {
+                ExecutionStatus.SUCCESS => Ok(response.clothingItems),
+                ExecutionStatus.INTERNAL_SERVER_ERROR => StatusCode(500, "Internal Server Error. Try again Later"),
+                ExecutionStatus.NOT_FOUND => NotFound("Clothing Item does not exist."),
+                _ => StatusCode(500, "Internal Server Error. Try again Later")
+            };
+        }
+
     }
 }

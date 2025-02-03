@@ -1,7 +1,39 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Wardrobe App</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="max-w-7xl">
+    <h1 class="text-4xl font-bold text-gray-900 mb-8">Welcome to WardrobeApp</h1>
 
-Welcome to your new app.
+    <!-- Dashboard Layout -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl">
+
+        <!-- Left Column: User Profile -->
+        <a href="/" class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 hover:bg-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800 underline">User Profile</h2>
+            <p class="text-gray-600 mt-2">Username</p>
+        </a>
+
+        <!-- Right Column: Stacked Tiles -->
+        <div class="flex flex-col gap-6">
+
+            <!-- Generate Outfit (Top) -->
+            <a href="/generateoutfit" class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 hover:bg-gray-200">
+                <h2 class="text-xl font-semibold text-gray-800 underline">Generate Outfit</h2>
+                <p class="text-gray-600 mt-2">Weather Display</p>
+                <img src="https://picsum.photos/300?grayscale" alt="Weather Icon" class="w-16 h-16 mt-3" />
+            </a>
+
+            <!-- My Collection (Bottom) -->
+            <a href="/mycollection" class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 hover:bg-gray-200">
+                <h2 class="text-xl font-semibold text-gray-800 underline">My Collection</h2>
+                <img src="https://picsum.photos/300?grayscale" alt="My Collection" class="w-16 h-16 mt-3" />
+            </a>
+
+        </div>
+
+    </div>
+</div>
+
+
+
