@@ -12,6 +12,17 @@ namespace Backend.Services
             _repository = repository;
         }
 
+        public int GetRandomClothingItem(ClothingKind kind)
+        {
+            var clothingList = _repository.FindAllClothingItems();
+            var filteredListOfIds = clothingList
+                .Where(c => ClothingKindMapper.GetClothingKind(c.Category) == kind)
+                .Select(c => c.Id)
+                .ToList();
+            var newId = GetUniqueId(filteredListOfIds, new List<int>() { });
+            return newId;
+        }
+
         public (ExecutionStatus, Outfit) MakeOutfit()
         {
             Outfit newOutfit = new Outfit();
@@ -23,28 +34,20 @@ namespace Backend.Services
             var rand = new Random().Next(0, 2);
             List<int> filteredList = new();
 
-
             if(rand == 0) //single
             {
-                filteredList = clothingList
-                    .Where(c => ClothingKindMapper.GetClothingKind(c.Category) == ClothingKind.Single)
-                    .Select(c => c.Id)
-                    .ToList();
+                filteredList = new List<int>() { GetRandomClothingItem(ClothingKind.Single) };
                 
             }
             else if(rand == 1) //top + bottom
             {
-                 
+                filteredList = new List<int>() { 
+                    GetRandomClothingItem(ClothingKind.Top), 
+                    GetRandomClothingItem(ClothingKind.Bottom) 
+                };
             }
 
-            List<int> chosenIds = new List<int>();
-            for(int i = 0; i < 3; i ++)
-            {
-                var newId = GetUniqueId(clothingIdList, chosenIds);
-                chosenIds.Add(newId);
-            }
-
-            newOutfit.ClothingItemsIds = chosenIds;
+            newOutfit.ClothingItemsIds = filteredList;
 
             return(ExecutionStatus.SUCCESS, newOutfit);
 
