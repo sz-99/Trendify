@@ -2,7 +2,9 @@
 using Backend.Models.Enums;
 using Backend.Services;
 using Backend.Utils;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
 
 namespace Backend.Controllers
 {
@@ -27,11 +29,21 @@ namespace Backend.Controllers
                 _ => StatusCode(500, "Unknown Internal Server Error. Try again Later")
             };
 
-        [HttpGet("{clothingItemId}")]
-        public IActionResult GetImage(int clothingItemId) =>
-            _imageService.FindImageByClothingItemId(clothingItemId) switch
+        [HttpGet("clothingId/{clothingItemId}")]
+        public IActionResult GetImageByClothingId(int clothingItemId) => _imageService.FindImageByClothingItemId(clothingItemId) switch
+        {
+            (ExecutionStatus.SUCCESS, string path, string originalFilename) => Ok(FileUtils.FileResultFromFilePath(path, originalFilename)),
+            (ExecutionStatus.INTERNAL_SERVER_ERROR, _, _) => StatusCode(500, "Internal server error. Please try again later."),
+            (ExecutionStatus.NOT_FOUND, _, _) => NotFound($"No image found for {clothingItemId}"),
+            (_, _, _) => BadRequest($"Unknown error dealing with clothing item {clothingItemId}")
+        };
+
+
+        [HttpGet("imageId/{imageId}")]
+        public IActionResult GetImageByImageId(int clothingItemId) =>
+            _imageService.FindImageByImageId(clothingItemId) switch
             {
-                (ExecutionStatus.SUCCESS, string path, string originalFilename) => Ok(File(path, "image/png", originalFilename)),
+                (ExecutionStatus.SUCCESS, string path, string originalFilename) => Ok(FileUtils.FileResultFromFilePath(path, originalFilename)),
                 (ExecutionStatus.INTERNAL_SERVER_ERROR, _, _) => StatusCode(500, "Internal server error. Please try again later."),
                 (ExecutionStatus.NOT_FOUND, _, _) => NotFound($"No image found for {clothingItemId}"),
                 (_, _, _) => BadRequest($"Unknown error dealing with clothing item {clothingItemId}")
