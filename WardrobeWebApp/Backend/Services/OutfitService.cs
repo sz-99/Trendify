@@ -7,9 +7,11 @@ namespace Backend.Services
     public class OutfitService: IOutfitService
     {
         private IClothingItemsRepository _repository;
-        public OutfitService(IClothingItemsRepository repository)
+        private IWeatherService _weatherService;
+        public OutfitService(IClothingItemsRepository repository, IWeatherService weatherService)
         {
             _repository = repository;
+            _weatherService = weatherService;
         }
 
         public int GetRandomClothingItem(ClothingKind kind)
