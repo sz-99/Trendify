@@ -17,8 +17,8 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        public IActionResult PostImage(int clothingItemId, IFormFile file) => 
-            _imageService.SaveImage(clothingItemId, file) switch
+        public IActionResult PostImage(IFormFile file) => 
+            _imageService.SaveImage(file, null) switch
             {
                 (ExecutionStatus.SUCCESS, int id) => Ok(id),
                 (ExecutionStatus.ALREADY_EXISTS, _) => StatusCode(500, "Internal Server Error. File with that name already exists."),

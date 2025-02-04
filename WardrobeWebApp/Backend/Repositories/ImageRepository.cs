@@ -14,7 +14,7 @@ namespace Backend
             _dbContext = dbContext;
         }
 
-        public (ExecutionStatus status, int? id, string? location) AddImageLocationToDb(int clothingItemId, string filename)
+        public (ExecutionStatus status, int? id, string? location) AddImageLocationToDb(string filename, int? clothingItemId)
         {
             try
             {
@@ -91,8 +91,8 @@ namespace Backend
             return (ExecutionStatus.SUCCESS, id);
         }
 
-        public (ExecutionStatus status, int? clothingItemId) SaveImage(int clothingItemId, IFormFile file) =>
-            AddImageLocationToDb(clothingItemId, file.FileName) switch
+        public (ExecutionStatus status, int? clothingItemId) SaveImage(IFormFile file, int? clothingItemId) =>
+            AddImageLocationToDb(file.FileName, clothingItemId) switch
             {
                 (ExecutionStatus.SUCCESS, int imageId, string filePath) => SaveImageToDisk(file, imageId, filePath),
                 (ExecutionStatus status, _, _) => (status, null)

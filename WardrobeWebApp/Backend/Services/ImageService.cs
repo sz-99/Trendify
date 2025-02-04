@@ -11,21 +11,19 @@ namespace Backend
             _repository = repository;
         }
 
-
         public (ExecutionStatus status, FileStream? file) FindImageByClothingItemId(int clothingItemId)
         {
             return _repository.FindImageByClothingItemId(clothingItemId);
         }
-
 
         /// <summary>
         /// Take an image, return the ID of the image
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
-        public (ExecutionStatus status, int? id) SaveImage(int clothingItemId, IFormFile file)
+        public (ExecutionStatus status, int? id) SaveImage(IFormFile file, int? clothingItemId = null)
         {
-            return _repository.SaveImage(clothingItemId, file);
+            return _repository.SaveImage(file, clothingItemId);
         }
     }
 }
