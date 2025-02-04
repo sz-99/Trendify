@@ -38,6 +38,7 @@ builder.Services.AddScoped<IClothingItemsService, ClothingItemsService>();
 builder.Services.AddScoped<IClothingItemsRepository, ClothingItemsRepository>();
 builder.Services.AddScoped<IOutfitService, OutfitService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IImageRepository, ImageRepository>();
 
 var app = builder.Build();
 

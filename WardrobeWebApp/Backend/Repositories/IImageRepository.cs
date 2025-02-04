@@ -1,7 +1,7 @@
 ﻿
 namespace Backend
 {
-    public interface IImageService
+    public interface IImageRepository
     {
         int SaveImage(IFormFile file);
     }

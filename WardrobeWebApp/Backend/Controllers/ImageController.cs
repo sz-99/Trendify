@@ -17,7 +17,7 @@ namespace Backend.Controllers
         [HttpPost]
         public IActionResult PostImage(IFormFile file)
         {
-            var result = _imageService.SaveImage("newFile.png", file);
+            var result = _imageService.SaveImage(file);
             return Ok(result);
         }
 
