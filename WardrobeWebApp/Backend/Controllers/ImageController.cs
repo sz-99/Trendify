@@ -38,7 +38,6 @@ namespace Backend.Controllers
             (_, _, _) => BadRequest($"Unknown error dealing with clothing item {clothingItemId}")
         };
 
-
         [HttpGet("imageId/{imageId}")]
         public IActionResult GetImageByImageId(int clothingItemId) =>
             _imageService.FindImageByImageId(clothingItemId) switch
