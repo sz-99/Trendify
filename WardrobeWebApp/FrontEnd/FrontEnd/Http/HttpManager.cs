@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using System.Net;
 using System.Text.Json;
 using System.Net.Http.Headers;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace FrontEnd.Http
 {
@@ -135,9 +136,10 @@ namespace FrontEnd.Http
             }
             return result;
         }
-        public static async Task<Response<bool>> UploadImageAsync(IBrowserFile file)
+        public static async Task<Response<int>> UploadImageAsync(IBrowserFile file)
         {
-            var result = new Response<bool>();
+            //returns imageId if file upload is successful otherwise 0 for the ResponseObject of the Response
+            var result = new Response<int>();
 
             try
             {
@@ -168,10 +170,13 @@ namespace FrontEnd.Http
                 {
                     result.HasError = true;
                     result.ErrorMessage = $"Http Error: {response.StatusCode}";
+                    result.ResponseObject = 0;
                 }
                 else
                 {
-                    result.ResponseObject = true; 
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    if (int.TryParse(responseBody, out int imageId))
+                         result.ResponseObject = imageId;
                 }
             }
             catch (HttpRequestException ex)
@@ -180,7 +185,7 @@ namespace FrontEnd.Http
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
                 result.StatusCode = HttpStatusCode.ServiceUnavailable;
-                result.ResponseObject = false;
+                result.ResponseObject = 0;
             }
             catch (Exception ex)
             {
@@ -188,7 +193,7 @@ namespace FrontEnd.Http
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
                 result.StatusCode = HttpStatusCode.NotFound;
-                result.ResponseObject = false;
+                result.ResponseObject = 0;
             }
 
             return result;

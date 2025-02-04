@@ -99,7 +99,7 @@
 <!-- Status Message -->
 
 @code {
-    
+
     private ClothingItem newClothingItem = new();
 
     private List<string> Categories = Enum.GetNames(typeof(ClothingCategory)).ToList();
@@ -136,7 +136,7 @@
             }
         }
     }
-     // public async Task<string> ConvertFileToBase64(IBrowserFile file)
+    // public async Task<string> ConvertFileToBase64(IBrowserFile file)
     // {
     //     using var stream = file.OpenReadStream();
     //     using var memoryStream = new MemoryStream();
@@ -155,7 +155,7 @@
         isUploading = true;
         statusMessage = "Uploading...";
 
-        var uploadResult = await HttpManager.UploadImageAsync(selectedFile);
+        Response<int> uploadResult = await HttpManager.UploadImageAsync(selectedFile);
 
         if (uploadResult.HasError)
         {
@@ -164,7 +164,12 @@
         }
         else
         {
-            statusMessage = "File uploaded successfully!";
+            int imageId = uploadResult.ResponseObject;
+
+               Console.WriteLine("Image Id " + imageId);
+                newClothingItem.ImageId = imageId;
+
+            statusMessage = "File uploaded successfully!";            
         }
 
         isUploading = false;
