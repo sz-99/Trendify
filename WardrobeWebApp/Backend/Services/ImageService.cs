@@ -1,4 +1,6 @@
-﻿namespace Backend
+﻿using Backend.Models.Enums;
+
+namespace Backend
 {
     public class ImageService : IImageService
     {
@@ -9,12 +11,14 @@
             _repository = repository;
         }
 
+        
+
         /// <summary>
         /// Take an image, return the ID of the image
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
-        public int SaveImage(IFormFile file)
+        public (ExecutionStatus status, int? id) SaveImage(IFormFile file)
         {
             return _repository.SaveImage(file);
         }

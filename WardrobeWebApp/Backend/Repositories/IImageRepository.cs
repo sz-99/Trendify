@@ -1,8 +1,9 @@
-﻿
+﻿using Backend.Models.Enums;
+
 namespace Backend
 {
     public interface IImageRepository
     {
-        int SaveImage(IFormFile file);
+        (ExecutionStatus status, int? id) SaveImage(IFormFile file);
     }
 }
