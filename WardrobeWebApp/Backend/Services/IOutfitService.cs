@@ -6,6 +6,6 @@ namespace Backend.Services
     public interface IOutfitService
     {
         (ExecutionStatus, Outfit) MakeOutfit();
-        (ExecutionStatus, List<ClothingItem>) MakeOutfitToList();
+        Task<(ExecutionStatus, List<ClothingItem>)> MakeOutfitToList(string location);
     }
 }

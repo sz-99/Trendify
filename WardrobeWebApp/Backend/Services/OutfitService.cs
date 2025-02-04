@@ -55,16 +55,65 @@ namespace Backend.Services
 
         }
 
+        public async Task<(ExecutionStatus, Outfit)> MakeOutfitBasedOnWeather(string location)
+        {
+            var (status, weather) = await _weatherService.GetWeatherForecast(location);
+            if(status != ExecutionStatus.SUCCESS || weather == null) 
+                return (ExecutionStatus.NOT_FOUND, null);
+
+            var (sts, outfit) = MakeOutfit();
+            if (sts != ExecutionStatus.SUCCESS || outfit == null)
+                return (sts, null);
+
+            var modifiedSelection = new List<int>(outfit.ClothingItemsIds);
+
+           try
+           {
+                if (weather.Precipication > 2.5 && weather.MaxTemp < 20)
+                {
+                    modifiedSelection.Add(GetRandomClothingItem(ClothingKind.Overall));
+                }
+                else if (weather.MaxTemp < 15 && weather.MaxTemp > 10)
+                {
+                    //add jumper or coat
+                    var rand = new Random().Next(0, 2);
+                    if (rand == 0) //jumper
+                    {
+                        modifiedSelection.Add(GetRandomClothingItem(ClothingKind.Outer));
+                    }
+                    else //coat
+                    {
+                        modifiedSelection.Add(GetRandomClothingItem(ClothingKind.Overall));
+                    }
+                }
+                else if (weather.AvgTemp <= 10)
+                {
+                    //add jumper AND coat
+                    modifiedSelection.Add(GetRandomClothingItem(ClothingKind.Outer));
+                    modifiedSelection.Add(GetRandomClothingItem(ClothingKind.Overall));
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Error in Outfit Generation: {ex.Message}");
+                return (ExecutionStatus.INTERNAL_SERVER_ERROR, null);
+            }
+
+            outfit.ClothingItemsIds = modifiedSelection;
+            return (ExecutionStatus.SUCCESS, outfit);
+        }
+
         public int GetUniqueId(List<int> clothingIdList, List<int> chosenIds)
         {
             List<int> candidateIds = clothingIdList.Where(id=>!chosenIds.Contains(id)).ToList();
+            if (candidateIds.Count == 0) throw new InvalidOperationException("No valid clothing to choose from");
             int idx = new Random().Next(0, candidateIds.Count);
             return candidateIds[idx];
         }
 
-        public (ExecutionStatus, List<ClothingItem>) MakeOutfitToList()
+        public async Task<(ExecutionStatus, List<ClothingItem>)> MakeOutfitToList(string location)
         {
-            var (status, outfit) = MakeOutfit();
+            var (status, outfit) = await MakeOutfitBasedOnWeather(location);
             if(status == ExecutionStatus.SUCCESS)
             {
                 return(ExecutionStatus.SUCCESS, outfit.ClothingItemsIds.Select(id=>_repository.FindClothingItemById(id)).ToList());
