@@ -1,4 +1,5 @@
 ﻿using Backend.Models;
+using Backend.Models.Enums;
 using System.Net.Http;
 using System.Text.Json;
 
@@ -9,7 +10,7 @@ namespace Backend.Services
         public string ApiKey = "c6a2a089ddc24ce7840142448250302";
         private static HttpClient _httpClient = new ();
 
-        public async Task<WeatherInfo?> GetWeatherForecast(string location)
+        public async Task<(ExecutionStatus, WeatherInfo?)> GetWeatherForecast(string location)
         {
            try
             {
@@ -35,12 +36,12 @@ namespace Backend.Services
                     Condition = forecastDay.GetProperty("condition").GetProperty("text").GetString() ?? "Unknown"
 
                 };
-                return weather;
+                return (ExecutionStatus.SUCCESS, weather);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error fetching weather: {ex.Message}");
-                return null;
+                return (ExecutionStatus.NOT_FOUND, null);
             }
 
         }

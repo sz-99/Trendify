@@ -1,10 +1,11 @@
 ﻿
 using Backend.Models;
+using Backend.Models.Enums;
 
 namespace Backend.Services
 {
     public interface IWeatherService
     {
-        Task<WeatherInfo?> GetWeatherForecast(string location);
+        Task<(ExecutionStatus, WeatherInfo?)> GetWeatherForecast(string location);
     }
 }

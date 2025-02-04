@@ -1,4 +1,6 @@
-﻿using Backend.Services;
+﻿using Backend.Models;
+using Backend.Models.Enums;
+using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
@@ -15,9 +17,13 @@ namespace Backend.Controllers
         [HttpGet("{location}")]
         public async Task<IActionResult> GetWeatherForcast(string location)
         {
-            var weather = await _weatherService.GetWeatherForecast(location);
-            if (weather == null) {return NotFound();}
-            return Ok(weather);
+            var response = await _weatherService.GetWeatherForecast(location);
+            WeatherInfo weather = response.Item2;
+            return response.Item1 switch
+            {
+                ExecutionStatus.SUCCESS => Ok(weather),
+                _ => NotFound()
+            };
         }
     }
 }
