@@ -138,7 +138,6 @@ namespace FrontEnd.Http
         }
         public static async Task<Response<int>> UploadImageAsync(IBrowserFile file)
         {
-            //returns imageId if file upload is successful otherwise 0 for the ResponseObject of the Response
             var result = new Response<int>();
 
             try
@@ -171,12 +170,14 @@ namespace FrontEnd.Http
                     result.HasError = true;
                     result.ErrorMessage = $"Http Error: {response.StatusCode}";
                     result.ResponseObject = 0;
+                    Console.WriteLine("Image Upload Attempt Failure : " + result.ErrorMessage);
+
                 }
                 else
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
                     if (int.TryParse(responseBody, out int imageId))
-                         result.ResponseObject = imageId;
+                        result.ResponseObject = imageId;
                 }
             }
             catch (HttpRequestException ex)

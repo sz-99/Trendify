@@ -22,11 +22,13 @@
         </div>
         <div>
             <h4 class="text-lg font-semibold mb-4 text-[#4b4b4b]">Details of the new clothing</h4>
-            <EditForm FormName="AddClothingItem" Model="newClothingItem" OnValidSubmit="HandleSubmit">
+            <EditForm  Model="newClothingItem" OnValidSubmit="HandleSubmit">
                 <DataAnnotationsValidator />
+                <ValidationSummary />
                 <div class="mb-2">
                     <label class="block font-medium text-[#4b4b4b]" for="name">Name</label>
                     <InputText id="name" @bind-Value="newClothingItem.Name" class="w-full p-2 border rounded" />
+                    <ValidationMessage For="@(() => newClothingItem.Name)" />
                 </div>
             <!--
                 <div class="mb-2">
@@ -35,7 +37,7 @@
                 </div>
             -->
                 <div class="mb-2">
-                    <label class="block font-medium text-[#4b4b4b]" for="imageId">Choose Image of your new Clothing</label>
+                    <label class="block font-medium text-[#4b4b4b]">Choose Image of your new Clothing</label>
                     <InputFile OnChange="HandleFileUpload" />
                     <button @onclick="UploadFile" disabled="@isUploading">Upload</button>
                     
@@ -49,16 +51,19 @@
                                 <option value="@category">@category</option>
                             }
                         </InputSelect>
+                        <ValidationMessage For="@(() => newClothingItem.Category)" />
                     </div>
                     <div>
                         <label class="block font-medium text-[#4b4b4b]" for="colour">Colour</label>
                         <InputText id="colour" @bind-Value="newClothingItem.Colour" class="w-full p-2 border rounded" />
+                        <ValidationMessage For="@(() => newClothingItem.Colour)" />
                     </div>
                 </div>
                 <div class="mb-2 grid grid-cols-2 gap-2">
                     <div>
                         <label class="block font-medium text-[#4b4b4b]" for="brand">Brand</label>
                         <InputText id="brand" @bind-Value="newClothingItem.Brand" class="w-full p-2 border rounded" />
+                        <ValidationMessage For="@(() => newClothingItem.Brand)" />
                     </div>
                     <div>
                         <label class="block font-medium text-[#4b4b4b]" for="size">Size</label>
@@ -68,6 +73,7 @@
                                 <option value="@size">@size</option>
                             }
                         </InputSelect>
+                        <ValidationMessage For="@(() => newClothingItem.Size)" />
                     </div>
                 </div>
                 <div class="mb-2 grid grid-cols-2 gap-2">
@@ -79,6 +85,7 @@
                                 <option value="@occasion">@occasion</option>
                             }
                         </InputSelect>
+                        <ValidationMessage For="@(() => newClothingItem.Occasion)" />
                     </div>
                     <div>
                         <label class="block font-medium text-[#4b4b4b]" for="season">Season</label>
@@ -88,15 +95,22 @@
                                 <option value="@season">@season</option>
                             }
                         </InputSelect>
+                        <ValidationMessage For="@(() => newClothingItem.Season)" />
                     </div>
                 </div>
                 <button type="submit" class="w-full bg-gray-100 hover:bg-blue-800 text-gray-900 p-2 rounded-lg">Submit</button>
             </EditForm>
         <button @onclick="NavigateHome" class="mt-4 w-full bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg">Cancel</button>
-        </div>
-        </div>
-    </div>
-<!-- Status Message -->
+        <!-- Status Message -->
+        @if (!string.IsNullOrEmpty(statusMessage))
+        {
+            Console.WriteLine(statusMessage);
+                <div class="alert alert-info mt-3"> @statusMessage </div>
+        }
+   </div>
+ </div>
+
+</div>
 
 @code {
 
@@ -111,7 +125,8 @@
     private string FileName = string.Empty;
     private string FileDataUrl = string.Empty;
     private bool IsImage = false;
-    private string statusMessage = string.Empty;
+    public string statusMessage { get; set; } = string.Empty;
+   
 
     private IBrowserFile selectedFile;
     private bool isUploading = false;
@@ -162,15 +177,7 @@
             statusMessage = $"Error uploading file: {uploadResult.ErrorMessage}";
             Console.WriteLine(statusMessage);
         }
-        else
-        {
-            int imageId = uploadResult.ResponseObject;
-
-               Console.WriteLine("Image Id " + imageId);
-                newClothingItem.ImageId = imageId;
-
-            statusMessage = "File uploaded successfully!";            
-        }
+    }
 
         isUploading = false;
     }
@@ -178,17 +185,14 @@
     {
         // TODO: After User Login is done replace with actual UserID
         newClothingItem.UserId = 1;
-        var response = await HttpManager.PostClothingItem(newClothingItem);
+       
+            var response = await HttpManager.PostClothingItem(newClothingItem, selectedFile);
 
-        if (response.HasError)
-        {
-            statusMessage = $"{response.StatusCode.ToString()}: {response.ErrorMessage}";
-        }
+            if (response.HasError)
+                statusMessage = $"{response.StatusCode.ToString()}: {response.ErrorMessage}";
 
-        statusMessage = response.ErrorMessage;
-        newClothingItem = response.ResponseObject;
-        Console.WriteLine("Submitted:"+ statusMessage);
-
+            statusMessage = "Successfully added to your Wardrobe";
+            newClothingItem = new();
     }
     public async Task NavigateHome()
     {
