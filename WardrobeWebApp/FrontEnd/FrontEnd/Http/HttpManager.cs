@@ -1,9 +1,9 @@
-﻿using Backend.Models;
+﻿
+using Backend.Models;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Net;
 using System.Text.Json;
 using System.Net.Http.Headers;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace FrontEnd.Http
 {
@@ -99,13 +99,23 @@ namespace FrontEnd.Http
             return result;
         }
 
-        public static async Task<Response<ClothingItem>> PostClothingItem(ClothingItem item)
+        public static async Task<Response<ClothingItem>> PostClothingItem(ClothingItem newClothingItem, IBrowserFile imageFile)
         {
-
             var result = new Response<ClothingItem>();
             try
             {
-                HttpResponseMessage response = await HttpClient.PostAsJsonAsync("ClothingItems", item);
+                Response<int> imageUploadResponse = await UploadImageAsync(imageFile);
+                if (imageUploadResponse.HasError)
+                {
+                    result.HasError = true;
+                    result.ErrorMessage = imageUploadResponse.ErrorMessage;
+                    return result;
+                }
+
+                newClothingItem.ImageId = imageUploadResponse.ResponseObject;
+
+
+                HttpResponseMessage response = await HttpClient.PostAsJsonAsync("ClothingItems", newClothingItem);
                 result.StatusCode = response.StatusCode;
 
                 if (!response.IsSuccessStatusCode)
@@ -158,9 +168,9 @@ namespace FrontEnd.Http
                         ContentType = new MediaTypeHeaderValue(file.ContentType)
                     }
                 };
-                content.Add(fileContent, "file", file.Name); 
+                content.Add(fileContent, "file", file.Name);
 
-                
+
                 HttpResponseMessage response = await HttpClient.PostAsync("ClothingItems/Image", content);
 
                 result.StatusCode = response.StatusCode;
@@ -170,8 +180,6 @@ namespace FrontEnd.Http
                     result.HasError = true;
                     result.ErrorMessage = $"Http Error: {response.StatusCode}";
                     result.ResponseObject = 0;
-                    Console.WriteLine("Image Upload Attempt Failure : " + result.ErrorMessage);
-
                 }
                 else
                 {
@@ -199,7 +207,7 @@ namespace FrontEnd.Http
 
             return result;
         }
-      
+
 
         public static async Task<Response<ClothingItem?>> PutClothingItem(int id, ClothingItem updatedItem)
         {

@@ -39,9 +39,18 @@ builder.Services.AddScoped<IClothingItemsRepository, ClothingItemsRepository>();
 builder.Services.AddScoped<IOutfitService, OutfitService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowBlazor",
+        policy =>
+        {
+            policy.WithOrigins("https://localhost:7203")  // Blazor frontend
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 var app = builder.Build();
-
+app.UseCors("AllowBlazor");
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<WardrobeDBContext>();

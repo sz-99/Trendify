@@ -45,6 +45,7 @@ namespace Backend.Controllers
         [HttpPost]
         public IActionResult AddClothingItem([FromBody] ClothingItem clothingItem)
         {
+            Console.WriteLine("inside");
             if (!ModelState.IsValid)
             {
                 foreach (var key in ModelState.Keys)

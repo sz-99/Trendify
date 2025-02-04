@@ -11,7 +11,7 @@ namespace Backend.Models
         public int UserId { get; set; }
 
         public int ImageId { get; set; }
-
+        [Required]
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [EnumDataType(typeof(ClothingCategory))]
