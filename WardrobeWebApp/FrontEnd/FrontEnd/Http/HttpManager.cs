@@ -1,6 +1,8 @@
 ﻿using Backend.Models;
+using Microsoft.AspNetCore.Components.Forms;
 using System.Net;
 using System.Text.Json;
+using System.Net.Http.Headers;
 
 namespace FrontEnd.Http
 {
@@ -12,7 +14,7 @@ namespace FrontEnd.Http
         };
         public static HttpClient HttpClient { get; set; } = new HttpClient(socketsHandler)
         {
-            //BaseAddress = new Uri("https://localhost:7062/")
+            BaseAddress = new Uri("https://localhost:7062/")
         };
 
         public static async Task<Response<List<ClothingItem>>> GetAllClothing()
@@ -20,7 +22,7 @@ namespace FrontEnd.Http
             var result = new Response<List<ClothingItem>>();
             try
             {
-                HttpResponseMessage response = await HttpClient.GetAsync("https://localhost:7062/Clothingitems");
+                HttpResponseMessage response = await HttpClient.GetAsync("ClothingItems/all");
                 result.StatusCode = response.StatusCode;
 
                 if (!response.IsSuccessStatusCode)
@@ -62,7 +64,7 @@ namespace FrontEnd.Http
             var result = new Response<ClothingItem>();
             try
             {
-                HttpResponseMessage response = await HttpClient.GetAsync("clothing");
+                HttpResponseMessage response = await HttpClient.GetAsync($"ClothingItems/{id}");
                 result.StatusCode = response.StatusCode;
 
                 if (!response.IsSuccessStatusCode)
@@ -102,7 +104,7 @@ namespace FrontEnd.Http
             var result = new Response<ClothingItem>();
             try
             {
-                HttpResponseMessage response = await HttpClient.PostAsJsonAsync("clothing", item);
+                HttpResponseMessage response = await HttpClient.PostAsJsonAsync("ClothingItems", item);
                 result.StatusCode = response.StatusCode;
 
                 if (!response.IsSuccessStatusCode)
@@ -133,6 +135,65 @@ namespace FrontEnd.Http
             }
             return result;
         }
+        public static async Task<Response<bool>> UploadImageAsync(IBrowserFile file)
+        {
+            var result = new Response<bool>();
+
+            try
+            {
+                if (file == null)
+                {
+                    result.HasError = true;
+                    result.ErrorMessage = "No file selected.";
+                    return result;
+                }
+
+
+                var content = new MultipartFormDataContent();
+                var fileContent = new StreamContent(file.OpenReadStream(maxAllowedSize: 10_000_000)) // Image size set to 10MB
+                {
+                    Headers =
+                    {
+                        ContentType = new MediaTypeHeaderValue(file.ContentType)
+                    }
+                };
+                content.Add(fileContent, "file", file.Name); 
+
+                
+                HttpResponseMessage response = await HttpClient.PostAsync("ClothingItems/Image", content);
+
+                result.StatusCode = response.StatusCode;
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    result.HasError = true;
+                    result.ErrorMessage = $"Http Error: {response.StatusCode}";
+                }
+                else
+                {
+                    result.ResponseObject = true; 
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Http Request Failed: {ex.Message}");
+                result.HasError = true;
+                result.ErrorMessage = ex.Message;
+                result.StatusCode = HttpStatusCode.ServiceUnavailable;
+                result.ResponseObject = false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unknown Exception: {ex.Message}");
+                result.HasError = true;
+                result.ErrorMessage = ex.Message;
+                result.StatusCode = HttpStatusCode.NotFound;
+                result.ResponseObject = false;
+            }
+
+            return result;
+        }
+      
 
         public static async Task<Response<ClothingItem?>> PutClothingItem(int id, ClothingItem updatedItem)
         {

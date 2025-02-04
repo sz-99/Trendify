@@ -5,12 +5,18 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Components\UserCollectionComponents\**" />
+    <Content Remove="Components\UserCollectionComponents\**" />
+    <EmbeddedResource Remove="Components\UserCollectionComponents\**" />
+    <None Remove="Components\UserCollectionComponents\**" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\Backend\Backend.csproj" />
     <ProjectReference Include="..\FrontEnd.Client\FrontEnd.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.8" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Components\UserCollectionComponents\" />
+    <None Include="wwwroot\images\winter.png" />
   </ItemGroup>
   <Target Name="Tailwind:Install" AfterTargets="AfterBuild">
     <Message Importance="high" Text="Installing Tailwind CLI" />

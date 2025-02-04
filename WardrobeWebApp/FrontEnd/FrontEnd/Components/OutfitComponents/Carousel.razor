@@ -1,22 +1,30 @@
 ﻿<div class="transform-3d flex flex-col justify-center items-center p-6" id="container" >
 
-    <input type="radio" name="slider" id="item-1" checked>
-    <input type="radio" name="slider" id="item-2">
-    <input type="radio" name="slider" id="item-3">
+    @for(int i = 1; i < 4; i++)
+    {
+        string name = inputName + i;
+        if(i == 1)
+        {
+            <input type="radio" name="slider" id=@name checked>
+        }
+        else
+        {
+            <input type="radio" name="slider" id=@name>
+        }
+    }
+
 
     <div id="cards" class="relative w-full h-full">
 
-        <label class="absolute w-1/2 h-full card" for="item-1" id="clothing1">
-            <img class="rounded-xl w-auto h-full" src="https://images.unsplash.com/photo-1620799139652-715e4d5b232d?q=80&w=1972&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
-        </label>
-
-        <label class="absolute w-1/2  h-full card" for="item-2" id="clothing2">
-            <img class="rounded-xl w-auto h-full" src="https://plus.unsplash.com/premium_photo-1718913936342-eaafff98834b?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
-        </label>
-
-        <label class="absolute w-1/2  h-full card" for="item-3" id="clothing3">
-            <img class="rounded-xl w-auto h-full" src="https://images.unsplash.com/photo-1521498542256-5aeb47ba2b36?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
-        </label>
+        @for (int i = 1; i < 4; i++)
+        {
+            string inName = inputName + i;
+            string lName = labelName + i;
+            <label class="absolute w-1/2 h-full card" for=@inName id=@lName>
+                <img class="rounded-xl w-auto h-full" src="https://images.unsplash.com/photo-1620799139652-715e4d5b232d?q=80&w=1972&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+            </label>
+        }
+    
 
     </div>
 </div>
@@ -46,19 +54,19 @@
     }
 
 
-    #item-1:checked ~ #cards #clothing3, #item-2:checked ~ #cards #clothing1, #item-3:checked ~ #cards #clothing2 {
+    #input-1:checked ~ #cards #frame-3, #input-2:checked ~ #cards #frame-1, #input-3:checked ~ #cards #frame-2 {
         transform: translatex(-40%) scale(.8);
         opacity: .4;
         z-index: 0;
     }
 
-    #item-1:checked ~ #cards #clothing2, #item-2:checked ~ #cards #clothing3, #item-3:checked ~ #cards #clothing1 {
+    #input-1:checked ~ #cards #frame-2, #input-2:checked ~ #cards #frame-3, #input-3:checked ~ #cards #frame-1 {
         transform: translatex(40%) scale(.8);
         opacity: .4;
         z-index: 0;
     }
 
-    #item-1:checked ~ #cards #clothing1, #item-2:checked ~ #cards #clothing2, #item-3:checked ~ #cards #clothing3 {
+    #input-1:checked ~ #cards #frame-1, #input-2:checked ~ #cards #frame-2, #input-3:checked ~ #cards #frame-3 {
         transform: translatex(0) scale(1);
         opacity: 1;
         z-index: 1;
@@ -71,5 +79,7 @@
 </style>
 
 @code {
+    private string inputName = "input-";
+    private string labelName = "frame-";
 }
  
