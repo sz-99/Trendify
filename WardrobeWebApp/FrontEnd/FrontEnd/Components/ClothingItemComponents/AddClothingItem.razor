@@ -9,7 +9,7 @@
 <div id="crud-modal" class="fixed inset-0 flex items-center justify-center bg-cover bg-center bg-no-repeat bg-opacity-50" style="background-image: url('/images/winter.png');">
     <div class=" bg-opacity-75 p-6 rounded-lg shadow-lg w-1/2 grid grid-cols-2 items-center gap-4">
 
-        <!-- Left Column: Image Preview -->
+       
         <div class="flex justify-center items-center h-full">
             @if (!string.IsNullOrEmpty(FileDataUrl))
             {
@@ -37,7 +37,10 @@
                 <div class="mb-2">
                     <label class="block font-medium text-[#4b4b4b]" for="imageId">Choose Image of your new Clothing</label>
                     <InputFile OnChange="HandleFileUpload" />
-                    <button @onclick="UploadFile" disabled="@isUploading">Upload</button>
+                    <!-- 
+
+                    <button type="button" @onclick="UploadFile" disabled="@isUploading">Upload</button>
+                    -->
                     
                 </div>
                 <div class="mb-2 grid grid-cols-2 gap-2">
@@ -93,13 +96,19 @@
                 <button type="submit" class="w-full bg-gray-100 hover:bg-blue-800 text-gray-900 p-2 rounded-lg">Submit</button>
             </EditForm>
         <button @onclick="NavigateHome" class="mt-4 w-full bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg">Cancel</button>
-        </div>
-        </div>
-    </div>
-<!-- Status Message -->
+        <!-- Status Message -->
+        @if (!string.IsNullOrEmpty(statusMessage))
+        {
+            Console.WriteLine(statusMessage);
+                <div class="alert alert-info mt-3"> @statusMessage </div>
+        }
+   </div>
+ </div>
+
+</div>
 
 @code {
-    
+
     private ClothingItem newClothingItem = new();
 
     private List<string> Categories = Enum.GetNames(typeof(ClothingCategory)).ToList();
@@ -111,10 +120,11 @@
     private string FileName = string.Empty;
     private string FileDataUrl = string.Empty;
     private bool IsImage = false;
-    private string statusMessage = string.Empty;
+    public string statusMessage { get; set; } = string.Empty;
+   
 
     private IBrowserFile selectedFile;
-    private bool isUploading = false;
+
 
 
     private async Task HandleFileUpload(InputFileChangeEventArgs e)
@@ -136,54 +146,19 @@
             }
         }
     }
-     // public async Task<string> ConvertFileToBase64(IBrowserFile file)
-    // {
-    //     using var stream = file.OpenReadStream();
-    //     using var memoryStream = new MemoryStream();
-    //     await stream.CopyToAsync(memoryStream);
-    //     return Convert.ToBase64String(memoryStream.ToArray());
-    // }
 
-    private async Task UploadFile()
-    {
-        if (selectedFile == null)
-        {
-            statusMessage = "Please select a file to upload.";
-            return;
-        }
-
-        isUploading = true;
-        statusMessage = "Uploading...";
-
-        var uploadResult = await HttpManager.UploadImageAsync(selectedFile);
-
-        if (uploadResult.HasError)
-        {
-            statusMessage = $"Error uploading file: {uploadResult.ErrorMessage}";
-            Console.WriteLine(statusMessage);
-        }
-        else
-        {
-            statusMessage = "File uploaded successfully!";
-        }
-
-        isUploading = false;
-    }
     private async Task HandleSubmit()
     {
         // TODO: After User Login is done replace with actual UserID
         newClothingItem.UserId = 1;
-        var response = await HttpManager.PostClothingItem(newClothingItem);
+       
+            var response = await HttpManager.PostClothingItem(newClothingItem, selectedFile);
 
-        if (response.HasError)
-        {
-            statusMessage = $"{response.StatusCode.ToString()}: {response.ErrorMessage}";
-        }
+            if (response.HasError)
+                statusMessage = $"{response.StatusCode.ToString()}: {response.ErrorMessage}";
 
-        statusMessage = response.ErrorMessage;
-        newClothingItem = response.ResponseObject;
-        Console.WriteLine("Submitted:"+ statusMessage);
-
+            statusMessage = "Successfully added to your Wardrobe";
+            newClothingItem = new();
     }
     public async Task NavigateHome()
     {
