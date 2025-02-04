@@ -2,16 +2,25 @@
 @page "/AddClothing"
 @using Backend.Models
 @using Backend.Models.Enums
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
 
+<div id="crud-modal" class="fixed inset-0 flex items-center justify-center bg-cover bg-center bg-no-repeat bg-opacity-50" style="background-image: url('/images/winter.png');">
+    <div class=" bg-opacity-75 p-6 rounded-lg shadow-lg w-1/2 grid grid-cols-2 items-center gap-4">
 
-<h3 class="text-xl font-bold text-center mb-4">New to your Collection</h3>
-
-<button @onclick="ToggleForm" class="bg-blue-700 hover:bg-blue-800 text-white px-5 py-2.5 rounded-lg">Add new to your Collection</button>
-
-@if (IsFormOpen)
-{
-    <div id="crud-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-        <div class="bg-[#e1c99f] p-6 rounded-lg shadow-lg w-1/3">
+        <!-- Left Column: Image Preview -->
+        <div class="flex justify-center items-center h-full">
+            @if (!string.IsNullOrEmpty(FileDataUrl))
+            {
+                <img src="@FileDataUrl" alt="Uploaded Image" class="max-h-full object-contain rounded-lg shadow-md" />
+            }
+            else
+            {
+                <p class="text-gray-500">No Image Uploaded</p>
+            }
+        </div>
+        <div>
             <h4 class="text-lg font-semibold mb-4 text-[#4b4b4b]">Details of the new clothing</h4>
             <EditForm FormName="AddClothingItem" Model="newClothingItem" OnValidSubmit="HandleSubmit">
                 <DataAnnotationsValidator />
@@ -19,9 +28,17 @@
                     <label class="block font-medium text-[#4b4b4b]" for="name">Name</label>
                     <InputText id="name" @bind-Value="newClothingItem.Name" class="w-full p-2 border rounded" />
                 </div>
+            <!--
                 <div class="mb-2">
                     <label class="block font-medium text-[#4b4b4b]" for="imageId">Image ID</label>
                     <InputNumber id="imageId" @bind-Value="newClothingItem.ImageId" class="w-full p-2 border rounded" />
+                </div>
+            -->
+                <div class="mb-2">
+                    <label class="block font-medium text-[#4b4b4b]" for="imageId">Choose Image of your new Clothing</label>
+                    <InputFile OnChange="HandleFileUpload" />
+                    <button @onclick="UploadFile" disabled="@isUploading">Upload</button>
+                    
                 </div>
                 <div class="mb-2 grid grid-cols-2 gap-2">
                     <div>
@@ -75,28 +92,83 @@
                 </div>
                 <button type="submit" class="w-full bg-gray-100 hover:bg-blue-800 text-gray-900 p-2 rounded-lg">Submit</button>
             </EditForm>
-            <button @onclick="ToggleForm" class="mt-4 w-full bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg">Close</button>
+        <button @onclick="NavigateHome" class="mt-4 w-full bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg">Cancel</button>
+        </div>
         </div>
     </div>
-}
-@code {
-    private bool IsFormOpen = false;
-    private ClothingItem newClothingItem = new();
+<!-- Status Message -->
 
-    // TODO: After User Login is done replace with actual UserID
+@code {
+    
+    private ClothingItem newClothingItem = new();
 
     private List<string> Categories = Enum.GetNames(typeof(ClothingCategory)).ToList();
     private List<string> Sizes = Enum.GetNames(typeof(ClothingSize)).ToList();
-    // private List<string> Types = Enum.GetNames(typeof(ClothingType)).ToList();
     private List<string> Occasions = Enum.GetNames(typeof(Occasion)).ToList();
     private List<string> Seasons = Enum.GetNames(typeof(Season)).ToList();
+    // private List<string> Types = Enum.GetNames(typeof(ClothingType)).ToList();
+
+    private string FileName = string.Empty;
+    private string FileDataUrl = string.Empty;
+    private bool IsImage = false;
     private string statusMessage = string.Empty;
 
-    private void ToggleForm()
-    {
-        IsFormOpen = !IsFormOpen;
-    }
+    private IBrowserFile selectedFile;
+    private bool isUploading = false;
 
+
+    private async Task HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+        if (selectedFile != null)
+        {
+            FileName = selectedFile.Name;
+            var format = selectedFile.ContentType;
+            using var stream = selectedFile.OpenReadStream(1048576);
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            var fileBytes = memoryStream.ToArray();
+
+            if (format.StartsWith("image/"))
+            {
+                IsImage = true;
+                FileDataUrl = $"data:{format};base64,{Convert.ToBase64String(fileBytes)}";
+            }
+        }
+    }
+    // public async Task<string> ConvertFileToBase64(IBrowserFile file)
+    // {
+    //     using var stream = file.OpenReadStream();
+    //     using var memoryStream = new MemoryStream();
+    //     await stream.CopyToAsync(memoryStream);
+    //     return Convert.ToBase64String(memoryStream.ToArray());
+    // }
+
+    private async Task UploadFile()
+    {
+        if (selectedFile == null)
+        {
+            statusMessage = "Please select a file to upload.";
+            return;
+        }
+
+        isUploading = true;
+        statusMessage = "Uploading...";
+
+        var uploadResult = await HttpManager.UploadImageAsync(selectedFile);
+
+        if (uploadResult.HasError)
+        {
+            statusMessage = $"Error uploading file: {uploadResult.ErrorMessage}";
+            Console.WriteLine(statusMessage);
+        }
+        else
+        {
+            statusMessage = "File uploaded successfully!";
+        }
+
+        isUploading = false;
+    }
     private async Task HandleSubmit()
     {
         // TODO: After User Login is done replace with actual UserID
@@ -110,8 +182,15 @@
 
         statusMessage = response.ErrorMessage;
         newClothingItem = response.ResponseObject;
-        Console.WriteLine("Submitted:", newClothingItem);
+        Console.WriteLine("Submitted:"+ statusMessage);
 
-        ToggleForm();
+    }
+    public async Task NavigateHome()
+    {
+        var isConfirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to leave without saving?");
+        if (isConfirmed)
+        {
+            NavigationManager.NavigateTo("/");
+        }
     }
 }
