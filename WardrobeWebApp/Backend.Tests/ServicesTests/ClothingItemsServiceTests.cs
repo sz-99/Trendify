@@ -67,5 +67,43 @@ namespace Backend.Tests.ServicesTests
             Assert.That(status, Is.EqualTo(ExecutionStatus.SUCCESS));
             Assert.That(returnedReplacedItem.HasSameValuesAs(replacementClothingItem));
         }
+
+        [Test]
+        public void DeleteClothingItem_Invokes_FindItemByIdMethod_Once()
+        {
+            //arrange
+            
+            //act
+            var result = _service.DeleteClothingItem(1);
+
+            //assert
+            _mockRepository.Verify(d=>d.FindClothingItemById(1), Times.Once());
+        }
+
+        [Test]
+        public void DeleteClothing_Returns_NOTFOUND()
+        {
+            //arrange
+
+            //act
+            var result = _service.DeleteClothingItem(100);
+
+            //assert
+            Assert.That(result, Is.EqualTo(ExecutionStatus.NOT_FOUND));
+        }
+
+        [Test]
+        public void FindAllClothing_Returns_Success_And_RevokeMethodOnce()
+        {
+            //arrange
+            _mockRepository.Setup(r=>r.FindAllClothingItems()).Returns(TestExamples.GetListOfClothingItem());
+
+            //act
+            var result = _service.FindAllClothingItems();
+
+            //assert
+            Assert.That(result.status, Is.EqualTo(ExecutionStatus.SUCCESS));
+            _mockRepository.Verify(r=>r.FindAllClothingItems(), Times.Once());
+        }
     }
 }
