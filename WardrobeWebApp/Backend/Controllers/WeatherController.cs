@@ -16,7 +16,7 @@ namespace Backend.Controllers
         public async Task<IActionResult> GetWeatherForcast(string location)
         {
             var weather = await _weatherService.GetWeatherForecast(location);
-            if (weather == null) { return NotFound();}
+            if (weather == null) {return NotFound();}
             return Ok(weather);
         }
     }

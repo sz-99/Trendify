@@ -6,21 +6,43 @@ namespace Backend.Services
 {
     public class WeatherService : IWeatherService
     {
-        public string Api_Key = "c6a2a089ddc24ce7840142448250302";
+        public string ApiKey = "c6a2a089ddc24ce7840142448250302";
         private static HttpClient _httpClient = new ();
 
         public async Task<WeatherInfo?> GetWeatherForecast(string location)
         {
-            string url = $"https://api.weatherapi.com/v1/forecast.json?key={Api_Key}&q={location}&days=1";
-            HttpResponseMessage response = await _httpClient.GetAsync(url);
-            response.EnsureSuccessStatusCode();
+           try
+            {
+                string url = $"https://api.weatherapi.com/v1/forecast.json?key={ApiKey}&q={location}&days=1";
+                HttpResponseMessage response = await _httpClient.GetAsync(url);
+                response.EnsureSuccessStatusCode();
 
-            string jsonResponse = await response.Content.ReadAsStringAsync();
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+
+                var doc = JsonDocument.Parse(jsonResponse);
             
+                var root = doc.RootElement;
+                string loc = root.GetProperty("location").GetProperty("name").GetString() ?? "Unknown";
+                var forecastDay = root.GetProperty("forecast").GetProperty("forecastday")[0].GetProperty("day");
 
+                var weather = new WeatherInfo()
+                {
+                    Location = loc,
+                    MinTemp = forecastDay.GetProperty("mintemp_c").GetSingle(),
+                    MaxTemp = forecastDay.GetProperty("maxtemp_c").GetSingle(),
+                    AvgTemp = forecastDay.GetProperty("avgtemp_c").GetSingle(),
+                    Precipication = forecastDay.GetProperty("totalprecip_mm").GetSingle(),
+                    Condition = forecastDay.GetProperty("condition").GetProperty("text").GetString() ?? "Unknown"
 
-            Console.WriteLine(jsonResponse);
-            return new WeatherInfo() { };
+                };
+                return weather;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching weather: {ex.Message}");
+                return null;
+            }
+
         }
     }
 }
