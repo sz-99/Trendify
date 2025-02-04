@@ -1,21 +1,30 @@
 ﻿using Backend.Models.Enums;
+using Backend.Models;
 
 namespace Backend
 {
     public class ImageService : IImageService
     {
-        IImageRepository _repository;
+        IImageRepository _imageRepository;
+        IClothingItemsRepository _clothingItemsRepository;
 
-        public ImageService(IImageRepository repository)
+        public ImageService(IImageRepository imageRepository, IClothingItemsRepository clothingItemsRepository)
         {
-            _repository = repository;
+            _imageRepository = imageRepository;
+            _clothingItemsRepository = clothingItemsRepository;
         }
 
-        public (ExecutionStatus status, FileStream? file) FindImageByClothingItemId(int clothingItemId)
-        {
-            return _repository.FindImageByClothingItemId(clothingItemId);
-        }
+        public (ExecutionStatus status, string? path, string? originalFilename) FindImageByClothingItemId(int clothingItemId)
+            => _clothingItemsRepository.FindClothingItemById(clothingItemId) switch
+            {
+                null => (ExecutionStatus.NOT_FOUND, null, null),
+                ClothingItem clothingItem => FindImageByImageId(clothingItem.ImageId)
+            };
 
+        public (ExecutionStatus status, string? path, string? originalFilename) FindImageByImageId(int imageId)
+        {
+            return _imageRepository.FindImageByImageId(imageId);
+        }
         /// <summary>
         /// Take an image, return the ID of the image
         /// </summary>
@@ -23,7 +32,7 @@ namespace Backend
         /// <returns></returns>
         public (ExecutionStatus status, int? id) SaveImage(IFormFile file, int? clothingItemId = null)
         {
-            return _repository.SaveImage(file, clothingItemId);
+            return _imageRepository.SaveImage(file, clothingItemId);
         }
     }
 }

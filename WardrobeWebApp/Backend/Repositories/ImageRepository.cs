@@ -30,6 +30,11 @@ namespace Backend
             }
         }
 
+        public IEnumerable<ImageLocation> FindAllImageLocations()
+        {
+            return _dbContext.ImageLocations;
+        }
+
         public (ExecutionStatus status, string? path) FindLocationPathFromClothingItemId(int id) =>
             _dbContext.ImageLocations.FirstOrDefault(il => il.ClothingItemId == id) switch
             {
@@ -37,33 +42,40 @@ namespace Backend
                 ImageLocation location => (ExecutionStatus.SUCCESS, location.LocationPath)
             };
 
-        public (ExecutionStatus status, FileStream? file) FileStreamFromPath(string path, string filename)
+        public (ExecutionStatus status, string? path) FindLocationPathFromImageId(int id) =>
+        _dbContext.ImageLocations.FirstOrDefault(il => il.Id == id) switch
         {
-            try
-            {
-                using (var fileStream = new FileStream(path, FileMode.Open))
-                {
-                    return (ExecutionStatus.SUCCESS, fileStream);
-                }
-            }
-            catch
-            {
-                return (ExecutionStatus.INTERNAL_SERVER_ERROR, null);
-            }
-        }
+            null => (ExecutionStatus.NOT_FOUND, null),
+            ImageLocation location => (ExecutionStatus.SUCCESS, location.LocationPath)
+        };
+
+
 
         public string? OriginalFileNameFromClothingItemId(int clothingItemId)
             => _dbContext.ImageLocations.FirstOrDefault(loc => loc.ClothingItemId == clothingItemId)?.OriginalFilename;
+        public string? OriginalFileNameFromImageId(int imageId)
+            => _dbContext.ImageLocations.FirstOrDefault(loc => loc.Id == imageId)?.OriginalFilename;
 
-        public (ExecutionStatus status, FileStream? file) FindImageByClothingItemId(int clothingItemId) =>
+        public (ExecutionStatus status, string? path, string? originalFilename) FindImagePathByClothingItemId(int clothingItemId) =>
             FindLocationPathFromClothingItemId(clothingItemId) switch
             {
                 (ExecutionStatus.SUCCESS, string path) => OriginalFileNameFromClothingItemId(clothingItemId) switch
                 {
-                    null => (ExecutionStatus.NOT_FOUND, null),
-                    string filename => FileStreamFromPath(path, filename)
+                    null => (ExecutionStatus.NOT_FOUND, null, null),
+                    string filename => (ExecutionStatus.SUCCESS, path, filename)
                 },
-                (ExecutionStatus status, _) => (status, null)
+                (ExecutionStatus status, _) => (status, null, null)
+            };
+
+        public (ExecutionStatus status, string? path, string? originalFilename) FindImageByImageId(int imageId) =>
+            FindLocationPathFromImageId(imageId) switch
+            {
+                (ExecutionStatus.SUCCESS, string path) => OriginalFileNameFromImageId(imageId) switch
+                {
+                    null => (ExecutionStatus.NOT_FOUND, null, null),
+                    string filename => (ExecutionStatus.SUCCESS, path, filename),
+                },
+                (ExecutionStatus status, _) => (status, null, null)
             };
 
 

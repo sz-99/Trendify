@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Backend.Models.Enums;
 using Backend.Services;
+using Backend.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
@@ -27,13 +28,15 @@ namespace Backend.Controllers
             };
 
 
+
         [HttpGet("{clothingItemId}")]
         public IActionResult GetImage(int clothingItemId) =>
             _imageService.FindImageByClothingItemId(clothingItemId) switch
             {
-                (ExecutionStatus.SUCCESS, FileStream file) => Ok(new FileStreamResult(file, "")),
-                (ExecutionStatus.INTERNAL_SERVER_ERROR, _) => StatusCode(500, "Internal server error. Please try again later."),
-                (ExecutionStatus.NOT_FOUND, _) => NotFound($"No image found for {clothingItemId}")
+                (ExecutionStatus.SUCCESS, string path, string originalFilename) => Ok(File(path, "image/png", originalFilename)),
+                (ExecutionStatus.INTERNAL_SERVER_ERROR, _, _) => StatusCode(500, "Internal server error. Please try again later."),
+                (ExecutionStatus.NOT_FOUND, _, _) => NotFound($"No image found for {clothingItemId}"),
+                (_, _, _) => BadRequest($"Unknown error dealing with clothing item {clothingItemId}")
             };
     }
 }
