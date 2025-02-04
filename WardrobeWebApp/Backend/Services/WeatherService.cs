@@ -7,7 +7,7 @@ namespace Backend.Services
 {
     public class WeatherService : IWeatherService
     {
-        public string ApiKey = "c6a2a089ddc24ce7840142448250302";
+        public string ApiKey = Environment.GetEnvironmentVariable("WEATHER_API_KEY");
         private static HttpClient _httpClient = new ();
 
         public async Task<(ExecutionStatus, WeatherInfo?)> GetWeatherForecast(string location)
