@@ -27,8 +27,6 @@ namespace Backend.Controllers
                 _ => StatusCode(500, "Unknown Internal Server Error. Try again Later")
             };
 
-
-
         [HttpGet("{clothingItemId}")]
         public IActionResult GetImage(int clothingItemId) =>
             _imageService.FindImageByClothingItemId(clothingItemId) switch
