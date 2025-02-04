@@ -12,7 +12,7 @@ namespace Backend
         }
 
 
-        public (ExecutionStatus status, IFormFile? file) FindImageByClothingItemId(int clothingItemId)
+        public (ExecutionStatus status, FileStream? file) FindImageByClothingItemId(int clothingItemId)
         {
             return _repository.FindImageByClothingItemId(clothingItemId);
         }

@@ -31,7 +31,7 @@ namespace Backend.Controllers
         public IActionResult GetImage(int clothingItemId) =>
             _imageService.FindImageByClothingItemId(clothingItemId) switch
             {
-                (ExecutionStatus.SUCCESS, IFormFile file) => Ok(file),
+                (ExecutionStatus.SUCCESS, FileStream file) => Ok(new FileStreamResult(file, "")),
                 (ExecutionStatus.INTERNAL_SERVER_ERROR, _) => StatusCode(500, "Internal server error. Please try again later."),
                 (ExecutionStatus.NOT_FOUND, _) => NotFound($"No image found for {clothingItemId}")
             };

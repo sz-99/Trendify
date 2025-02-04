@@ -1,5 +1,6 @@
 ﻿using Backend.Models;
 using Backend.Models.Enums;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Backend
 {
@@ -36,14 +37,13 @@ namespace Backend
                 ImageLocation location => (ExecutionStatus.SUCCESS, location.LocationPath)
             };
 
-        public (ExecutionStatus status, IFormFile? file) IFormFileFromPath(string path, string filename)
+        public (ExecutionStatus status, FileStream? file) FileStreamFromPath(string path, string filename)
         {
             try
             {
-                using (var memoryStream = new MemoryStream(File.ReadAllBytes(path).ToArray()))
+                using (var fileStream = new FileStream(path, FileMode.Open))
                 {
-                    var file = new FormFile(memoryStream, 0, memoryStream.Length, "imageFile", filename);
-                    return (ExecutionStatus.SUCCESS, file);
+                    return (ExecutionStatus.SUCCESS, fileStream);
                 }
             }
             catch
@@ -55,13 +55,13 @@ namespace Backend
         public string? OriginalFileNameFromClothingItemId(int clothingItemId)
             => _dbContext.ImageLocations.FirstOrDefault(loc => loc.ClothingItemId == clothingItemId)?.OriginalFilename;
 
-        public (ExecutionStatus status, IFormFile? file) FindImageByClothingItemId(int clothingItemId) =>
+        public (ExecutionStatus status, FileStream? file) FindImageByClothingItemId(int clothingItemId) =>
             FindLocationPathFromClothingItemId(clothingItemId) switch
             {
                 (ExecutionStatus.SUCCESS, string path) => OriginalFileNameFromClothingItemId(clothingItemId) switch
                 {
                     null => (ExecutionStatus.NOT_FOUND, null),
-                    string filename => IFormFileFromPath(path, filename)
+                    string filename => FileStreamFromPath(path, filename)
                 },
                 (ExecutionStatus status, _) => (status, null)
             };
