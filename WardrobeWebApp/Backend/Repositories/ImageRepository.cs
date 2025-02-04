@@ -13,26 +13,64 @@ namespace Backend
             _dbContext = dbContext;
         }
 
-        public (ExecutionStatus status, int? id, string? location) AddImageLocationToDb(string filename)
+        public (ExecutionStatus status, int? id, string? location) AddImageLocationToDb(int clothingItemId, string filename)
         {
             try
             {
                 var locationPath = GetImageLocation(filename);
-                var imageLocation = new ImageLocation(locationPath);
+                var imageLocation = new ImageLocation(clothingItemId, locationPath, filename);
                 _dbContext.ImageLocations.Add(imageLocation);
-                _dbContext.SaveChanges(); 
+                _dbContext.SaveChanges();
                 return (ExecutionStatus.SUCCESS, imageLocation.Id, locationPath);
             }
-            catch 
+            catch
             {
                 return (ExecutionStatus.INTERNAL_SERVER_ERROR, null, null);
-            }   
+            }
         }
 
-        public string GetImageLocation(string filename) => Path.Combine(ImageFolder, Guid.NewGuid() + "_" + filename);  
-        
+        public (ExecutionStatus status, string? path) FindLocationPathFromClothingItemId(int id) =>
+            _dbContext.ImageLocations.FirstOrDefault(il => il.ClothingItemId == id) switch
+            {
+                null => (ExecutionStatus.NOT_FOUND, null),
+                ImageLocation location => (ExecutionStatus.SUCCESS, location.LocationPath)
+            };
 
-        public (ExecutionStatus status, int? id) SaveImageToDisk(IFormFile file, int id, string locationPath) 
+        public (ExecutionStatus status, IFormFile? file) IFormFileFromPath(string path, string filename)
+        {
+            try
+            {
+                using (var memoryStream = new MemoryStream(File.ReadAllBytes(path).ToArray()))
+                {
+                    var file = new FormFile(memoryStream, 0, memoryStream.Length, "imageFile", filename);
+                    return (ExecutionStatus.SUCCESS, file);
+                }
+            }
+            catch
+            {
+                return (ExecutionStatus.INTERNAL_SERVER_ERROR, null);
+            }
+        }
+
+        public string? OriginalFileNameFromClothingItemId(int clothingItemId)
+            => _dbContext.ImageLocations.FirstOrDefault(loc => loc.ClothingItemId == clothingItemId)?.OriginalFilename;
+
+        public (ExecutionStatus status, IFormFile? file) FindImageByClothingItemId(int clothingItemId) =>
+            FindLocationPathFromClothingItemId(clothingItemId) switch
+            {
+                (ExecutionStatus.SUCCESS, string path) => OriginalFileNameFromClothingItemId(clothingItemId) switch
+                {
+                    null => (ExecutionStatus.NOT_FOUND, null),
+                    string filename => IFormFileFromPath(path, filename)
+                },
+                (ExecutionStatus status, _) => (status, null)
+            };
+
+
+        public string GetImageLocation(string filename) => Path.Combine(ImageFolder, Guid.NewGuid() + "_" + filename);
+
+
+        public (ExecutionStatus status, int? id) SaveImageToDisk(IFormFile file, int id, string locationPath)
         {
             try
             {
@@ -53,12 +91,12 @@ namespace Backend
             return (ExecutionStatus.SUCCESS, id);
         }
 
-        public (ExecutionStatus status, int? id) SaveImage(IFormFile file) => 
-            AddImageLocationToDb(file.FileName) switch
-        {
-            (ExecutionStatus.SUCCESS, int id, string location) => SaveImageToDisk(file, id, location),
-            (ExecutionStatus status, _, _) => (status, null)
-        };
+        public (ExecutionStatus status, int? clothingItemId) SaveImage(int clothingItemId, IFormFile file) =>
+            AddImageLocationToDb(clothingItemId, file.FileName) switch
+            {
+                (ExecutionStatus.SUCCESS, int imageId, string filePath) => SaveImageToDisk(file, imageId, filePath),
+                (ExecutionStatus status, _, _) => (status, null)
+            };
 
     }
 }

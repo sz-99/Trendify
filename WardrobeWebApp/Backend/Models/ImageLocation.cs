@@ -7,11 +7,17 @@ namespace Backend.Models
         [Key] 
         public int Id { get; set; }
 
-        public string? Location { get; set; } = null;
+        public int ClothingItemId { get; set; }
 
-        public ImageLocation(string location)
+        public string? LocationPath { get; set; } = null;
+
+        public string? OriginalFilename { get; set; } = null;
+
+        public ImageLocation(int clothingItemId, string locationPath, string originalFilename)
         {
-            Location = location.Trim();
+            ClothingItemId = clothingItemId;
+            LocationPath = locationPath.Trim();
+            OriginalFilename = originalFilename;
         }
     }
 }

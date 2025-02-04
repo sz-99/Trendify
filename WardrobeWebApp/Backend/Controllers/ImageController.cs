@@ -17,20 +17,24 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        public IActionResult PostImage(IFormFile file) => _imageService.SaveImage(file) switch
-        {
-            (ExecutionStatus.SUCCESS, int id) => Ok(id),
-            (ExecutionStatus.ALREADY_EXISTS, _) => StatusCode(500, "Internal Server Error. File with that name already exists."),
-            (ExecutionStatus.INTERNAL_SERVER_ERROR, _) => StatusCode(500, "Internal Server Error. Try again Later"),
-            _ => StatusCode(500, "Unknown Internal Server Error. Try again Later")
-        };
+        public IActionResult PostImage(int clothingItemId, IFormFile file) => 
+            _imageService.SaveImage(clothingItemId, file) switch
+            {
+                (ExecutionStatus.SUCCESS, int id) => Ok(id),
+                (ExecutionStatus.ALREADY_EXISTS, _) => StatusCode(500, "Internal Server Error. File with that name already exists."),
+                (ExecutionStatus.INTERNAL_SERVER_ERROR, _) => StatusCode(500, "Internal Server Error. Try again Later"),
+                _ => StatusCode(500, "Unknown Internal Server Error. Try again Later")
+            };
 
 
-        //[HttpGet("{id}")]
-        //public IActionResult GetImage(int id)
-        //{
-        //    IFormFile image = _imageService.FindImage(id);
-        //    return Ok(image);
-        //}
+        [HttpGet("{clothingItemId}")]
+        public IActionResult GetImage(int clothingItemId) =>
+            _imageService.FindImageByClothingItemId(clothingItemId) switch
+            {
+                (ExecutionStatus.SUCCESS, IFormFile file) => Ok(file),
+                (ExecutionStatus.INTERNAL_SERVER_ERROR, _) => StatusCode(500, "Internal server error. Please try again later."),
+                (ExecutionStatus.NOT_FOUND, _) => NotFound($"No image found for {clothingItemId}")
+            };
     }
 }
+
