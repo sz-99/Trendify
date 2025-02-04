@@ -39,13 +39,13 @@ namespace Backend.Controllers
         };
 
         [HttpGet("imageId/{imageId}")]
-        public IActionResult GetImageByImageId(int clothingItemId) =>
-            _imageService.FindImageByImageId(clothingItemId) switch
+        public IActionResult GetImageByImageId(int imageId) =>
+            _imageService.FindImageByImageId(imageId) switch
             {
                 (ExecutionStatus.SUCCESS, string path, string originalFilename) => Ok(FileUtils.FileResultFromFilePath(path, originalFilename)),
                 (ExecutionStatus.INTERNAL_SERVER_ERROR, _, _) => StatusCode(500, "Internal server error. Please try again later."),
-                (ExecutionStatus.NOT_FOUND, _, _) => NotFound($"No image found for {clothingItemId}"),
-                (_, _, _) => BadRequest($"Unknown error dealing with clothing item {clothingItemId}")
+                (ExecutionStatus.NOT_FOUND, _, _) => NotFound($"No image found for {imageId}"),
+                (_, _, _) => BadRequest($"Unknown error dealing with clothing item {imageId}")
             };
     }
 }
