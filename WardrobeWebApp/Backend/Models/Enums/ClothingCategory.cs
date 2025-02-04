@@ -9,6 +9,8 @@
         Dress,
         Jumper,
         Blouse,
-        Sari
+        Sari,
+        Skirt, 
+        Dungaree
     }
 }
