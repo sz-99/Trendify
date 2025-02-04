@@ -1,0 +1,117 @@
+﻿
+@page "/AddClothing"
+@using Backend.Models
+@using Backend.Models.Enums
+
+
+<h3 class="text-xl font-bold text-center mb-4">New to your Collection</h3>
+
+<button @onclick="ToggleForm" class="bg-blue-700 hover:bg-blue-800 text-white px-5 py-2.5 rounded-lg">Add new to your Collection</button>
+
+@if (IsFormOpen)
+{
+    <div id="crud-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-[#e1c99f] p-6 rounded-lg shadow-lg w-1/3">
+            <h4 class="text-lg font-semibold mb-4 text-[#4b4b4b]">Details of the new clothing</h4>
+            <EditForm FormName="AddClothingItem" Model="newClothingItem" OnValidSubmit="HandleSubmit">
+                <DataAnnotationsValidator />
+                <div class="mb-2">
+                    <label class="block font-medium text-[#4b4b4b]" for="name">Name</label>
+                    <InputText id="name" @bind-Value="newClothingItem.Name" class="w-full p-2 border rounded" />
+                </div>
+                <div class="mb-2">
+                    <label class="block font-medium text-[#4b4b4b]" for="imageId">Image ID</label>
+                    <InputNumber id="imageId" @bind-Value="newClothingItem.ImageId" class="w-full p-2 border rounded" />
+                </div>
+                <div class="mb-2 grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-medium text-[#4b4b4b]" for="category">Category</label>
+                        <InputSelect id="category" @bind-Value="newClothingItem.Category" class="w-full p-2 border rounded">
+                            @foreach (var category in Categories)
+                            {
+                                <option value="@category">@category</option>
+                            }
+                        </InputSelect>
+                    </div>
+                    <div>
+                        <label class="block font-medium text-[#4b4b4b]" for="colour">Colour</label>
+                        <InputText id="colour" @bind-Value="newClothingItem.Colour" class="w-full p-2 border rounded" />
+                    </div>
+                </div>
+                <div class="mb-2 grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-medium text-[#4b4b4b]" for="brand">Brand</label>
+                        <InputText id="brand" @bind-Value="newClothingItem.Brand" class="w-full p-2 border rounded" />
+                    </div>
+                    <div>
+                        <label class="block font-medium text-[#4b4b4b]" for="size">Size</label>
+                        <InputSelect id="size" @bind-Value="newClothingItem.Size" class="w-full p-2 border rounded">
+                            @foreach (var size in Sizes)
+                            {
+                                <option value="@size">@size</option>
+                            }
+                        </InputSelect>
+                    </div>
+                </div>
+                <div class="mb-2 grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-medium text-[#4b4b4b]" for="occasion">Occasion</label>
+                        <InputSelect id="occasion" @bind-Value="newClothingItem.Occasion" class="w-full p-2 border rounded">
+                            @foreach (var occasion in Occasions)
+                            {
+                                <option value="@occasion">@occasion</option>
+                            }
+                        </InputSelect>
+                    </div>
+                    <div>
+                        <label class="block font-medium text-[#4b4b4b]" for="season">Season</label>
+                        <InputSelect id="season" @bind-Value="newClothingItem.Season" class="w-full p-2 border rounded">
+                            @foreach (var season in Seasons)
+                            {
+                                <option value="@season">@season</option>
+                            }
+                        </InputSelect>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-gray-100 hover:bg-blue-800 text-gray-900 p-2 rounded-lg">Submit</button>
+            </EditForm>
+            <button @onclick="ToggleForm" class="mt-4 w-full bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg">Close</button>
+        </div>
+    </div>
+}
+@code {
+    private bool IsFormOpen = false;
+    private ClothingItem newClothingItem = new();
+
+    // TODO: After User Login is done replace with actual UserID
+
+    private List<string> Categories = Enum.GetNames(typeof(ClothingCategory)).ToList();
+    private List<string> Sizes = Enum.GetNames(typeof(ClothingSize)).ToList();
+    // private List<string> Types = Enum.GetNames(typeof(ClothingType)).ToList();
+    private List<string> Occasions = Enum.GetNames(typeof(Occasion)).ToList();
+    private List<string> Seasons = Enum.GetNames(typeof(Season)).ToList();
+    private string statusMessage = string.Empty;
+
+    private void ToggleForm()
+    {
+        IsFormOpen = !IsFormOpen;
+    }
+
+    private async Task HandleSubmit()
+    {
+        // TODO: After User Login is done replace with actual UserID
+        newClothingItem.UserId = 1;
+        var response = await HttpManager.PostClothingItem(newClothingItem);
+
+        if (response.HasError)
+        {
+            statusMessage = $"{response.StatusCode.ToString()}: {response.ErrorMessage}";
+        }
+
+        statusMessage = response.ErrorMessage;
+        newClothingItem = response.ResponseObject;
+        Console.WriteLine("Submitted:", newClothingItem);
+
+        ToggleForm();
+    }
+}
