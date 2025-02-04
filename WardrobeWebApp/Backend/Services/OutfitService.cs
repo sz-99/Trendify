@@ -69,8 +69,14 @@ namespace Backend.Services
 
            try
            {
-                if (weather.Precipication > 2.5 && weather.MaxTemp < 20)
+                if (weather.Precipication > 2.5 && weather.MaxTemp < 20 && weather.AvgTemp > 10)
                 {
+                    modifiedSelection.Add(GetRandomClothingItem(ClothingKind.Overall));
+                }
+                else if (weather.AvgTemp <= 10)
+                {
+                    //add jumper AND coat
+                    modifiedSelection.Add(GetRandomClothingItem(ClothingKind.Outer));
                     modifiedSelection.Add(GetRandomClothingItem(ClothingKind.Overall));
                 }
                 else if (weather.MaxTemp < 15 && weather.MaxTemp > 10)
@@ -86,12 +92,7 @@ namespace Backend.Services
                         modifiedSelection.Add(GetRandomClothingItem(ClothingKind.Overall));
                     }
                 }
-                else if (weather.AvgTemp <= 10)
-                {
-                    //add jumper AND coat
-                    modifiedSelection.Add(GetRandomClothingItem(ClothingKind.Outer));
-                    modifiedSelection.Add(GetRandomClothingItem(ClothingKind.Overall));
-                }
+                
             }
             catch(Exception ex)
             {
