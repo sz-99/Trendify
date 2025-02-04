@@ -20,6 +20,7 @@ namespace Backend
                 var locationPath = GetImageLocation(filename);
                 var imageLocation = new ImageLocation(locationPath);
                 _dbContext.ImageLocations.Add(imageLocation);
+                _dbContext.SaveChanges(); 
                 return (ExecutionStatus.SUCCESS, imageLocation.Id, locationPath);
             }
             catch 
@@ -28,7 +29,7 @@ namespace Backend
             }   
         }
 
-        public string GetImageLocation(string filename) => Path.Combine(ImageFolder, filename);  
+        public string GetImageLocation(string filename) => Path.Combine(ImageFolder, Guid.NewGuid() + "_" + filename);  
         
 
         public (ExecutionStatus status, int? id) SaveImageToDisk(IFormFile file, int id, string locationPath) 
@@ -52,7 +53,8 @@ namespace Backend
             return (ExecutionStatus.SUCCESS, id);
         }
 
-        public (ExecutionStatus status, int? id) SaveImage(IFormFile file) => AddImageLocationToDb(file.FileName) switch
+        public (ExecutionStatus status, int? id) SaveImage(IFormFile file) => 
+            AddImageLocationToDb(file.FileName) switch
         {
             (ExecutionStatus.SUCCESS, int id, string location) => SaveImageToDisk(file, id, location),
             (ExecutionStatus status, _, _) => (status, null)
