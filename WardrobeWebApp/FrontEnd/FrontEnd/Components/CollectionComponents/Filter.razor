@@ -1,22 +1,34 @@
-﻿<div @onfocusout="HideAllDropdowns" class="container w-full h-8 flex flex-row items-center justify-center mt-8 space-x-4">
+﻿<div class="container w-full h-8 flex flex-row items-center justify-center mt-8 space-x-4">
 
     @foreach(var keyValue in dropdownStates)
     {
         <div class="flex flex-col relative h-full">
 
             <!--Button-->
-            <button @onclick="() => ToggleDropdownStates(keyValue.Key)" 
-                    id="@keyValue.Key" 
-                    class="h-full text-white bg-stone-400 hover:bg-stone-500 font-medium rounded-xl text-sm px-5 text-center inline-flex items-center" 
-                    type="button">
+            <button 
+            @onclick="() => ToggleDropdownStates(keyValue.Key)" 
+            id="@keyValue.Key" 
+            class="h-full 
+                        text-white 
+                        bg-stone-400 
+                        hover:bg-stone-500 
+                        font-medium 
+                        rounded-xl 
+                        text-sm 
+                        px-5 
+                        text-center 
+                        inline-flex 
+                        items-center" 
+            type="button">
 
-                        @keyValue.Key <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                @keyValue.Key 
+                <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
                 </svg>
             </button>
 
             <!--Dropdown Hidden/Visible-->
-            <div id="Category-dropdown" class="z-10 absolute left-0 mt-2 @(dropdownStates[keyValue.Key] ? "" : "hidden") bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 filter-dropdowns">
+            <div @onclick:stopPropagation="true" id="Category-dropdown" class="z-10 absolute left-0 mt-2 @(dropdownStates[keyValue.Key] ? "" : "hidden") bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 filter-dropdowns">
                 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
 
                     @{
@@ -29,10 +41,16 @@
                         string inputID = queryOptionButton + "Input";
                         string labelID = queryOptionButton + "Label";
 
-                        <li>
+                        <li tabindex="-1" @onfocusout=HideAllDropdowns>
                             <input type="radio" id="@inputID" name="@keyValue.Key" class="hidden" @bind="@radioBoxActiveButtons[keyValue.Key]">
 
-                            <label id="@labelID" for="@inputID" @onclick="() => ChangeFilterQuery.InvokeAsync(queryOptionButton)" class="common-style @(radioBoxActiveButtons[keyValue.Key] != string.Empty ? "active" : "nonActive")">@option</label>
+
+                            <label id="@labelID" 
+                            for="@inputID"
+                                   @onclick="() => HandleFilterButtonClick(queryOptionButton)"
+                            class="common-style @(radioBoxActiveButtons[keyValue.Key] != string.Empty ? "active" : "nonActive")">
+                                @option
+                            </label>
                         </li>
 
                         index++;
@@ -73,8 +91,6 @@
     [Parameter]
     public EventCallback<string> ChangeFilterQuery { get; set; }
 
-
-
     private Dictionary<string, bool> dropdownStates = new()
     {
         {"Category", false },
@@ -88,6 +104,10 @@
         foreach (var (k, v) in dropdownStates) {
             dropdownStates[k] = false;
         }
+    }
+
+    private void HandleFilterButtonClick(string queryOptionButton) {
+        ChangeFilterQuery.InvokeAsync(queryOptionButton);
     }
 
     private void ToggleDropdownStates(string key)
@@ -106,18 +126,13 @@
           {"Occasion", string.Empty }
     };
 
-    private Array FindEnumValues(string key)
+    private Array FindEnumValues(string key) => key switch
     {
-        return key switch
-        {
-            "Category" => Enum.GetValues(typeof(Backend.Models.Enums.ClothingCategory)),
-            "Size" => Enum.GetValues(typeof(Backend.Models.Enums.ClothingSize)),
-            "Season" => Enum.GetValues(typeof(Backend.Models.Enums.Season)),
-            "Occasion" => Enum.GetValues(typeof(Backend.Models.Enums.Occasion)),
-            _ => throw new ArgumentException("Enum not recognised.")
-        };
-       
-    }
-
+        "Category" => Enum.GetValues(typeof(Backend.Models.Enums.ClothingCategory)),
+        "Size" => Enum.GetValues(typeof(Backend.Models.Enums.ClothingSize)),
+        "Season" => Enum.GetValues(typeof(Backend.Models.Enums.Season)),
+        "Occasion" => Enum.GetValues(typeof(Backend.Models.Enums.Occasion)),
+        _ => throw new ArgumentException("Enum not recognised.")
+    };
 
 }
