@@ -1,22 +1,33 @@
 ﻿@using Backend.Models
+@using Microsoft.AspNetCore.Components.Forms
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
 
 <div class="flex min-h-screen items-center justify-center bg-gray-100 px-6 py-12">
     <div class="w-full max-w-sm bg-white rounded-2xl shadow-lg p-8">
         <h2 class="text-center text-2xl font-bold tracking-tight text-gray-900">Log in to your account</h2>
 
-        <EditForm class="space-y-6 mt-6" Model="UserLogin" OnValidSubmit="HandleSubmit" FormName="LoginForm">
+        <EditForm class="space-y-6 mt-6" Model="userLogin" OnValidSubmit="HandleSubmit" FormName="LoginForm">
             <DataAnnotationsValidator />
             <div>
                 <label for="email" class="block text-sm font-medium text-gray-900">Username</label>
                 <InputText id="email" class="block w-full mt-2 rounded-md bg-white px-3 py-2 border border-gray-300 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:ring-indigo-500"
-                   @bind-Value="UserLogin.UserName"/>
+                   @bind-Value="userLogin.UserName"/>
             </div>
 
             <div>
                 <label for="password" class="block text-sm font-medium text-gray-900">Password</label>
-                <InputText type="password" name="password" id="password" autocomplete="current-password" @bind-Value="UserLogin.Password" required
+                <InputText type="password" name="password" id="password" autocomplete="current-password" @bind-Value="userLogin.Password" required
                        class="block w-full mt-2 rounded-md bg-white px-3 py-2 border border-gray-300 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:ring-indigo-500"/>
             </div>
+            @if (isSubmitted)
+            {
+                <div>
+                    <p class="block text-sm font-medium text-gray-900">
+                @statusMessage
+                </p>
+                </div>
+            }
 
             <button type="submit"
                     class="w-full rounded-md bg-stone-400 px-4 py-2 text-white font-semibold shadow-md hover:bg-stone-500 focus:outline-none focus:ring-2 focus:ring-indigo-400">
@@ -34,19 +45,25 @@
 
 
 @code {
-    public UserLogin UserLogin { get; set; } = new UserLogin();
+    public UserLogin userLogin { get; set; } = new UserLogin();
     private string statusMessage = string.Empty;
+    private bool isSubmitted { get; set; } = false;
 
     public async Task HandleSubmit()
     {
-        UserLogin.UserId = 1;
-        var response = await HttpManager.PostUserLogin(UserLogin);
-        if(response.HasError)
+        var response = await HttpManager.PostUserLogin(userLogin);
+        if (response.HasError)
         {
-            statusMessage = $"{response.StatusCode.ToString()}: {response.ErrorMessage}";
+            statusMessage = $"{response.StatusCode.ToString()}: Incorrect username or password.";
+            Console.WriteLine($"{statusMessage}");
         }
-        statusMessage = response.ErrorMessage;
-        UserLogin = response.ResponseObject;
-        Console.WriteLine("Submitted:" + statusMessage);
+        else
+        {
+            statusMessage = "Login Successful!";
+            userLogin = response.ResponseObject;
+            Console.WriteLine("Submitted:" + statusMessage);
+            navigationManager.NavigateTo("/mycollection");
+        }
+        isSubmitted = true;
     }
 }

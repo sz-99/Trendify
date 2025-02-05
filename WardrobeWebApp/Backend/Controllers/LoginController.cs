@@ -15,7 +15,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetUserValidationResult([FromBody] UserLogin userLogin)
+        public IActionResult GetUserValidationResult( UserLogin userLogin)
         {
             var isValid = _loginService.ValidateUser(userLogin.UserName, userLogin.Password);
             if(isValid)
