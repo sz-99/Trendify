@@ -50,7 +50,6 @@ namespace Backend.Controllers
         //    };
 
         [HttpGet("imageId/{imageId}")]
-
         public IActionResult GetImageByImageId(int imageId)
         {
             var (status, path, originalFilename) = _imageService.FindImageByImageId(imageId);
