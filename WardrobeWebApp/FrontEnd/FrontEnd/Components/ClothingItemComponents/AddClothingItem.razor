@@ -177,7 +177,7 @@
             statusMessage = $"Error uploading file: {uploadResult.ErrorMessage}";
             Console.WriteLine(statusMessage);
         }
-    }
+    
 
         isUploading = false;
     }
@@ -186,7 +186,7 @@
         // TODO: After User Login is done replace with actual UserID
         newClothingItem.UserId = 1;
        
-            var response = await HttpManager.PostClothingItem(newClothingItem, selectedFile);
+            var response = await HttpManager.PostClothingItem(newClothingItem);
 
             if (response.HasError)
                 statusMessage = $"{response.StatusCode.ToString()}: {response.ErrorMessage}";
