@@ -21,22 +21,27 @@
         </div>
         <div>
             <h4 class="text-lg font-semibold mb-4 text-[#4b4b4b]">Details of the new clothing</h4>
-            <EditForm  Model="newClothingItem" OnValidSubmit="HandleValidSubmit">
+            <EditForm  Model="NewClothingItem" OnValidSubmit="HandleValidSubmit">
 
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
-                <!-- Status Message -->
-                @if (selectedFile == null && !string.IsNullOrEmpty(statusMessage))
+                <!-- Error Message -->
+                @if (SelectedFile == null && !string.IsNullOrEmpty(ErrorMessage))
                 {
-                    Console.WriteLine(statusMessage);
-                    <div class="alert alert-info mt-3 text-red-500"> @statusMessage </div>
+                    <div class="alert alert-info mt-3 text-red-500"> @ErrorMessage </div>
+                }
+
+                <!-- Status Message -->
+                @if (!string.IsNullOrEmpty(SuccessMessage))
+                {
+                    <div class="alert alert-info mt-3 text-green-800"> @SuccessMessage </div>
                 }
 
                 <div class="mb-2">
                     <label class="block font-medium text-[#4b4b4b]" for="name">Name</label>
-                    <InputText id="name" @bind-Value="newClothingItem.Name" class="w-full p-2 border rounded" />
-                    <ValidationMessage For="@(() => newClothingItem.Name)" />
+                    <InputText id="name" @bind-Value="NewClothingItem.Name" class="w-full p-2 border rounded" />
+                    <ValidationMessage For="@(() => NewClothingItem.Name)" />
                 </div>
 
                 <div class="mb-2">
@@ -47,57 +52,57 @@
                 <div class="mb-2 grid grid-cols-2 gap-2">
                     <div>
                         <label class="block font-medium text-[#4b4b4b]" for="category">Category</label>
-                        <InputSelect id="category" @bind-Value="newClothingItem.Category" class="w-full p-2 border rounded">
+                        <InputSelect id="category" @bind-Value="NewClothingItem.Category" class="w-full p-2 border rounded">
                             @foreach (var category in Categories)
                             {
                                 <option value="@category">@category</option>
                             }
                         </InputSelect>
-                        <ValidationMessage For="@(() => newClothingItem.Category)" />
+                        <ValidationMessage For="@(() => NewClothingItem.Category)" />
                     </div>
                     <div>
                         <label class="block font-medium text-[#4b4b4b]" for="colour">Colour</label>
-                        <InputText id="colour" @bind-Value="newClothingItem.Colour" class="w-full p-2 border rounded" />
-                        <ValidationMessage For="@(() => newClothingItem.Colour)" />
+                        <InputText id="colour" @bind-Value="NewClothingItem.Colour" class="w-full p-2 border rounded" />
+                        <ValidationMessage For="@(() => NewClothingItem.Colour)" />
                     </div>
                 </div>
                 <div class="mb-2 grid grid-cols-2 gap-2">
                     <div>
                         <label class="block font-medium text-[#4b4b4b]" for="brand">Brand</label>
-                        <InputText id="brand" @bind-Value="newClothingItem.Brand" class="w-full p-2 border rounded" />
-                        <ValidationMessage For="@(() => newClothingItem.Brand)" />
+                        <InputText id="brand" @bind-Value="NewClothingItem.Brand" class="w-full p-2 border rounded" />
+                        <ValidationMessage For="@(() => NewClothingItem.Brand)" />
                     </div>
                     <div>
                         <label class="block font-medium text-[#4b4b4b]" for="size">Size</label>
-                        <InputSelect id="size" @bind-Value="newClothingItem.Size" class="w-full p-2 border rounded">
+                        <InputSelect id="size" @bind-Value="NewClothingItem.Size" class="w-full p-2 border rounded">
                             @foreach (var size in Sizes)
                             {
                                 <option value="@size">@size</option>
                             }
                         </InputSelect>
-                        <ValidationMessage For="@(() => newClothingItem.Size)" />
+                        <ValidationMessage For="@(() => NewClothingItem.Size)" />
                     </div>
                 </div>
                 <div class="mb-2 grid grid-cols-2 gap-2">
                     <div>
                         <label class="block font-medium text-[#4b4b4b]" for="occasion">Occasion</label>
-                        <InputSelect id="occasion" @bind-Value="newClothingItem.Occasion" class="w-full p-2 border rounded">
+                        <InputSelect id="occasion" @bind-Value="NewClothingItem.Occasion" class="w-full p-2 border rounded">
                             @foreach (var occasion in Occasions)
                             {
                                 <option value="@occasion">@occasion</option>
                             }
                         </InputSelect>
-                        <ValidationMessage For="@(() => newClothingItem.Occasion)" />
+                        <ValidationMessage For="@(() => NewClothingItem.Occasion)" />
                     </div>
                     <div>
                         <label class="block font-medium text-[#4b4b4b]" for="season">Season</label>
-                        <InputSelect id="season" @bind-Value="newClothingItem.Season" class="w-full p-2 border rounded">
+                        <InputSelect id="season" @bind-Value="NewClothingItem.Season" class="w-full p-2 border rounded">
                             @foreach (var season in Seasons)
                             {
                                 <option value="@season">@season</option>
                             }
                         </InputSelect>
-                        <ValidationMessage For="@(() => newClothingItem.Season)" />
+                        <ValidationMessage For="@(() => NewClothingItem.Season)" />
                     </div>
                 </div>
                 <button type="submit" class="w-full bg-gray-100 hover:bg-blue-800 text-gray-900 p-2 rounded-lg">Submit</button>
@@ -112,7 +117,7 @@
 
 @code {
 
-    private ClothingItem newClothingItem = new();
+    private ClothingItem NewClothingItem { get; set; } = new();
 
     private List<string> Categories = Enum.GetNames(typeof(ClothingCategory)).ToList();
     private List<string> Sizes = Enum.GetNames(typeof(ClothingSize)).ToList();
@@ -122,19 +127,20 @@
     private string FileName = string.Empty;
     private string FileDataUrl = string.Empty;
     private ImageUploadModel? ImageUpload { get; set; }
-    private bool IsImage = false;
-    public string statusMessage { get; set; } = string.Empty;
+    private bool IsImage { get; set; } = false;
+    public string SuccessMessage { get; set; } = string.Empty;
+    public string ErrorMessage { get; set; } = string.Empty;
 
-    private IBrowserFile? selectedFile;
+    private IBrowserFile? SelectedFile { get; set; } = null;
 
     private async Task HandleFileUpload(InputFileChangeEventArgs e)
     {
-        selectedFile = e.File;
-        if (selectedFile != null)
+        SelectedFile = e.File;
+        if (SelectedFile != null)
         {
-            FileName = selectedFile.Name;
-            var format = selectedFile.ContentType;
-            using var stream = selectedFile.OpenReadStream(1048576);
+            FileName = SelectedFile.Name;
+            var format = SelectedFile.ContentType;
+            using var stream = SelectedFile.OpenReadStream(1048576);
             using var memoryStream = new MemoryStream();
             await stream.CopyToAsync(memoryStream);
             var fileBytes = memoryStream.ToArray();
@@ -143,6 +149,7 @@
             {
                 IsImage = true;
                 FileDataUrl = $"data:{format};base64,{Convert.ToBase64String(fileBytes)}";
+                ErrorMessage = String.Empty;
             }
         }
     }
@@ -150,22 +157,23 @@
     private async Task HandleValidSubmit()
     {
         // TODO: After User Login is done replace with actual UserID
-        newClothingItem.UserId = 1;
+        NewClothingItem.UserId = 1;
 
-        var response = await HttpManager.PostClothingItem(newClothingItem, selectedFile);
+        var response = await HttpManager.PostClothingItem(NewClothingItem, SelectedFile);
 
         if (response.HasError) 
         {
-            statusMessage = $"{response.ErrorMessage}";
+            ErrorMessage = $"{response.ErrorMessage}";
+            return;
         }
         else 
         {
-            statusMessage = "Successfully added to your Wardrobe";
+            SuccessMessage = "Successfully added to your Wardrobe";
         }
 
-        newClothingItem = new();
+        NewClothingItem = new();
         FileDataUrl = "";
-        selectedFile = null;
+        SelectedFile = null;
     }
 
     public async Task NavigateHome()
