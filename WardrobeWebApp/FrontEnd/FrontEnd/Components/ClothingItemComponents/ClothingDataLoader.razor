@@ -1,8 +1,12 @@
 ﻿@using FrontEnd.Components.Utils
 
-@if (dbError)
+@if (clothingList == null)
 {
-    <ErrorMessage></ErrorMessage>
+    <div class="d-flex align-items-center">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 }
 else
 {
@@ -13,7 +17,7 @@ else
 
 @code {
 
-    private List<ClothingItem> clothingList { get; set; } = new();
+    private List<ClothingItem> clothingList { get; set; }
     private string statuscode;
     private bool dbError;
 
