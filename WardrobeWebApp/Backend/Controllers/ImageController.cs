@@ -4,6 +4,7 @@ using Backend.Services;
 using Backend.Utils;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using System.IO;
 
 namespace Backend.Controllers
@@ -38,15 +39,42 @@ namespace Backend.Controllers
             (_, _, _) => BadRequest($"Unknown error dealing with clothing item {clothingItemId}")
         };
 
+        //[HttpGet("imageId/{imageId}")]
+        //public IActionResult GetImageByImageId(int imageId) =>
+        //    _imageService.FindImageByImageId(imageId) switch
+        //    {
+        //        (ExecutionStatus.SUCCESS, string path, string originalFilename) => Ok(FileUtils.FileResultFromFilePath(path, originalFilename)),
+        //        (ExecutionStatus.INTERNAL_SERVER_ERROR, _, _) => StatusCode(500, "Internal server error. Please try again later."),
+        //        (ExecutionStatus.NOT_FOUND, _, _) => NotFound($"No image found for {imageId}"),
+        //        (_, _, _) => BadRequest($"Unknown error dealing with clothing item {imageId}")
+        //    };
+
         [HttpGet("imageId/{imageId}")]
-        public IActionResult GetImageByImageId(int imageId) =>
-            _imageService.FindImageByImageId(imageId) switch
+
+        public IActionResult GetImageByImageId(int imageId)
+        {
+            var (status, path, originalFilename) = _imageService.FindImageByImageId(imageId);
+
+            if (status == ExecutionStatus.SUCCESS)
             {
-                (ExecutionStatus.SUCCESS, string path, string originalFilename) => Ok(FileUtils.FileResultFromFilePath(path, originalFilename)),
-                (ExecutionStatus.INTERNAL_SERVER_ERROR, _, _) => StatusCode(500, "Internal server error. Please try again later."),
-                (ExecutionStatus.NOT_FOUND, _, _) => NotFound($"No image found for {imageId}"),
-                (_, _, _) => BadRequest($"Unknown error dealing with clothing item {imageId}")
+
+                var absoluteFilePath = Path.Combine(Directory.GetCurrentDirectory(), path);
+
+                return PhysicalFile(absoluteFilePath, GetMimeType(absoluteFilePath), originalFilename);
+            }
+
+            return status switch
+            {
+                ExecutionStatus.INTERNAL_SERVER_ERROR => StatusCode(500, "Internal server error. Please try again later."),
+                ExecutionStatus.NOT_FOUND => NotFound($"No image found for {imageId}"),
+                _ => BadRequest($"Unknown error dealing with clothing item {imageId}")
             };
+        }
+        private string GetMimeType(string filePath)
+        {
+            var provider = new FileExtensionContentTypeProvider();
+            return provider.TryGetContentType(filePath, out var contentType) ? contentType : "application/octet-stream";
+        }
     }
 }
 

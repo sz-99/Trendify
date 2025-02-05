@@ -14,6 +14,7 @@ namespace Backend.Models
         public int UserId { get; set; }
 
         [Required]
+        [JsonPropertyName("imageId")]
         public int ImageId { get; set; }
 
         [Required]
@@ -22,9 +23,13 @@ namespace Backend.Models
 
         [Required]
         [EnumDataType(typeof(ClothingCategory))]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonPropertyName("category")]
         public ClothingCategory Category { get; set; }
 
         [EnumDataType(typeof(ClothingSize))]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonPropertyName("size")]
         public ClothingSize Size { get; set; }
 
         [JsonPropertyName("brand")]
@@ -32,11 +37,16 @@ namespace Backend.Models
 
         [Required]
         [JsonPropertyName("colour")]
+
         public string Colour { get; set; }
 
         [EnumDataType(typeof(Occasion))]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonPropertyName("occasion")]
         public Occasion Occasion { get; set; }
         [EnumDataType(typeof(Season))]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonPropertyName("season")]
         public Season Season { get; set; }
 
         public static ClothingItem Copy(ClothingItem other)
