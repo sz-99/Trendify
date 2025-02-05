@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Components.Forms;
 using System.Net;
 using System.Text.Json;
 using System.Net.Http.Headers;
+using static System.Net.Mime.MediaTypeNames;
+using Azure;
 
 namespace FrontEnd.Http
 {
@@ -90,11 +92,10 @@ namespace FrontEnd.Http
             {
                 Console.WriteLine($"Unknown Exception: {ex.Message}");
 
-                {
                     result.HasError = true;
                     result.ErrorMessage = ex.Message;
                     result.StatusCode = System.Net.HttpStatusCode.NotFound;
-                };
+               
             }
             return result;
         }
@@ -208,9 +209,9 @@ namespace FrontEnd.Http
             return result;
         }
 
-
-        public static async Task<Response<ClothingItem?>> PutClothingItem(int id, ClothingItem updatedItem)
-        {
+        
+    public static async Task<Response<ClothingItem?>> PutClothingItem(int id, ClothingItem updatedItem)
+    {
             var result = new Response<ClothingItem>();
             try
             {
@@ -242,7 +243,7 @@ namespace FrontEnd.Http
                 result.StatusCode = System.Net.HttpStatusCode.NotFound;
             }
             return result;
-        }
+    }
 
         public static async Task<Response<bool>> DeleteClothingItem(int id)
         {
@@ -280,7 +281,44 @@ namespace FrontEnd.Http
             }
             return result;
         }
+        public static async Task<Response<string>> GetImageById(int imageId)
+        {
+            string imageSrc;
+            var result = new Response<string>();
+            try
+            {
+                HttpResponseMessage response = await HttpClient.GetAsync($"ClothingItems/Image/imageId/{imageId}");
+               if (!response.IsSuccessStatusCode)
+                {
+                    result.HasError = true;
+                    result.ErrorMessage = $"Http Error: {response.StatusCode}";
+                }
+                var imageBytes = await response.Content.ReadAsByteArrayAsync();
+                var base64String = Convert.ToBase64String(imageBytes);
+                var contentType = response.Content.Headers.ContentType?.ToString();
+                imageSrc = $"data:{contentType};base64,{base64String}";
 
+                result.ResponseObject = imageSrc;
+             }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Http Request Failed: {ex.Message}");
+                result.HasError = true;
+                result.ErrorMessage = ex.Message;
+                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unknown Exception: {ex.Message}");
+                result.HasError = true;
+                result.ErrorMessage = ex.Message;
+                result.StatusCode = System.Net.HttpStatusCode.NotFound;
+            }
+            return result;
+        }
 
     }
 }
+
+
+
