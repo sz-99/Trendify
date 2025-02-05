@@ -12,10 +12,10 @@ namespace Backend.Controllers
         {
             _outfitService = outfitService;
         }
-        [HttpGet]
-        public IActionResult GetOutfit()
+        [HttpGet("{location}")]
+        public IActionResult GetOutfit(string location)
         {
-            var (status, outfit) = _outfitService.MakeOutfitToList();
+            var (status, outfit) = _outfitService.MakeOutfitToList(location).Result;
             if(status == Models.Enums.ExecutionStatus.SUCCESS) 
             return Ok(outfit);
 
