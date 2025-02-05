@@ -44,10 +44,9 @@
                         <li tabindex="-1" @onfocusout=HideAllDropdowns>
                             <input type="radio" id="@inputID" name="@keyValue.Key" class="hidden" @bind="@radioBoxActiveButtons[keyValue.Key]">
 
-
                             <label id="@labelID" 
                             for="@inputID"
-                                   @onclick="() => HandleFilterButtonClick(queryOptionButton)"
+                            @onclick="() => HandleFilterButtonClick(queryOptionButton)"
                             class="common-style @(radioBoxActiveButtons[keyValue.Key] != string.Empty ? "active" : "nonActive")">
                                 @option
                             </label>
@@ -108,6 +107,7 @@
 
     private void HandleFilterButtonClick(string queryOptionButton) {
         ChangeFilterQuery.InvokeAsync(queryOptionButton);
+        HideAllDropdowns();
     }
 
     private void ToggleDropdownStates(string key)
