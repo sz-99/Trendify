@@ -2,6 +2,7 @@
 @page "/AddClothing"
 @using Backend.Models
 @using Backend.Models.Enums
+@using FrontEnd.FrontendModels
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
@@ -20,9 +21,18 @@
         </div>
         <div>
             <h4 class="text-lg font-semibold mb-4 text-[#4b4b4b]">Details of the new clothing</h4>
-            <EditForm  Model="newClothingItem" OnValidSubmit="HandleSubmit">
+            <EditForm  Model="newClothingItem" OnValidSubmit="HandleValidSubmit">
+
                 <DataAnnotationsValidator />
                 <ValidationSummary />
+
+                <!-- Status Message -->
+                @if (selectedFile == null && !string.IsNullOrEmpty(statusMessage))
+                {
+                    Console.WriteLine(statusMessage);
+                    <div class="alert alert-info mt-3 text-red-500"> @statusMessage </div>
+                }
+
                 <div class="mb-2">
                     <label class="block font-medium text-[#4b4b4b]" for="name">Name</label>
                     <InputText id="name" @bind-Value="newClothingItem.Name" class="w-full p-2 border rounded" />
@@ -94,12 +104,7 @@
             </EditForm>
             <button @onclick="NavigateHome" class="mt-4 w-full bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg">Cancel</button>
 
-            <!-- Status Message -->
-            @if (!string.IsNullOrEmpty(statusMessage))
-            {
-                Console.WriteLine(statusMessage);
-                <div class="alert alert-info mt-3"> @statusMessage </div>
-            }
+
         </div>
     </div>
 
@@ -113,15 +118,14 @@
     private List<string> Sizes = Enum.GetNames(typeof(ClothingSize)).ToList();
     private List<string> Occasions = Enum.GetNames(typeof(Occasion)).ToList();
     private List<string> Seasons = Enum.GetNames(typeof(Season)).ToList();
-    // private List<string> Types = Enum.GetNames(typeof(ClothingType)).ToList();
 
     private string FileName = string.Empty;
     private string FileDataUrl = string.Empty;
+    private ImageUploadModel? ImageUpload { get; set; }
     private bool IsImage = false;
     public string statusMessage { get; set; } = string.Empty;
 
     private IBrowserFile? selectedFile;
-
 
     private async Task HandleFileUpload(InputFileChangeEventArgs e)
     {
@@ -143,27 +147,7 @@
         }
     }
 
-    private async Task UploadFile()
-    {
-        if (selectedFile == null)
-        {
-            statusMessage = "Please select a file to upload.";
-            return;
-        }
-
-        statusMessage = "Uploading...";
-
-        Response<int> uploadResult = await HttpManager.UploadImageAsync(selectedFile);
-
-        if (uploadResult.HasError)
-        {
-            statusMessage = $"Error uploading file: {uploadResult.ErrorMessage}";
-            Console.WriteLine(statusMessage);
-        }
-
-    }
-
-    private async Task HandleSubmit()
+    private async Task HandleValidSubmit()
     {
         // TODO: After User Login is done replace with actual UserID
         newClothingItem.UserId = 1;
@@ -172,7 +156,7 @@
 
         if (response.HasError) 
         {
-            statusMessage = $"{response.StatusCode.ToString()}: {response.ErrorMessage}";
+            statusMessage = $"{response.ErrorMessage}";
         }
         else 
         {
@@ -183,6 +167,7 @@
         FileDataUrl = "";
         selectedFile = null;
     }
+
     public async Task NavigateHome()
     {
         var isConfirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to leave without saving?");
