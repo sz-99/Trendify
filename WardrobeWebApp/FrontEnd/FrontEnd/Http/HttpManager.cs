@@ -32,11 +32,11 @@ namespace FrontEnd.Http
                 {
                     result.HasError = true;
                     result.ErrorMessage = $"Http Error: {response.StatusCode}";
+                    return result;
                 }
 
                 string httpContent = await response.Content.ReadAsStringAsync();
-                var list = JsonSerializer.Deserialize<List<ClothingItem>>(httpContent);
-
+                var list = JsonSerializer.Deserialize<List<ClothingItem>>(httpContent);               
                 result.ResponseObject = list ?? new List<ClothingItem>();
             }
 
@@ -57,6 +57,7 @@ namespace FrontEnd.Http
                     result.HasError = true;
                     result.ErrorMessage = ex.Message;
                     result.StatusCode = System.Net.HttpStatusCode.NotFound;
+                    return result;
                 };
             }
             return result;
@@ -74,6 +75,7 @@ namespace FrontEnd.Http
                 {
                     result.HasError = true;
                     result.ErrorMessage = $"Http Error: {response.StatusCode}";
+                    return result;
                 }
                 string httpContent = await response.Content.ReadAsStringAsync();
                 var item = JsonSerializer.Deserialize<ClothingItem>(httpContent);
@@ -281,7 +283,7 @@ namespace FrontEnd.Http
             }
             return result;
         }
-        public static async Task<Response<string>> GetImageById(int imageId)
+        public static async Task<Response<string>> GetClothingImageById(int imageId)
         {
             string imageSrc;
             var result = new Response<string>();
@@ -292,10 +294,11 @@ namespace FrontEnd.Http
                 {
                     result.HasError = true;
                     result.ErrorMessage = $"Http Error: {response.StatusCode}";
+                    return result;
                 }
                 var imageBytes = await response.Content.ReadAsByteArrayAsync();
                 var base64String = Convert.ToBase64String(imageBytes);
-                var contentType = response.Content.Headers.ContentType?.ToString();
+                var contentType = response.Content.Headers.ContentType?.ToString() ?? "image/jpeg";
                 imageSrc = $"data:{contentType};base64,{base64String}";
 
                 result.ResponseObject = imageSrc;
