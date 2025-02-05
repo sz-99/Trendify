@@ -4,8 +4,17 @@
 
 
 <PageTitle>Login</PageTitle>
-<Login/>
+@if(isLogin)
+{
+    <Login />
+}
+else
+{
+    <SignUp/>
+}
+
 
 @code {
+    public bool isLogin { get; set; } = true;
 
 }
