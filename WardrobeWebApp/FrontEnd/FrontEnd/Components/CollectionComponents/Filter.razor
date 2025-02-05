@@ -1,13 +1,13 @@
 ﻿<div class="container w-full h-8 flex flex-row items-center justify-center mt-8 space-x-4">
 
-    @foreach(var keyValue in dropdownStates)
+    @foreach(var filterKeyValue in dropdownStates)
     {
         <div class="flex flex-col relative h-full">
 
             <!--Button-->
             <button 
-            @onclick="() => ToggleDropdownStates(keyValue.Key)" 
-            id="@keyValue.Key" 
+            @onclick="() => ToggleDropdownStates(filterKeyValue.Key)" 
+            id="@filterKeyValue.Key" 
             class="h-full 
                         text-white 
                         bg-stone-400 
@@ -21,33 +21,34 @@
                         items-center" 
             type="button">
 
-                @keyValue.Key 
+                @filterKeyValue.Key: @radioBoxActiveButtons[filterKeyValue.Key]
                 <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
                 </svg>
             </button>
 
             <!--Dropdown Hidden/Visible-->
-            <div @onclick:stopPropagation="true" id="Category-dropdown" class="z-10 absolute left-0 mt-2 @(dropdownStates[keyValue.Key] ? "" : "hidden") bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 filter-dropdowns">
+            <div @onclick:stopPropagation="true" id="Category-dropdown" class="z-10 absolute left-0 mt-2 @(dropdownStates[filterKeyValue.Key] ? "" : "hidden") bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 filter-dropdowns">
                 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
 
                     @{
                         int index = 0;
                     }
 
-                    @foreach (var option in FindEnumValues(keyValue.Key))
+                    @foreach (var option in GetEnumValues(filterKeyValue.Key))
                     {
-                        string queryOptionButton = @keyValue.Key.ToLower() + "=" + index;
+                        string queryOptionButton = filterKeyValue.Key.ToLower() + "=" + index;
+
                         string inputID = queryOptionButton + "Input";
                         string labelID = queryOptionButton + "Label";
 
                         <li tabindex="-1" @onfocusout=HideAllDropdowns>
-                            <input type="radio" id="@inputID" name="@keyValue.Key" class="hidden" @bind="@radioBoxActiveButtons[keyValue.Key]">
+                            <input type="radio" id="@inputID" name="@filterKeyValue.Key" class="hidden" @bind="@radioBoxActiveButtons[filterKeyValue.Key]">
 
                             <label id="@labelID" 
                             for="@inputID"
-                            @onclick="() => HandleFilterButtonClick(queryOptionButton)"
-                            class="common-style @(radioBoxActiveButtons[keyValue.Key] != string.Empty ? "active" : "nonActive")">
+                                   @onclick="() => HandleFilterButtonClick(queryOptionButton, (int)option, filterKeyValue.Key)"
+                            class="common-style @(radioBoxActiveButtons[filterKeyValue.Key] == string.Empty ? "nonActive" : "active")">
                                 @option
                             </label>
                         </li>
@@ -76,7 +77,6 @@
     background-color: #505661;
     }
 
-
     .active {
     background-color: #005866;
     }
@@ -96,17 +96,17 @@
         {"Size", false },
         {"Season", false },
         {"Occasion", false }
-
     };
 
     private void HideAllDropdowns() {
-        foreach (var (k, v) in dropdownStates) {
-            dropdownStates[k] = false;
+        foreach (var (key, value) in dropdownStates) {
+            dropdownStates[key] = false;
         }
     }
 
-    private void HandleFilterButtonClick(string queryOptionButton) {
+    private void HandleFilterButtonClick(string queryOptionButton, int option, string filterKey) {
         ChangeFilterQuery.InvokeAsync(queryOptionButton);
+        radioBoxActiveButtons[filterKey] = option.ToString();
         HideAllDropdowns();
     }
 
@@ -120,13 +120,13 @@
 
     private Dictionary<string, string> radioBoxActiveButtons = new()
     {
-          {"Category", string.Empty },
-          {"Size", string.Empty },
-          {"Season", string.Empty },
-          {"Occasion", string.Empty }
+        {"Category", string.Empty },
+        {"Size", string.Empty },
+        {"Season", string.Empty },
+        {"Occasion", string.Empty }
     };
 
-    private Array FindEnumValues(string key) => key switch
+    private Array GetEnumValues(string key) => key switch
     {
         "Category" => Enum.GetValues(typeof(Backend.Models.Enums.ClothingCategory)),
         "Size" => Enum.GetValues(typeof(Backend.Models.Enums.ClothingSize)),
