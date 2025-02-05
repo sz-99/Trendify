@@ -8,8 +8,6 @@
 
 <div id="crud-modal" class="fixed inset-0 flex items-center justify-center bg-cover bg-center bg-no-repeat bg-opacity-50" style="background-image: url('/images/winter.png');">
     <div class=" bg-opacity-75 p-6 rounded-lg shadow-lg w-1/2 grid grid-cols-2 items-center gap-4">
-
-       
         <div class="flex justify-center items-center h-full">
             @if (!string.IsNullOrEmpty(FileDataUrl))
             {
@@ -30,21 +28,12 @@
                     <InputText id="name" @bind-Value="newClothingItem.Name" class="w-full p-2 border rounded" />
                     <ValidationMessage For="@(() => newClothingItem.Name)" />
                 </div>
-            <!--
-                <div class="mb-2">
-                    <label class="block font-medium text-[#4b4b4b]" for="imageId">Image ID</label>
-                    <InputNumber id="imageId" @bind-Value="newClothingItem.ImageId" class="w-full p-2 border rounded" />
-                </div>
-            -->
+
                 <div class="mb-2">
                     <label class="block font-medium text-[#4b4b4b]">Choose Image of your new Clothing</label>
                     <InputFile OnChange="HandleFileUpload" />
-                    <!-- 
-
-                    <button type="button" @onclick="UploadFile" disabled="@isUploading">Upload</button>
-                    -->
-                    
                 </div>
+
                 <div class="mb-2 grid grid-cols-2 gap-2">
                     <div>
                         <label class="block font-medium text-[#4b4b4b]" for="category">Category</label>
@@ -103,15 +92,16 @@
                 </div>
                 <button type="submit" class="w-full bg-gray-100 hover:bg-blue-800 text-gray-900 p-2 rounded-lg">Submit</button>
             </EditForm>
-        <button @onclick="NavigateHome" class="mt-4 w-full bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg">Cancel</button>
-        <!-- Status Message -->
-        @if (!string.IsNullOrEmpty(statusMessage))
-        {
-            Console.WriteLine(statusMessage);
+            <button @onclick="NavigateHome" class="mt-4 w-full bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg">Cancel</button>
+
+            <!-- Status Message -->
+            @if (!string.IsNullOrEmpty(statusMessage))
+            {
+                Console.WriteLine(statusMessage);
                 <div class="alert alert-info mt-3"> @statusMessage </div>
-        }
-   </div>
- </div>
+            }
+        </div>
+    </div>
 
 </div>
 
@@ -129,10 +119,8 @@
     private string FileDataUrl = string.Empty;
     private bool IsImage = false;
     public string statusMessage { get; set; } = string.Empty;
-   
 
-    private IBrowserFile selectedFile;
-
+    private IBrowserFile? selectedFile;
 
 
     private async Task HandleFileUpload(InputFileChangeEventArgs e)
@@ -154,14 +142,6 @@
             }
         }
     }
-
-    // public async Task<string> ConvertFileToBase64(IBrowserFile file)
-    // {
-    //     using var stream = file.OpenReadStream();
-    //     using var memoryStream = new MemoryStream();
-    //     await stream.CopyToAsync(memoryStream);
-    //     return Convert.ToBase64String(memoryStream.ToArray());
-    // }
 
     private async Task UploadFile()
     {
@@ -187,7 +167,7 @@
     {
         // TODO: After User Login is done replace with actual UserID
         newClothingItem.UserId = 1;
-       
+
         var response = await HttpManager.PostClothingItem(newClothingItem, selectedFile);
 
         if (response.HasError) 
@@ -198,8 +178,10 @@
         {
             statusMessage = "Successfully added to your Wardrobe";
         }
-        
+
         newClothingItem = new();
+        FileDataUrl = "";
+        selectedFile = null;
     }
     public async Task NavigateHome()
     {

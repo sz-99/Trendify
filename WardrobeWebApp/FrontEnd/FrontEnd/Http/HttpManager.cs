@@ -44,7 +44,7 @@ namespace FrontEnd.Http
 
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
+                result.StatusCode = HttpStatusCode.ServiceUnavailable;
 
             }
             catch (Exception ex)
@@ -84,7 +84,7 @@ namespace FrontEnd.Http
 
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
+                result.StatusCode = HttpStatusCode.ServiceUnavailable;
             }
             catch (Exception ex)
             {
@@ -93,13 +93,13 @@ namespace FrontEnd.Http
                 {
                     result.HasError = true;
                     result.ErrorMessage = ex.Message;
-                    result.StatusCode = System.Net.HttpStatusCode.NotFound;
+                    result.StatusCode = HttpStatusCode.NotFound;
                 };
             }
             return result;
         }
 
-        public static async Task<Response<ClothingItem>> PostClothingItem(ClothingItem newClothingItem, IBrowserFile imageFile)
+        public static async Task<Response<ClothingItem>> PostClothingItem(ClothingItem newClothingItem, IBrowserFile? imageFile)
         {           
             var result = new Response<ClothingItem>();
             try
@@ -135,18 +135,18 @@ namespace FrontEnd.Http
                 Console.WriteLine($"Http Request Failed: {ex.Message}");
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
+                result.StatusCode = HttpStatusCode.ServiceUnavailable;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Unknown Exception: {ex.Message}");
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = System.Net.HttpStatusCode.NotFound;
+                result.StatusCode = HttpStatusCode.InternalServerError;
             }
             return result;
         }
-        public static async Task<Response<int>> UploadImageAsync(IBrowserFile file)
+        public static async Task<Response<int>> UploadImageAsync(IBrowserFile? file)
         {
             var result = new Response<int>();
 
