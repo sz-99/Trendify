@@ -99,6 +99,7 @@ namespace FrontEnd.Http
             return result;
         }
 
+
         public static async Task<Response<ClothingItem>> PostClothingItem(ClothingItem newClothingItem, IBrowserFile? imageFile)
         {           
             var result = new Response<ClothingItem>();
@@ -114,7 +115,6 @@ namespace FrontEnd.Http
                                 
                 newClothingItem.ImageId = imageUploadResponse.ResponseObject;
 
-                
                 HttpResponseMessage response = await HttpClient.PostAsJsonAsync("ClothingItems", newClothingItem);
                 result.StatusCode = response.StatusCode;
 

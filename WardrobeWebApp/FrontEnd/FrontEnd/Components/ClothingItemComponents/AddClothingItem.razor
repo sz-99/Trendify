@@ -3,6 +3,7 @@
 @using Backend.Models
 @using Backend.Models.Enums
 @using FrontEnd.FrontendModels
+@using FrontEnd.Components.ClothingItemComponents.AddClothingItemComponents
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
@@ -22,20 +23,9 @@
         <div>
             <h4 class="text-lg font-semibold mb-3 text-[#4b4b4b]">Please enter details for the new clothing item:</h4>
             <EditForm  Model="NewClothingItem" OnValidSubmit="HandleValidSubmit">
-
                 <DataAnnotationsValidator />
-
-                <!-- Error Message -->
-                @if (SelectedFile == null && !string.IsNullOrEmpty(ErrorMessage))
-                {
-                    <div class="alert alert-info my-3 text-red-500"> @ErrorMessage </div>
-                }
-
-                <!-- Status Message -->
-                @if (!string.IsNullOrEmpty(SuccessMessage))
-                {
-                    <div class="alert alert-info my-3 text-green-800"> @SuccessMessage </div>
-                }
+                <ErrorMessageAlert Message="@ErrorMessage" />
+                <SuccessMessage Message="@SuccessMessage" />
 
                 <div class="mb-2">
                     <label class="block font-medium text-[#4b4b4b]" for="name">Name:</label>
@@ -106,8 +96,8 @@
                 </div>
                 <button type="submit" class="mt-3 w-full bg-gray-100 hover:bg-blue-800 text-gray-900 p-2 rounded-lg">Submit</button>
             </EditForm>
-            <button @onclick="ClearFields" class="my-1 w-full bg-gray-100 hover:bg-blue-800 text-gray-900 p-2 rounded-lg">Clear</button>
-            <button @onclick="NavigateHome" class="my-1 w-full bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg">Cancel</button>
+            <button @onclick="ClearAll" class="my-1 w-full bg-gray-100 hover:bg-blue-800 text-gray-900 p-2 rounded-lg">Clear</button>
+            <button @onclick="NavigateHome" class="my-1 w-full bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg">Finish</button>
         </div>
     </div>
 
@@ -167,7 +157,7 @@
         }
         else 
         {
-            SuccessMessage = "Successfully added to your Wardrobe";
+            SuccessMessage = $"Successfully added '{NewClothingItem.Name}' to your Wardrobe";
         }
 
         ClearFields();
@@ -195,6 +185,11 @@
         NewClothingItem = new();
         FileDataUrl = String.Empty;
         SelectedFile = null;
+    }
+
+    private void ClearAll() {
+        ClearFields();
+        ClearMessages();
     }
 
 }

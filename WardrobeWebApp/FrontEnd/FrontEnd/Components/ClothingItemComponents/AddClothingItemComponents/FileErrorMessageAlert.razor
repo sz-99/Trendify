@@ -1,0 +1,12 @@
+﻿@if (SelectedFile == null && !string.IsNullOrEmpty(Message))
+{
+    <ErrorMessage Message="@Message"/>
+}
+
+@code {
+    [Parameter]
+    public IBrowserFile? SelectedFile { get; set; }
+
+    [Parameter]
+    public string? Message { get; set; }
+}
