@@ -1,0 +1,65 @@
+﻿@rendermode InteractiveServer
+
+<div class="container w-full h-8 flex flex-row items-center justify-center mt-8 space-x-4">
+
+    @foreach(var keyValue in dropdownStates)
+    {
+        <div class="flex flex-col relative h-full">
+
+            <button @onclick="() => ToggleDropdownStates(keyValue.Key)" id="@keyValue.Key" class="h-full text-white bg-stone-400 hover:bg-stone-500 font-medium rounded-xl text-sm px-5 text-center inline-flex items-center" type="button">
+                @keyValue.Key <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                </svg>
+            </button>
+
+
+            <!-- Dropdown menu -->
+            <div id="Category-dropdown" class="z-10 absolute left-0 mt-2 @(dropdownStates[keyValue.Key] ? "" : "hidden") bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700">
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+                    @foreach (var option in FindEnumValues(keyValue.Key))
+                    {
+                        <li>
+                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 bg-gray-900 dark:hover:bg-gray-600 dark:hover:text-white">@option</a>
+                        </li>
+                    }
+                 
+                   
+                </ul>
+            </div>
+        </div>
+    }
+
+</div>
+
+@code {
+    private Dictionary<string, bool> dropdownStates = new()
+    {
+        {"Category", false },
+        {"Size", false },
+        {"Season", false },
+        {"Occasion", false }
+
+    };
+
+    private void ToggleDropdownStates(string key)
+    {
+        foreach(var keyValue in dropdownStates)
+        {
+            dropdownStates[keyValue.Key] = keyValue.Key == key ? !dropdownStates[keyValue.Key] : false;
+        }
+    }
+
+    private Array FindEnumValues(string key)
+    {
+        return key switch
+        {
+            "Category" => Enum.GetValues(typeof(Backend.Models.Enums.ClothingCategory)),
+            "Size" => Enum.GetValues(typeof(Backend.Models.Enums.ClothingSize)),
+            "Season" => Enum.GetValues(typeof(Backend.Models.Enums.Season)),
+            "Occasion" => Enum.GetValues(typeof(Backend.Models.Enums.Occasion)),
+            _ => throw new ArgumentException("Enum not recognised.")
+        };
+       
+    }
+
+}
