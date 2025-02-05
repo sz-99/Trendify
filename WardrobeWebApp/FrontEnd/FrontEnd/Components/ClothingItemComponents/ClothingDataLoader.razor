@@ -1,23 +1,43 @@
-﻿<ClothingItemList clothesList="clothingList"></ClothingItemList>
+﻿@using FrontEnd.Components.Utils
+
+@if (dbError)
+{
+    <ErrorMessage></ErrorMessage>
+}
+else
+{
+    <ClothingItemList clothesList="@clothingList"></ClothingItemList>
+}
+
+
 
 @code {
 
-    public List<ClothingItem> clothingList { get; set; } = new();
-    public string statuscode = "";
+    private List<ClothingItem> clothingList { get; set; } = new();
+    private string statuscode;
+    private bool dbError;
 
     protected async override Task OnInitializedAsync()
     {
-        var response = await HttpManager.GetAllClothing();
-
-        if (response.HasError)
+        try
         {
-            statuscode += response.StatusCode.ToString();
 
-        }
-        else
+            var response = await HttpManager.GetAllClothing();
+            if (response.HasError)
+            {
+                statuscode = response.StatusCode.ToString();
+
+            }
+            else
+            {
+                clothingList = response.ResponseObject;
+               
+            }
+
+        }catch(Exception e)
         {
-            clothingList = response.ResponseObject;
+            dbError = true;
         }
 
-}
+    }
 }
