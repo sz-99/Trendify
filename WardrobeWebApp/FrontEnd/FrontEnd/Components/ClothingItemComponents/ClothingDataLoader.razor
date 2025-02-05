@@ -12,6 +12,8 @@ else
 
 
 @code {
+    [Parameter]
+    public string FilterQuery { get; set; } = string.Empty;
 
     private List<ClothingItem> clothingList { get; set; } = new();
     private string statuscode;
@@ -23,6 +25,7 @@ else
         {
 
             var response = await HttpManager.GetAllClothing();
+
             if (response.HasError)
             {
                 statuscode = response.StatusCode.ToString();
@@ -31,7 +34,7 @@ else
             else
             {
                 clothingList = response.ResponseObject;
-               
+
             }
 
         }catch(Exception e)
@@ -39,5 +42,37 @@ else
             dbError = true;
         }
 
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        if (string.IsNullOrEmpty(FilterQuery))
+        {
+            return;
+        }
+
+        try
+        {
+
+            var response = await HttpManager.GetFilteredClothing(FilterQuery);
+
+            if (response.HasError)
+            {
+                statuscode = response.StatusCode.ToString();
+
+            }
+            else
+            {
+                clothingList = response.ResponseObject;
+
+            }
+
+        }
+        catch (Exception e)
+        {
+            dbError = true;
+        }
+
+        StateHasChanged();
     }
 }

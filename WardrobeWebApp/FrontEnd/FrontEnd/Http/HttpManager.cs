@@ -1,8 +1,8 @@
 ﻿using Backend.Models;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Net;
-using System.Text.Json;
 using System.Net.Http.Headers;
+using System.Text.Json;
 
 namespace FrontEnd.Http
 {
@@ -23,6 +23,49 @@ namespace FrontEnd.Http
             try
             {
                 HttpResponseMessage response = await HttpClient.GetAsync("ClothingItems/all");
+                result.StatusCode = response.StatusCode;
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    result.HasError = true;
+                    result.ErrorMessage = $"Http Error: {response.StatusCode}";
+                }
+
+                string httpContent = await response.Content.ReadAsStringAsync();
+                var list = JsonSerializer.Deserialize<List<ClothingItem>>(httpContent);
+
+                result.ResponseObject = list ?? new List<ClothingItem>();
+            }
+
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Http Request Failed: {ex.Message}");
+
+                result.HasError = true;
+                result.ErrorMessage = ex.Message;
+                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unknown Exception: {ex.Message}");
+
+                {
+                    result.HasError = true;
+                    result.ErrorMessage = ex.Message;
+                    result.StatusCode = System.Net.HttpStatusCode.NotFound;
+                };
+            }
+            return result;
+        }
+
+        public static async Task<Response<List<ClothingItem>>> GetFilteredClothing(string query)
+        {
+            Console.WriteLine($"ClothingItems?{query}");
+            var result = new Response<List<ClothingItem>>();
+            try
+            {
+                HttpResponseMessage response = await HttpClient.GetAsync($"ClothingItems?{query}");
                 result.StatusCode = response.StatusCode;
 
                 if (!response.IsSuccessStatusCode)
@@ -157,9 +200,9 @@ namespace FrontEnd.Http
                         ContentType = new MediaTypeHeaderValue(file.ContentType)
                     }
                 };
-                content.Add(fileContent, "file", file.Name); 
+                content.Add(fileContent, "file", file.Name);
 
-                
+
                 HttpResponseMessage response = await HttpClient.PostAsync("ClothingItems/Image", content);
 
                 result.StatusCode = response.StatusCode;
@@ -171,7 +214,7 @@ namespace FrontEnd.Http
                 }
                 else
                 {
-                    result.ResponseObject = true; 
+                    result.ResponseObject = true;
                 }
             }
             catch (HttpRequestException ex)
@@ -193,7 +236,6 @@ namespace FrontEnd.Http
 
             return result;
         }
-      
 
         public static async Task<Response<ClothingItem?>> PutClothingItem(int id, ClothingItem updatedItem)
         {

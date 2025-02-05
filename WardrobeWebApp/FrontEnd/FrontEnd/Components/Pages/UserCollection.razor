@@ -5,10 +5,18 @@
 @using FrontEnd.Components.CollectionComponents
 
 <PageTitle>My Collection</PageTitle>
-<CollectionsTopMenu></CollectionsTopMenu>
-<ClothingDataLoader></ClothingDataLoader>
+
+<CollectionsTopMenu ChangeFilterQuery="UpdateQueryParameters"></CollectionsTopMenu>
+<ClothingDataLoader FilterQuery="@QueryParameters"></ClothingDataLoader>
+ 
+
 
 @code {
- 
+    public string QueryParameters = string.Empty;
+
+    public void UpdateQueryParameters(string query)
+    {
+        QueryParameters = query;
+    }
 
 }
