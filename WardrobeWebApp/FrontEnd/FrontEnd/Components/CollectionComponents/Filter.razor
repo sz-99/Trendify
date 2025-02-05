@@ -1,20 +1,24 @@
-﻿<div class="container w-full h-8 flex flex-row items-center justify-center mt-8 space-x-4">
+﻿<div @onfocusout="HideAllDropdowns" class="container w-full h-8 flex flex-row items-center justify-center mt-8 space-x-4">
 
     @foreach(var keyValue in dropdownStates)
     {
         <div class="flex flex-col relative h-full">
 
             <!--Button-->
-            <button @onclick="() => ToggleDropdownStates(keyValue.Key)" id="@keyValue.Key" class="h-full text-white bg-stone-400 hover:bg-stone-500 font-medium rounded-xl text-sm px-5 text-center inline-flex items-center" type="button">
-                @keyValue.Key <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+            <button @onclick="() => ToggleDropdownStates(keyValue.Key)" 
+                    id="@keyValue.Key" 
+                    class="h-full text-white bg-stone-400 hover:bg-stone-500 font-medium rounded-xl text-sm px-5 text-center inline-flex items-center" 
+                    type="button">
+
+                        @keyValue.Key <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
                 </svg>
             </button>
 
             <!--Dropdown Hidden/Visible-->
             <div id="Category-dropdown" class="z-10 absolute left-0 mt-2 @(dropdownStates[keyValue.Key] ? "" : "hidden") bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 filter-dropdowns">
                 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-                    
+
                     @{
                         int index = 0;
                     }
@@ -43,25 +47,25 @@
 
 <style>
     .common-style {
-        display: block;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
-        cursor: pointer;
+    display: block;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    cursor: pointer;
     }
 
     .common-style:hover {
-            background-color: #505661;
+    background-color: #505661;
     }
 
 
     .active {
-        background-color: #005866;
+    background-color: #005866;
     }
 
     .nonActive {
-        background-color: #6B7280;
+    background-color: #6B7280;
     }
 </style>
 
@@ -79,6 +83,12 @@
         {"Occasion", false }
 
     };
+
+    private void HideAllDropdowns() {
+        foreach (var (k, v) in dropdownStates) {
+            dropdownStates[k] = false;
+        }
+    }
 
     private void ToggleDropdownStates(string key)
     {
