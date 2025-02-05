@@ -170,7 +170,7 @@ namespace FrontEnd.Http
                 content.Add(fileContent, "file", file.Name);
 
 
-                HttpResponseMessage response = await HttpClient.PostAsync("Image", content);
+                HttpResponseMessage response = await HttpClient.PostAsync("ClothingItems/Image", content);
 
                 result.StatusCode = response.StatusCode;
 

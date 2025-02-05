@@ -152,13 +152,18 @@
         // TODO: After User Login is done replace with actual UserID
         newClothingItem.UserId = 1;
        
-            var response = await HttpManager.PostClothingItem(newClothingItem, selectedFile);
+        var response = await HttpManager.PostClothingItem(newClothingItem, selectedFile);
 
-            if (response.HasError)
-                statusMessage = $"{response.StatusCode.ToString()}: {response.ErrorMessage}";
-
+        if (response.HasError) 
+        {
+            statusMessage = $"{response.StatusCode.ToString()}: {response.ErrorMessage}";
+        }
+        else 
+        {
             statusMessage = "Successfully added to your Wardrobe";
-            newClothingItem = new();
+        }
+        
+        newClothingItem = new();
     }
     public async Task NavigateHome()
     {
