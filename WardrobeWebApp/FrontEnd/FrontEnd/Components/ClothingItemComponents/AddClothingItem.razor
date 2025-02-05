@@ -171,7 +171,6 @@
             return;
         }
 
-        isUploading = true;
         statusMessage = "Uploading...";
 
         Response<int> uploadResult = await HttpManager.UploadImageAsync(selectedFile);
@@ -181,9 +180,7 @@
             statusMessage = $"Error uploading file: {uploadResult.ErrorMessage}";
             Console.WriteLine(statusMessage);
         }
-    
 
-        isUploading = false;
     }
 
     private async Task HandleSubmit()
