@@ -23,10 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ControllersTests\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Backend\Backend.csproj" />
   </ItemGroup>
 
