@@ -1,0 +1,194 @@
+﻿
+@page "/AddClothing"
+@using Backend.Models
+@using Backend.Models.Enums
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<div id="crud-modal" class="fixed inset-0 flex items-center justify-center bg-cover bg-center bg-no-repeat bg-opacity-50" style="background-image: url('/images/winter.png');">
+    <div class=" bg-opacity-75 p-6 rounded-lg shadow-lg w-1/2 grid grid-cols-2 items-center gap-4">
+        <div class="flex justify-center items-center h-full">
+            @if (!string.IsNullOrEmpty(FileDataUrl))
+            {
+                <img src="@FileDataUrl" alt="Uploaded Image" class="max-h-full object-contain rounded-lg shadow-md" />
+            }
+            else
+            {
+                <p class="text-gray-500">No Image Uploaded</p>
+            }
+        </div>
+        <div>
+            <h4 class="text-lg font-semibold mb-4 text-[#4b4b4b]">Details of the new clothing</h4>
+            <EditForm  Model="newClothingItem" OnValidSubmit="HandleSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="mb-2">
+                    <label class="block font-medium text-[#4b4b4b]" for="name">Name</label>
+                    <InputText id="name" @bind-Value="newClothingItem.Name" class="w-full p-2 border rounded" />
+                    <ValidationMessage For="@(() => newClothingItem.Name)" />
+                </div>
+
+                <div class="mb-2">
+                    <label class="block font-medium text-[#4b4b4b]">Choose Image of your new Clothing</label>
+                    <InputFile OnChange="HandleFileUpload" />
+                </div>
+
+                <div class="mb-2 grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-medium text-[#4b4b4b]" for="category">Category</label>
+                        <InputSelect id="category" @bind-Value="newClothingItem.Category" class="w-full p-2 border rounded">
+                            @foreach (var category in Categories)
+                            {
+                                <option value="@category">@category</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => newClothingItem.Category)" />
+                    </div>
+                    <div>
+                        <label class="block font-medium text-[#4b4b4b]" for="colour">Colour</label>
+                        <InputText id="colour" @bind-Value="newClothingItem.Colour" class="w-full p-2 border rounded" />
+                        <ValidationMessage For="@(() => newClothingItem.Colour)" />
+                    </div>
+                </div>
+                <div class="mb-2 grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-medium text-[#4b4b4b]" for="brand">Brand</label>
+                        <InputText id="brand" @bind-Value="newClothingItem.Brand" class="w-full p-2 border rounded" />
+                        <ValidationMessage For="@(() => newClothingItem.Brand)" />
+                    </div>
+                    <div>
+                        <label class="block font-medium text-[#4b4b4b]" for="size">Size</label>
+                        <InputSelect id="size" @bind-Value="newClothingItem.Size" class="w-full p-2 border rounded">
+                            @foreach (var size in Sizes)
+                            {
+                                <option value="@size">@size</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => newClothingItem.Size)" />
+                    </div>
+                </div>
+                <div class="mb-2 grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-medium text-[#4b4b4b]" for="occasion">Occasion</label>
+                        <InputSelect id="occasion" @bind-Value="newClothingItem.Occasion" class="w-full p-2 border rounded">
+                            @foreach (var occasion in Occasions)
+                            {
+                                <option value="@occasion">@occasion</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => newClothingItem.Occasion)" />
+                    </div>
+                    <div>
+                        <label class="block font-medium text-[#4b4b4b]" for="season">Season</label>
+                        <InputSelect id="season" @bind-Value="newClothingItem.Season" class="w-full p-2 border rounded">
+                            @foreach (var season in Seasons)
+                            {
+                                <option value="@season">@season</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => newClothingItem.Season)" />
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-gray-100 hover:bg-blue-800 text-gray-900 p-2 rounded-lg">Submit</button>
+            </EditForm>
+            <button @onclick="NavigateHome" class="mt-4 w-full bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg">Cancel</button>
+
+            <!-- Status Message -->
+            @if (!string.IsNullOrEmpty(statusMessage))
+            {
+                Console.WriteLine(statusMessage);
+                <div class="alert alert-info mt-3"> @statusMessage </div>
+            }
+        </div>
+    </div>
+
+</div>
+
+@code {
+
+    private ClothingItem newClothingItem = new();
+
+    private List<string> Categories = Enum.GetNames(typeof(ClothingCategory)).ToList();
+    private List<string> Sizes = Enum.GetNames(typeof(ClothingSize)).ToList();
+    private List<string> Occasions = Enum.GetNames(typeof(Occasion)).ToList();
+    private List<string> Seasons = Enum.GetNames(typeof(Season)).ToList();
+    // private List<string> Types = Enum.GetNames(typeof(ClothingType)).ToList();
+
+    private string FileName = string.Empty;
+    private string FileDataUrl = string.Empty;
+    private bool IsImage = false;
+    public string statusMessage { get; set; } = string.Empty;
+
+    private IBrowserFile? selectedFile;
+
+
+    private async Task HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+        if (selectedFile != null)
+        {
+            FileName = selectedFile.Name;
+            var format = selectedFile.ContentType;
+            using var stream = selectedFile.OpenReadStream(1048576);
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            var fileBytes = memoryStream.ToArray();
+
+            if (format.StartsWith("image/"))
+            {
+                IsImage = true;
+                FileDataUrl = $"data:{format};base64,{Convert.ToBase64String(fileBytes)}";
+            }
+        }
+    }
+
+    private async Task UploadFile()
+    {
+        if (selectedFile == null)
+        {
+            statusMessage = "Please select a file to upload.";
+            return;
+        }
+
+        statusMessage = "Uploading...";
+
+        Response<int> uploadResult = await HttpManager.UploadImageAsync(selectedFile);
+
+        if (uploadResult.HasError)
+        {
+            statusMessage = $"Error uploading file: {uploadResult.ErrorMessage}";
+            Console.WriteLine(statusMessage);
+        }
+
+    }
+
+    private async Task HandleSubmit()
+    {
+        // TODO: After User Login is done replace with actual UserID
+        newClothingItem.UserId = 1;
+
+        var response = await HttpManager.PostClothingItem(newClothingItem, selectedFile);
+
+        if (response.HasError) 
+        {
+            statusMessage = $"{response.StatusCode.ToString()}: {response.ErrorMessage}";
+        }
+        else 
+        {
+            statusMessage = "Successfully added to your Wardrobe";
+        }
+
+        newClothingItem = new();
+        FileDataUrl = "";
+        selectedFile = null;
+    }
+    public async Task NavigateHome()
+    {
+        var isConfirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to leave without saving?");
+        if (isConfirmed)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+}

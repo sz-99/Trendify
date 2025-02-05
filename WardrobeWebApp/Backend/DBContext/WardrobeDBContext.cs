@@ -16,6 +16,8 @@ namespace Backend
         public DbSet<WearingHistory> WearingHistories { get; set; }
         public DbSet<Outfit> Outfits { get; set; }
 
+        public DbSet<ImageLocation> ImageLocations { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
