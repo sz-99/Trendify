@@ -21,16 +21,19 @@
 
                     @foreach (var option in FindEnumValues(keyValue.Key))
                     {
-                        string query = @keyValue.Key.ToLower() + "=" + index;
-         
+                        string queryOptionButton = @keyValue.Key.ToLower() + "=" + index;
+                        string inputID = queryOptionButton + "Input";
+                        string labelID = queryOptionButton + "Label";
 
                         <li>
-                            <a @onclick="() => ChangeFilterQuery.InvokeAsync(query)" class="block px-4 py-2 hover:bg-gray-100 bg-gray-900 dark:hover:bg-gray-600 dark:hover:text-white">@option</a>
+                            <input type="radio" id="@inputID" name="@keyValue.Key" class="hidden" @bind="@radioBoxActiveButtons[keyValue.Key]">
+
+                            <label id="@labelID" for="@inputID" @onclick="() => ChangeFilterQuery.InvokeAsync(queryOptionButton)" class="common-style @(radioBoxActiveButtons[keyValue.Key] != string.Empty ? "active" : "nonActive")">@option</label>
                         </li>
 
                         index++;
                     }
-                </ul>
+                </ul> 
             </div>
 
         </div>
@@ -38,9 +41,34 @@
 
 </div>
 
+<style>
+    .common-style {
+        display: block;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        cursor: pointer;
+    }
+
+    .common-style:hover {
+            background-color: #505661;
+    }
+
+
+    .active {
+        background-color: #005866;
+    }
+
+    .nonActive {
+        background-color: #6B7280;
+    }
+</style>
+
 @code {
     [Parameter]
     public EventCallback<string> ChangeFilterQuery { get; set; }
+
 
 
     private Dictionary<string, bool> dropdownStates = new()
@@ -59,6 +87,14 @@
             dropdownStates[keyValue.Key] = keyValue.Key == key ? !dropdownStates[keyValue.Key] : false;
         }
     }
+
+    private Dictionary<string, string> radioBoxActiveButtons = new()
+    {
+          {"Category", string.Empty },
+          {"Size", string.Empty },
+          {"Season", string.Empty },
+          {"Occasion", string.Empty }
+    };
 
     private Array FindEnumValues(string key)
     {
