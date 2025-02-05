@@ -5,6 +5,7 @@ using System.Net;
 using System.Text.Json;
 using System.Net.Http.Headers;
 using static System.Net.Mime.MediaTypeNames;
+using Azure;
 
 namespace FrontEnd.Http
 {
@@ -45,7 +46,7 @@ namespace FrontEnd.Http
 
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = HttpStatusCode.ServiceUnavailable;
+                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
 
             }
             catch (Exception ex)
@@ -85,26 +86,25 @@ namespace FrontEnd.Http
 
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = HttpStatusCode.ServiceUnavailable;
+                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Unknown Exception: {ex.Message}");
 
-                {
-                    result.HasError = true;
-                    result.ErrorMessage = ex.Message;
-                    result.StatusCode = HttpStatusCode.NotFound;
-                };
+                result.HasError = true;
+                result.ErrorMessage = ex.Message;
+                result.StatusCode = System.Net.HttpStatusCode.NotFound;
+
             }
             return result;
         }
 
-        public static async Task<Response<ClothingItem>> PostClothingItem(ClothingItem newClothingItem, IBrowserFile? imageFile)
-        {           
-
+        public static async Task<Response<ClothingItem>> PostClothingItem(ClothingItem newClothingItem, IBrowserFile imageFile)
+        {
             var result = new Response<ClothingItem>();
             try
+            {
                 Response<int> imageUploadResponse = await UploadImageAsync(imageFile);
                 if (imageUploadResponse.HasError)
                 {
@@ -112,12 +112,11 @@ namespace FrontEnd.Http
                     result.ErrorMessage = imageUploadResponse.ErrorMessage;
                     return result;
                 }
-                                
+
                 newClothingItem.ImageId = imageUploadResponse.ResponseObject;
 
-                
+
                 HttpResponseMessage response = await HttpClient.PostAsJsonAsync("ClothingItems", newClothingItem);
-                HttpResponseMessage response = await HttpClient.PostAsJsonAsync("clothing", item);
                 result.StatusCode = response.StatusCode;
 
                 if (!response.IsSuccessStatusCode)
@@ -137,18 +136,18 @@ namespace FrontEnd.Http
                 Console.WriteLine($"Http Request Failed: {ex.Message}");
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = HttpStatusCode.ServiceUnavailable;
+                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Unknown Exception: {ex.Message}");
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = HttpStatusCode.InternalServerError;
+                result.StatusCode = System.Net.HttpStatusCode.NotFound;
             }
             return result;
         }
-        public static async Task<Response<int>> UploadImageAsync(IBrowserFile? file)
+        public static async Task<Response<int>> UploadImageAsync(IBrowserFile file)
         {
             var result = new Response<int>();
 
@@ -182,8 +181,6 @@ namespace FrontEnd.Http
                     result.HasError = true;
                     result.ErrorMessage = $"Http Error: {response.StatusCode}";
                     result.ResponseObject = 0;
-
-                    Console.WriteLine("Image Upload Attempt Failure : " + result.ErrorMessage);
                 }
                 else
                 {
@@ -207,10 +204,10 @@ namespace FrontEnd.Http
                 result.ErrorMessage = ex.Message;
                 result.StatusCode = HttpStatusCode.NotFound;
                 result.ResponseObject = 0;
-
             }
+
             return result;
-      
+        }
 
 
         public static async Task<Response<ClothingItem?>> PutClothingItem(int id, ClothingItem updatedItem)
