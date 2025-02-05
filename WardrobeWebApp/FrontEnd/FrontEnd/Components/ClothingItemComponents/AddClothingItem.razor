@@ -8,8 +8,6 @@
 
 <div id="crud-modal" class="fixed inset-0 flex items-center justify-center bg-cover bg-center bg-no-repeat bg-opacity-50" style="background-image: url('/images/winter.png');">
     <div class=" bg-opacity-75 p-6 rounded-lg shadow-lg w-1/2 grid grid-cols-2 items-center gap-4">
-
-        <!-- Left Column: Image Preview -->
         <div class="flex justify-center items-center h-full">
             @if (!string.IsNullOrEmpty(FileDataUrl))
             {
@@ -22,24 +20,20 @@
         </div>
         <div>
             <h4 class="text-lg font-semibold mb-4 text-[#4b4b4b]">Details of the new clothing</h4>
-            <EditForm FormName="AddClothingItem" Model="newClothingItem" OnValidSubmit="HandleSubmit">
+            <EditForm  Model="newClothingItem" OnValidSubmit="HandleSubmit">
                 <DataAnnotationsValidator />
+                <ValidationSummary />
                 <div class="mb-2">
                     <label class="block font-medium text-[#4b4b4b]" for="name">Name</label>
                     <InputText id="name" @bind-Value="newClothingItem.Name" class="w-full p-2 border rounded" />
+                    <ValidationMessage For="@(() => newClothingItem.Name)" />
                 </div>
-            <!--
+
                 <div class="mb-2">
-                    <label class="block font-medium text-[#4b4b4b]" for="imageId">Image ID</label>
-                    <InputNumber id="imageId" @bind-Value="newClothingItem.ImageId" class="w-full p-2 border rounded" />
-                </div>
-            -->
-                <div class="mb-2">
-                    <label class="block font-medium text-[#4b4b4b]" for="imageId">Choose Image of your new Clothing</label>
+                    <label class="block font-medium text-[#4b4b4b]">Choose Image of your new Clothing</label>
                     <InputFile OnChange="HandleFileUpload" />
-                    <button @onclick="UploadFile" disabled="@isUploading">Upload</button>
-                    
                 </div>
+
                 <div class="mb-2 grid grid-cols-2 gap-2">
                     <div>
                         <label class="block font-medium text-[#4b4b4b]" for="category">Category</label>
@@ -49,16 +43,19 @@
                                 <option value="@category">@category</option>
                             }
                         </InputSelect>
+                        <ValidationMessage For="@(() => newClothingItem.Category)" />
                     </div>
                     <div>
                         <label class="block font-medium text-[#4b4b4b]" for="colour">Colour</label>
                         <InputText id="colour" @bind-Value="newClothingItem.Colour" class="w-full p-2 border rounded" />
+                        <ValidationMessage For="@(() => newClothingItem.Colour)" />
                     </div>
                 </div>
                 <div class="mb-2 grid grid-cols-2 gap-2">
                     <div>
                         <label class="block font-medium text-[#4b4b4b]" for="brand">Brand</label>
                         <InputText id="brand" @bind-Value="newClothingItem.Brand" class="w-full p-2 border rounded" />
+                        <ValidationMessage For="@(() => newClothingItem.Brand)" />
                     </div>
                     <div>
                         <label class="block font-medium text-[#4b4b4b]" for="size">Size</label>
@@ -68,6 +65,7 @@
                                 <option value="@size">@size</option>
                             }
                         </InputSelect>
+                        <ValidationMessage For="@(() => newClothingItem.Size)" />
                     </div>
                 </div>
                 <div class="mb-2 grid grid-cols-2 gap-2">
@@ -79,6 +77,7 @@
                                 <option value="@occasion">@occasion</option>
                             }
                         </InputSelect>
+                        <ValidationMessage For="@(() => newClothingItem.Occasion)" />
                     </div>
                     <div>
                         <label class="block font-medium text-[#4b4b4b]" for="season">Season</label>
@@ -88,18 +87,26 @@
                                 <option value="@season">@season</option>
                             }
                         </InputSelect>
+                        <ValidationMessage For="@(() => newClothingItem.Season)" />
                     </div>
                 </div>
                 <button type="submit" class="w-full bg-gray-100 hover:bg-blue-800 text-gray-900 p-2 rounded-lg">Submit</button>
             </EditForm>
-        <button @onclick="NavigateHome" class="mt-4 w-full bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg">Cancel</button>
-        </div>
+            <button @onclick="NavigateHome" class="mt-4 w-full bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg">Cancel</button>
+
+            <!-- Status Message -->
+            @if (!string.IsNullOrEmpty(statusMessage))
+            {
+                Console.WriteLine(statusMessage);
+                <div class="alert alert-info mt-3"> @statusMessage </div>
+            }
         </div>
     </div>
-<!-- Status Message -->
+
+</div>
 
 @code {
-    
+
     private ClothingItem newClothingItem = new();
 
     private List<string> Categories = Enum.GetNames(typeof(ClothingCategory)).ToList();
@@ -111,10 +118,9 @@
     private string FileName = string.Empty;
     private string FileDataUrl = string.Empty;
     private bool IsImage = false;
-    private string statusMessage = string.Empty;
+    public string statusMessage { get; set; } = string.Empty;
 
-    private IBrowserFile selectedFile;
-    private bool isUploading = false;
+    private IBrowserFile? selectedFile;
 
 
     private async Task HandleFileUpload(InputFileChangeEventArgs e)
@@ -136,13 +142,6 @@
             }
         }
     }
-     // public async Task<string> ConvertFileToBase64(IBrowserFile file)
-    // {
-    //     using var stream = file.OpenReadStream();
-    //     using var memoryStream = new MemoryStream();
-    //     await stream.CopyToAsync(memoryStream);
-    //     return Convert.ToBase64String(memoryStream.ToArray());
-    // }
 
     private async Task UploadFile()
     {
@@ -152,38 +151,37 @@
             return;
         }
 
-        isUploading = true;
         statusMessage = "Uploading...";
 
-        var uploadResult = await HttpManager.UploadImageAsync(selectedFile);
+        Response<int> uploadResult = await HttpManager.UploadImageAsync(selectedFile);
 
         if (uploadResult.HasError)
         {
             statusMessage = $"Error uploading file: {uploadResult.ErrorMessage}";
             Console.WriteLine(statusMessage);
         }
-        else
-        {
-            statusMessage = "File uploaded successfully!";
-        }
 
-        isUploading = false;
     }
+
     private async Task HandleSubmit()
     {
         // TODO: After User Login is done replace with actual UserID
         newClothingItem.UserId = 1;
-        var response = await HttpManager.PostClothingItem(newClothingItem);
 
-        if (response.HasError)
+        var response = await HttpManager.PostClothingItem(newClothingItem, selectedFile);
+
+        if (response.HasError) 
         {
             statusMessage = $"{response.StatusCode.ToString()}: {response.ErrorMessage}";
         }
+        else 
+        {
+            statusMessage = "Successfully added to your Wardrobe";
+        }
 
-        statusMessage = response.ErrorMessage;
-        newClothingItem = response.ResponseObject;
-        Console.WriteLine("Submitted:"+ statusMessage);
-
+        newClothingItem = new();
+        FileDataUrl = "";
+        selectedFile = null;
     }
     public async Task NavigateHome()
     {
