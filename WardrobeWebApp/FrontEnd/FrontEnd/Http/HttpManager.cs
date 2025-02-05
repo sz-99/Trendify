@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using System.Net;
 using System.Text.Json;
 using System.Net.Http.Headers;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace FrontEnd.Http
 {
@@ -179,6 +180,8 @@ namespace FrontEnd.Http
                     result.HasError = true;
                     result.ErrorMessage = $"Http Error: {response.StatusCode}";
                     result.ResponseObject = 0;
+
+                    Console.WriteLine("Image Upload Attempt Failure : " + result.ErrorMessage);
                 }
                 else
                 {
