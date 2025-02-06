@@ -7,7 +7,7 @@ namespace Backend.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class WeatherController : Controller
+    public class WeatherController : ControllerBase
     {
         IWeatherService _weatherService;
         public WeatherController(IWeatherService weatherService)
