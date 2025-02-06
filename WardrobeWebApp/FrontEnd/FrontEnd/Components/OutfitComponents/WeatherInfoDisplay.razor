@@ -1,0 +1,85 @@
+﻿@using Backend.Models
+
+
+<div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-400 to-blue-600 p-4">
+    <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
+        <!-- Input Field -->
+        <div class="flex items-center border-b-2 border-gray-300 py-2">
+            <input @bind="Location" @bind:event="oninput"
+                   class="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-2 px-2 leading-tight focus:outline-none"
+                   type="text" placeholder="Location" />
+            <i class="fas fa-search text-gray-500"></i>
+        </div>
+
+        <!-- Weather Info -->
+        @if (Weather != null)
+        {
+            <div class="mt-6 flex items-center justify-between">
+                <!-- Left Side: Weather Details -->
+                <div>
+                    <p class="text-lg font-semibold">@Weather?.Location</p>
+                    <p class="text-2xl font-bold text-gray-800">@Weather?.Temp °C</p>
+                    <p class="text-gray-600">Min: @Weather?.MinTemp °C | Max: @Weather?.MaxTemp °C</p>
+                    <p class="text-gray-600">Precipitation: @Weather?.Precipitation mm</p>
+                </div>
+
+                <!-- Right Side: Icon -->
+                <div class="flex flex-col items-center">
+                    <img src="@Weather?.ConditionIcon" alt="@Weather?.Condition" class="w-20 h-20" />
+                    <p class="text-gray-700">@Weather?.Condition</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private string Location { get; set; } = "";
+    private WeatherInfo? Weather { get; set; }
+    private CancellationTokenSource? cts;
+
+    private async Task GetWeather()
+    {
+        if (string.IsNullOrWhiteSpace(Location)) return;
+
+        // Cancel previous request to avoid multiple API calls
+        cts?.Cancel();
+        cts = new CancellationTokenSource();
+
+        try
+        {
+            await Task.Delay(500, cts.Token); // Add debounce delay
+
+            var response = await HttpManager.GetWeatherByLocation(Location);
+
+            if (response?.ResponseObject != null)
+            {
+
+                Weather = response.ResponseObject;
+            }
+        }
+        catch (TaskCanceledException)
+        {
+            
+        }
+    }
+
+    private class WeatherApiResponse
+    {
+        public CurrentWeather? current { get; set; }
+    }
+
+    private class CurrentWeather
+    {
+        public float temp_c { get; set; }
+        public float precip_mm { get; set; }
+        public WeatherCondition condition { get; set; } = new();
+    }
+
+    private class WeatherCondition
+    {
+        public string text { get; set; } = "";
+        public string icon { get; set; } = "";
+    }
+}
+
