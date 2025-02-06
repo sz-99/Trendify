@@ -329,7 +329,7 @@ namespace FrontEnd.Http
             {
                 HttpResponseMessage response = await HttpClient.GetAsync($"Weather/{location}");
                 result.StatusCode = response.StatusCode;
-
+               
                 if (!response.IsSuccessStatusCode)
                 {
                     result.HasError = true;

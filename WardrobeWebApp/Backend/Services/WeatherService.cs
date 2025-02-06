@@ -12,6 +12,7 @@ namespace Backend.Services
 
         public async Task<(ExecutionStatus, WeatherInfo?)> GetWeatherForecast(string location)
         {
+            Console.WriteLine("API k " + ApiKey);
            try
             {
                 string url = $"https://api.weatherapi.com/v1/forecast.json?key={ApiKey}&q={location}&days=1";
@@ -32,7 +33,7 @@ namespace Backend.Services
                     MinTemp = forecastDay.GetProperty("mintemp_c").GetSingle(),
                     MaxTemp = forecastDay.GetProperty("maxtemp_c").GetSingle(),
                     AvgTemp = forecastDay.GetProperty("avgtemp_c").GetSingle(),
-                    Precipication = forecastDay.GetProperty("totalprecip_mm").GetSingle(),
+                    Precipitation = forecastDay.GetProperty("totalprecip_mm").GetSingle(),
                     Condition = forecastDay.GetProperty("condition").GetProperty("text").GetString() ?? "Unknown",
                     ConditionIconUrl = "https:" + forecastDay.GetProperty("condition").GetProperty("icon")
                 };

@@ -69,7 +69,7 @@ namespace Backend.Services
 
            try
            {
-                if (weather.Precipication > 2.5 && weather.MaxTemp < 20 && weather.AvgTemp > 10)
+                if (weather.Precipitation > 2.5 && weather.MaxTemp < 20 && weather.AvgTemp > 10)
                 {
                     modifiedSelection.Add(GetRandomClothingItem(ClothingKind.Overall));
                 }

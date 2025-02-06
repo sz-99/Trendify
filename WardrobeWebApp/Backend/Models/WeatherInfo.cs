@@ -17,9 +17,9 @@ namespace Backend.Models
         [JsonPropertyName("maxTemp")]
 
         public float MaxTemp { get; set; }
-        [JsonPropertyName("precipication")]
+        [JsonPropertyName("Precipitation")]
 
-        public float Precipication { get; set; }
+        public float Precipitation { get; set; }
         [JsonPropertyName("condition")]
 
         public string Condition { get; set; }
