@@ -105,6 +105,7 @@ namespace FrontEnd.Http
 
         public static async Task<Response<ClothingItem>> PostClothingItem(ClothingItem newClothingItem, IBrowserFile? imageFile)
         {           
+
             var result = new Response<ClothingItem>();
             try
             {
@@ -117,6 +118,8 @@ namespace FrontEnd.Http
                 }
 
                 newClothingItem.ImageId = imageUploadResponse.ResponseObject;
+
+
 
                 HttpResponseMessage response = await HttpClient.PostAsJsonAsync("ClothingItems", newClothingItem);
                 result.StatusCode = response.StatusCode;
@@ -338,7 +341,6 @@ namespace FrontEnd.Http
 
                 result.ResponseObject = userLogin;
             }
-
             catch (HttpRequestException ex)
             {
                 Console.WriteLine($"Http Request Failed: {ex.Message}");
