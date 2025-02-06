@@ -26,16 +26,16 @@
                 @filterKeyValue.Key:&nbsp;@switch (filterKeyValue.Key)
                 {
                     case "Category":
-                        <span>@SelectedCategory</span>
+                        <span>@Category</span>
                         break;
                     case "Size":
-                        <span>@SelectedSize</span>
+                        <span>@Size</span>
                         break;
                     case "Season":
-                        <span>@SelectedSeason</span>
+                        <span>@Season</span>
                         break;
                     case "Occasion":
-                        <span>@SelectedOccasion</span>
+                        <span>@Occasion</span>
                         break;
                 }
 
@@ -64,7 +64,7 @@
 
                             <label id="@labelID" 
                             for="@inputID"
-                            @onclick="() => HandleFilterButtonClick(queryOptionButton, (int)option, filterKeyValue.Key)"
+                            @onclick="() => HandleFilterButtonClick((int)option, filterKeyValue.Key)"
                             class="common-style @(radioBoxActiveButtons[filterKeyValue.Key] == string.Empty ? "nonActive" : "active")">
                                 @option
                             </label>
@@ -115,10 +115,15 @@
         {"Occasion", false }
     };
 
-    private ClothingCategory SelectedCategory { get; set; }
-    private ClothingSize SelectedSize { get; set; }
-    private Season SelectedSeason { get; set; }
-    private Occasion SelectedOccasion { get; set; }
+    private ClothingCategory? Category { get; set; }
+    private ClothingSize? Size { get; set; }
+    private Season? Season { get; set; }
+    private Occasion? Occasion { get; set; }
+
+    private string? CategoryQuery { get => Category is null ? null : $"Category={(int)Category}"; }
+    private string? SizeQuery { get => Size is null ? null : $"Size={(int)Size}"; }
+    private string? SeasonQuery { get => Season is null ? null : $"Season={(int)Season}"; }
+    private string? OccasionQuery { get => Occasion is null ? null : $"Occasion={(int)Occasion}"; }
 
     private Dictionary<string, string> radioBoxActiveButtons = new();
 
@@ -132,32 +137,36 @@
         };
     }
 
+    private string GetQueryParams() {
+        return String.Join("&", [CategoryQuery, SizeQuery, SeasonQuery, OccasionQuery]);
+    }
+
     private void HideAllDropdowns() {
         foreach (var (key, value) in dropdownStates) {
             dropdownStates[key] = false;
         }
     }
 
-    private void HandleFilterButtonClick(string queryOptionButton, int option, string filterKey) {
-        ChangeFilterQuery.InvokeAsync(queryOptionButton);
-        radioBoxActiveButtons[filterKey] = option.ToString();
+    private void HandleFilterButtonClick(int option, string filterKey) {
 
         if (filterKey == "Category") 
         {
-            SelectedCategory = (ClothingCategory)option;
+            Category = (ClothingCategory)option;
         }
         else if (filterKey == "Size")
         {
-            SelectedSize = (ClothingSize)option;
+            Size = (ClothingSize)option;
         }
         else if (filterKey == "Season") 
         {
-            SelectedSeason = (Season)option;
+            Season = (Season)option;
         }
         else if (filterKey == "Occasion")
         {
-            SelectedOccasion = (Occasion)option;
+            Occasion = (Occasion)option;
         }
+        ChangeFilterQuery.InvokeAsync(GetQueryParams());
+        radioBoxActiveButtons[filterKey] = option.ToString();
 
         HideAllDropdowns();
     }
@@ -170,12 +179,12 @@
         }
     }
 
-    private Array GetEnumValues(string key) => key switch
+    private List<object> GetEnumValues(string key) => key switch
     {
-        "Category" => Enum.GetValues(typeof(ClothingCategory)),
-        "Size" => Enum.GetValues(typeof(ClothingSize)),
-        "Season" => Enum.GetValues(typeof(Season)),
-        "Occasion" => Enum.GetValues(typeof(Occasion)),
+        "Category" => Enum.GetValues(typeof(ClothingCategory)).Cast<object>().ToList(),
+        "Size" => Enum.GetValues(typeof(ClothingSize)).Cast<object>().ToList(),
+        "Season" => Enum.GetValues(typeof(Season)).Cast<object>().ToList(),
+        "Occasion" => Enum.GetValues(typeof(Occasion)).Cast<object>().ToList(),
         _ => throw new ArgumentException("Enum not recognised.")
     };
 
