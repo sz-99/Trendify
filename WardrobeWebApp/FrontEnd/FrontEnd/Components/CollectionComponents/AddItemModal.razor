@@ -1,0 +1,207 @@
+﻿@using Backend.Models
+@using Backend.Models.Enums
+@using FrontEnd.FrontendModels
+@using FrontEnd.Components.ClothingItemComponents.AddClothingItemComponents
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<div class="@(_hidden ? "hidden" : "") fixed top-0 left-0 z-10 bg-gray-500 bg-opacity-50 h-full w-full flex items-center justify-center">
+    <div id="crud-modal" class="z-20 bg-white w-1/2 rounded-xl p-6 shadow-lg">
+    <div class=" bg-opacity-75 p-6 rounded-lg w-1/2 grid grid-cols-2 items-center gap-4 w-full relative">
+            <span class="absolute top-0 right-4 text-2xl cursor-pointer text-gray-500 hover:text-gray-600" @onclick="() => HideModal.InvokeAsync()">&times;</span>
+        <!--Image Container-->
+        <div class="flex justify-center items-center h-full">
+            @if (!string.IsNullOrEmpty(FileDataUrl))
+            {
+                <img src="@FileDataUrl" alt="Uploaded Image" class="max-h-full object-contain rounded-lg shadow-md" />
+            }
+            else
+            {
+                <p class="text-gray-500">No Image Uploaded</p>
+            }
+        </div>
+        <!--Input Container-->
+        <div>
+            <h4 class="text-lg font-semibold mb-3 text-[#4b4b4b]">Please enter details for the new clothing item:</h4>
+            <EditForm Model="NewClothingItem" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <ErrorMessageAlert Message="@ErrorMessage" />
+                <SuccessMessage Message="@SuccessMessage" />
+
+                <div class="mb-2">
+                    <label class="block font-medium text-[#4b4b4b]" for="name">Name:</label>
+                    <InputText id="name" @onclick="ClearSuccessMessage" @bind-Value="NewClothingItem.Name" class="w-full p-2 border rounded" />
+                    <ValidationMessage For="@(() => NewClothingItem.Name)" />
+                </div>
+
+                <div class="mb-2">
+                    <label class="mb-1 block font-medium text-[#4b4b4b]">Choose an image:</label>
+                    <InputFile OnChange="HandleFileUpload" />
+                </div>
+
+                <div class="mb-1 grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-medium text-[#4b4b4b]" for="category">Category:</label>
+                        <InputSelect id="category" @onclick="ClearSuccessMessage" @bind-Value="NewClothingItem.Category" class="w-full p-2 border rounded">
+                            @foreach (var category in Categories)
+                            {
+                                <option value="@category">@category</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => NewClothingItem.Category)" />
+                    </div>
+                    <div>
+                        <label class="block font-medium text-[#4b4b4b]" for="colour">Colour:</label>
+                        <InputText id="colour" @onclick="ClearSuccessMessage" @bind-Value="NewClothingItem.Colour" class="w-full p-2 border rounded" />
+                        <ValidationMessage For="@(() => NewClothingItem.Colour)" />
+                    </div>
+                </div>
+                <div class="mb-1 grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-medium text-[#4b4b4b]" for="brand">Brand:</label>
+                        <InputText id="brand" @onclick="ClearSuccessMessage" @bind-Value="NewClothingItem.Brand" class="w-full p-2 border rounded" />
+                        <ValidationMessage For="@(() => NewClothingItem.Brand)" />
+                    </div>
+                    <div>
+                        <label class="block font-medium text-[#4b4b4b]" for="size">Size:</label>
+                        <InputSelect id="size" @onclick="ClearSuccessMessage" @bind-Value="NewClothingItem.Size" class="w-full p-2 border rounded">
+                            @foreach (var size in Sizes)
+                            {
+                                <option value="@size">@size</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => NewClothingItem.Size)" />
+                    </div>
+                </div>
+                <div class="mb-1 grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-medium text-[#4b4b4b]" for="occasion">Occasion:</label>
+                        <InputSelect id="occasion" @onclick="ClearSuccessMessage" @bind-Value="NewClothingItem.Occasion" class="w-full p-2 border rounded">
+                            @foreach (var occasion in Occasions)
+                            {
+                                <option value="@occasion">@occasion</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => NewClothingItem.Occasion)" />
+                    </div>
+                    <div>
+                        <label class="block font-medium text-[#4b4b4b]" for="season">Season:</label>
+                        <InputSelect id="season" @onclick="ClearSuccessMessage" @bind-Value="NewClothingItem.Season" class="w-full p-2 border rounded">
+                            @foreach (var season in Seasons)
+                            {
+                                <option value="@season">@season</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => NewClothingItem.Season)" />
+                    </div>
+                </div>
+                <button type="submit" class="mt-3 w-full bg-gray-500 hover:bg-blue-800 text-white p-2 rounded-lg">Submit</button>
+            </EditForm>
+            <button @onclick="ClearAll" class="my-1 w-full bg-gray-500 hover:bg-blue-800 text-white p-2 rounded-lg">Clear</button>
+            <button @onclick="NavigateHome" class="my-1 w-full bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg">Finish</button>
+        </div>
+    </div>
+
+</div>
+</div>
+
+@code {
+
+    [Parameter]
+    public bool _hidden { get; set; }
+
+    [Parameter]
+    public EventCallback HideModal { get; set; }
+
+    private ClothingItem NewClothingItem { get; set; } = new();
+
+    private List<string> Categories = Enum.GetNames(typeof(ClothingCategory)).ToList();
+    private List<string> Sizes = Enum.GetNames(typeof(ClothingSize)).ToList();
+    private List<string> Occasions = Enum.GetNames(typeof(Occasion)).ToList();
+    private List<string> Seasons = Enum.GetNames(typeof(Season)).ToList();
+
+    private string FileName = string.Empty;
+    private string FileDataUrl = string.Empty;
+    private ImageUploadModel? ImageUpload { get; set; }
+    private bool IsImage { get; set; } = false;
+    public string SuccessMessage { get; set; } = string.Empty;
+    public string ErrorMessage { get; set; } = string.Empty;
+
+    private IBrowserFile? SelectedFile { get; set; } = null;
+
+    private async Task HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        SelectedFile = e.File;
+        if (SelectedFile != null)
+        {
+            FileName = SelectedFile.Name;
+            var format = SelectedFile.ContentType;
+            using var stream = SelectedFile.OpenReadStream(1048576);
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            var fileBytes = memoryStream.ToArray();
+
+            if (format.StartsWith("image/"))
+            {
+                IsImage = true;
+                FileDataUrl = $"data:{format};base64,{Convert.ToBase64String(fileBytes)}";
+                ErrorMessage = String.Empty;
+            }
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        // TODO: After User Login is done replace with actual UserID
+        NewClothingItem.UserId = 1;
+        SuccessMessage = "";
+
+        var response = await HttpManager.PostClothingItem(NewClothingItem, SelectedFile);
+
+        if (response.HasError)
+        {
+            ErrorMessage = $"{response.ErrorMessage}";
+            return;
+        }
+        else
+        {
+            SuccessMessage = $"Successfully added '{NewClothingItem.Name}' to your Wardrobe";
+        }
+
+        ClearFields();
+    }
+
+    public async Task NavigateHome()
+    {
+        var isConfirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to leave without saving?");
+        if (isConfirmed)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+    private void ClearMessages()
+    {
+        ClearErrorMessage();
+        ClearSuccessMessage();
+    }
+
+    private void ClearErrorMessage() => ErrorMessage = String.Empty;
+
+    private void ClearSuccessMessage() => SuccessMessage = String.Empty;
+
+    private void ClearFields()
+    {
+        NewClothingItem = new();
+        FileDataUrl = String.Empty;
+        SelectedFile = null;
+    }
+
+    private void ClearAll()
+    {
+        ClearFields();
+        ClearMessages();
+    }
+
+}

@@ -5,10 +5,18 @@
 @using FrontEnd.Components.CollectionComponents
 
 <PageTitle>My Collection</PageTitle>
-<CollectionsTopMenu></CollectionsTopMenu>
-<ClothingDataLoader></ClothingDataLoader>
+<CollectionsTopMenu _hidden="@_hidden" ShowModal="DisplayModal"></CollectionsTopMenu>
+<AddItemModal _hidden="_hidden" HideModal="HideModal"></AddItemModal>
 
 @code {
- 
+    private bool _hidden = true;
 
+    private void DisplayModal()
+    {
+        _hidden = false;
+    }
+    public void HideModal()
+    {
+        _hidden = true;
+    }
 }
