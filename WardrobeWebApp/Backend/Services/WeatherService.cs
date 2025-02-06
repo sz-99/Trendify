@@ -33,8 +33,8 @@ namespace Backend.Services
                     MaxTemp = forecastDay.GetProperty("maxtemp_c").GetSingle(),
                     AvgTemp = forecastDay.GetProperty("avgtemp_c").GetSingle(),
                     Precipication = forecastDay.GetProperty("totalprecip_mm").GetSingle(),
-                    Condition = forecastDay.GetProperty("condition").GetProperty("text").GetString() ?? "Unknown"
-
+                    Condition = forecastDay.GetProperty("condition").GetProperty("text").GetString() ?? "Unknown",
+                    ConditionIconUrl = "https:" + forecastDay.GetProperty("condition").GetProperty("icon")
                 };
                 return (ExecutionStatus.SUCCESS, weather);
             }
