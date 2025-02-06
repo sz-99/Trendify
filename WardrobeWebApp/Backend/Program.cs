@@ -1,5 +1,6 @@
 
 using Backend;
+using Backend.Repositories;
 using Backend.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,6 +43,8 @@ builder.Services.AddScoped<IWeatherService, WeatherService>();
 
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
+builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 
 var app = builder.Build();
@@ -49,7 +52,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<WardrobeDBContext>();
-    Backend.DBContext.DatabaseSeeding.SeedDatabase(context);
+    //Backend.DBContext.DatabaseSeeding.SeedDatabase(context);
 }
 
 // Configure the HTTP request pipeline.
