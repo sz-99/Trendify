@@ -1,0 +1,13 @@
+﻿@rendermode InteractiveServer
+
+@if (!string.IsNullOrEmpty(Message))
+{
+    <SuccessMessage Message="@Message" />
+}
+
+
+@code {
+    [Parameter]
+    public string? Message { get; set; }
+
+}
