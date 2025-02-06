@@ -5,12 +5,14 @@
 @using FrontEnd.Components.CollectionComponents
 
 <PageTitle>My Collection</PageTitle>
-<CollectionsTopMenu _hidden="@_hidden" ShowModal="DisplayModal"></CollectionsTopMenu>
+<CollectionsTopMenu _hidden="@_hidden" ShowModal="DisplayModal" ChangeFilterQuery="UpdateQueryParameters"></CollectionsTopMenu>
 <AddItemModal _hidden="_hidden" HideModal="HideModal"></AddItemModal>
-<ClothingDataLoader></ClothingDataLoader>
+<ClothingDataLoader FilterQuery="@QueryParameters"></ClothingDataLoader>
 
 @code {
     private bool _hidden = true;
+
+    public string QueryParameters { get; set; } = string.Empty;
 
     private void DisplayModal()
     {
@@ -19,5 +21,10 @@
     public void HideModal()
     {
         _hidden = true;
+    }
+    
+    public void UpdateQueryParameters(string query)
+    {
+        QueryParameters = query;
     }
 }
