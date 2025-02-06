@@ -21,7 +21,22 @@
                         items-center" 
             type="button">
 
-                @filterKeyValue.Key: @radioBoxActiveButtons[filterKeyValue.Key]
+                @filterKeyValue.Key:&nbsp;@switch (filterKeyValue.Key)
+                {
+                    case "Category":
+                        <span>@SelectedCategory</span>
+                        break;
+                    case "Size":
+                        <span>@SelectedSize</span>
+                        break;
+                    case "Season":
+                        <span>@SelectedSeason</span>
+                        break;
+                    case "Occasion":
+                        <span>@SelectedOccasion</span>
+                        break;
+                }
+
                 <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
                 </svg>
@@ -98,6 +113,11 @@
         {"Occasion", false }
     };
 
+    private int SelectedCategory { get; set; }
+    private int SelectedSize { get; set; }
+    private int SelectedSeason { get; set; }
+    private int SelectedOccasion { get; set; }
+
     private Dictionary<string, string> radioBoxActiveButtons = new();
 
     protected override void OnInitialized() {
@@ -116,11 +136,27 @@
         }
     }
 
-
-
     private void HandleFilterButtonClick(string queryOptionButton, int option, string filterKey) {
         ChangeFilterQuery.InvokeAsync(queryOptionButton);
         radioBoxActiveButtons[filterKey] = option.ToString();
+
+        if (filterKey == "Category") 
+        {
+            SelectedCategory = option;
+        }
+        else if (filterKey == "Size")
+        {
+            SelectedSize = option;
+        }
+        else if (filterKey == "Season") 
+        {
+            SelectedSeason = option;
+        }
+        else if (filterKey == "Occasion")
+        {
+            SelectedOccasion = option;
+        }
+
         HideAllDropdowns();
     }
 

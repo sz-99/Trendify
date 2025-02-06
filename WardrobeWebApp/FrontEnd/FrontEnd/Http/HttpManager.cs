@@ -3,8 +3,7 @@ using Backend.Models;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Net;
 using System.Net.Http.Headers;
-using static System.Net.Mime.MediaTypeNames;
-using Azure;
+using System.Text.Json;
 
 namespace FrontEnd.Http
 {
@@ -45,7 +44,7 @@ namespace FrontEnd.Http
 
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
+                result.StatusCode = HttpStatusCode.ServiceUnavailable;
 
             }
             catch (Exception ex)
@@ -55,7 +54,7 @@ namespace FrontEnd.Http
                 {
                     result.HasError = true;
                     result.ErrorMessage = ex.Message;
-                    result.StatusCode = System.Net.HttpStatusCode.NotFound;
+                    result.StatusCode = HttpStatusCode.NotFound;
                     return result;
                 };
             }
@@ -89,7 +88,7 @@ namespace FrontEnd.Http
 
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
+                result.StatusCode = HttpStatusCode.ServiceUnavailable;
 
             }
             catch (Exception ex)
@@ -99,7 +98,7 @@ namespace FrontEnd.Http
                 {
                     result.HasError = true;
                     result.ErrorMessage = ex.Message;
-                    result.StatusCode = System.Net.HttpStatusCode.NotFound;
+                    result.StatusCode = HttpStatusCode.NotFound;
                 };
             }
             return result;
@@ -130,7 +129,7 @@ namespace FrontEnd.Http
 
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
+                result.StatusCode = HttpStatusCode.ServiceUnavailable;
             }
             catch (Exception ex)
             {
@@ -138,7 +137,7 @@ namespace FrontEnd.Http
 
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = System.Net.HttpStatusCode.NotFound;
+                result.StatusCode = HttpStatusCode.NotFound;
 
             }
             return result;
@@ -183,14 +182,14 @@ namespace FrontEnd.Http
                 Console.WriteLine($"Http Request Failed: {ex.Message}");
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
+                result.StatusCode = HttpStatusCode.ServiceUnavailable;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Unknown Exception: {ex.Message}");
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = System.Net.HttpStatusCode.NotFound;
+                result.StatusCode = HttpStatusCode.NotFound;
             }
             return result;
         }
@@ -289,7 +288,7 @@ namespace FrontEnd.Http
                 Console.WriteLine($"Unknown Exception: {ex.Message}");
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = System.Net.HttpStatusCode.NotFound;
+                result.StatusCode = HttpStatusCode.NotFound;
             }
             return result;
         }
@@ -354,14 +353,14 @@ namespace FrontEnd.Http
                 Console.WriteLine($"Http Request Failed: {ex.Message}");
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
+                result.StatusCode = HttpStatusCode.ServiceUnavailable;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Unknown Exception: {ex.Message}");
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = System.Net.HttpStatusCode.NotFound;
+                result.StatusCode = HttpStatusCode.NotFound;
             }
             return result;
         }
@@ -397,7 +396,7 @@ namespace FrontEnd.Http
                 Console.WriteLine($"Unknown Exception: {ex.Message}");
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = System.Net.HttpStatusCode.NotFound;
+                result.StatusCode = HttpStatusCode.NotFound;
             }
             return result;
         }
