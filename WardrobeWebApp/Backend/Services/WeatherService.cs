@@ -12,7 +12,6 @@ namespace Backend.Services
 
         public async Task<(ExecutionStatus, WeatherInfo?)> GetWeatherForecast(string location)
         {
-            Console.WriteLine("API k " + ApiKey);
            try
             {
                 string url = $"https://api.weatherapi.com/v1/forecast.json?key={ApiKey}&q={location}&days=1";
