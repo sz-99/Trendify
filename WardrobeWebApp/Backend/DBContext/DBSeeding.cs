@@ -1,45 +1,38 @@
 ﻿using Backend.Models.Enums;
 using Backend.Models;
-using static System.Net.Mime.MediaTypeNames;
-using System.Drawing;
 
 namespace Backend.DBContext
 {
     public class DatabaseSeeding
     {
-        public static void SeedDatabase(WardrobeDBContext context)
+        public static void SeedClothingItems(WardrobeDBContext context)
         {
             if (!context.ClothingItems.Any())
             {
                 context.ClothingItems.AddRange(
                     new Models.ClothingItem()
-                    { Id = 1, ImageId = 1, UserId = 1, Name = "My Blue Shirt", Brand = "Hugo Boss", Category = ClothingCategory.Shirt, Colour = "#A5D4DC", Occasion = Occasion.Formal, Season = Season.Summer, Size = ClothingSize.M },
+                    { ImageId = 1, UserId = 1, Name = "My Black trousers", Brand = "Hugo Boss", Category = ClothingCategory.Trousers, Colour = "Black", Occasion = Occasion.Home, Season = Season.Autumn, Size = ClothingSize.M },
                     new Models.ClothingItem()
-                    { Id = 2, ImageId = 2, UserId = 1, Name = "My Black Trousers", Brand = "Marks & Spencers", Category = ClothingCategory.Trousers, Colour = "#010101", Occasion = Occasion.Formal, Season = Season.Winter, Size = ClothingSize.M },
+                    { ImageId = 2, UserId = 1, Name = "My Black Shirt", Brand = "Nike", Category = ClothingCategory.Shirt, Colour = "Black", Occasion = Occasion.Home, Season = Season.Summer, Size = ClothingSize.M },
                     new Models.ClothingItem()
-                    { Id = 3, ImageId = 3, UserId = 2, Name = "My Red Jacket", Brand = "Supreme", Category = ClothingCategory.Coat, Colour = "#C90505", Occasion = Occasion.Formal, Season = Season.Winter, Size = ClothingSize.M },
-                    new Models.ClothingItem() 
-                    { Id = 4, ImageId = 1, UserId = 1, Name = "My Blue Shirt", Brand = "Hugo Boss", Category = ClothingCategory.Shirt, Colour = "#A5D4DC", Occasion = Occasion.Formal, Season = Season.Summer, Size = ClothingSize.M},
+                    { ImageId = 3, UserId = 2, Name = "My Hoodie", Brand = "Supreme", Category = ClothingCategory.Jumper, Colour = "Black", Occasion = Occasion.Sport, Season = Season.Winter, Size = ClothingSize.L },
                     new Models.ClothingItem()
-                    { Id = 5, ImageId = 2, UserId = 1, Name = "My Knit Jumper", Brand = "Marks & Spencers", Category = Models.Enums.ClothingCategory.Jumper, Colour = "#010101", Occasion = Models.Enums.Occasion.DIY, Season = Models.Enums.Season.Winter, Size = Models.Enums.ClothingSize.M },
+                    { ImageId = 4, UserId = 1, Name = "My Pink Frock", Brand = "Hugo Boss", Category = ClothingCategory.Dress, Colour = "Pink", Occasion = Occasion.Party, Season = Season.Summer, Size = ClothingSize.M },
                     new Models.ClothingItem()
-                    { Id = 6, ImageId = 3, UserId = 2, Name = "Short Velvet Dungaree ", Brand = "Supreme", Category = Models.Enums.ClothingCategory.Dungaree, Colour = "#C90505", Occasion = Models.Enums.Occasion.Home, Season = Models.Enums.Season.Summer, Size = Models.Enums.ClothingSize.M },
+                    { ImageId = 5, UserId = 1, Name = "My Brown PoloShirt", Brand = "Marks & Spencers", Category = ClothingCategory.Shirt, Colour = "Brown", Occasion = Occasion.DIY, Season = Season.Winter, Size = ClothingSize.M },
                     new Models.ClothingItem()
-                    { Id = 7, ImageId = 3, UserId = 2, Name = "My Denim Dungaree", Brand = "Levi's", Category = Models.Enums.ClothingCategory.Dungaree, Colour = "#C90505", Occasion = Models.Enums.Occasion.Formal, Season = Models.Enums.Season.Winter, Size = Models.Enums.ClothingSize.M },
+                    { ImageId = 6, UserId = 2, Name = "Yellow and white poloshirt", Brand = "Supreme", Category = ClothingCategory.Shirt, Colour = "Yellow", Occasion = Occasion.Home, Season = Season.Summer, Size = ClothingSize.M },
                     new Models.ClothingItem()
-                    { Id = 8, ImageId = 3, UserId = 2, Name = "My Expensive Cashmere Coat", Brand = "MaxMara", Category = Models.Enums.ClothingCategory.Coat, Colour = "#C90505", Occasion = Models.Enums.Occasion.Party, Season = Models.Enums.Season.Winter, Size = Models.Enums.ClothingSize.M },
+                    { ImageId = 7, UserId = 2, Name = "Rain Jacket", Brand = "Levi's", Category = ClothingCategory.Coat, Colour = "Blue", Occasion = Occasion.Sport, Season = Season.Winter, Size = ClothingSize.M },
                     new Models.ClothingItem()
-                    { Id = 9, ImageId = 7, UserId = 5, Name = "Flare Skirt", Brand = "Dries Van Noten", Category = Models.Enums.ClothingCategory.Skirt, Colour = "#C90505", Occasion = Models.Enums.Occasion.Party, Season = Models.Enums.Season.Autumn, Size = Models.Enums.ClothingSize.M },
-                    new Models.ClothingItem()
-                    { Id = 10, ImageId = 11, UserId = 1, Name = "My Wool Blend Jumper", Brand = "Marks & Spencers", Category = Models.Enums.ClothingCategory.Jumper, Colour = "#010101", Occasion = Models.Enums.Occasion.DIY, Season = Models.Enums.Season.Winter, Size = Models.Enums.ClothingSize.M },
-                    new Models.ClothingItem()
-                    { Id = 11, ImageId = 2, UserId = 1, Name = "Bling bling Sari", Brand = "Made by Me", Category = Models.Enums.ClothingCategory.Sari, Colour = "#010101", Occasion = Models.Enums.Occasion.DIY, Season = Models.Enums.Season.Spring, Size = Models.Enums.ClothingSize.M },
-                    new Models.ClothingItem()
-                    { Id = 12, ImageId = 2, UserId = 1, Name = "mini sparkly dress", Brand = "urban outfitters", Category = Models.Enums.ClothingCategory.Dress, Colour = "#010101", Occasion = Models.Enums.Occasion.DIY, Season = Models.Enums.Season.Summer, Size = Models.Enums.ClothingSize.M }
+                    { ImageId = 8, UserId = 2, Name = "SPorts T-shirt", Brand = "MaxMara", Category = ClothingCategory.Coat, Colour = "Orange", Occasion = Occasion.Sport, Season = Season.Winter, Size = ClothingSize.M }
                     );
                 context.SaveChanges();
             }
+        }
 
+        public static void SeedLogins(WardrobeDBContext context)
+        {
             if (!context.UserLogins.Any())
             {
                 context.UserLogins.AddRange(
@@ -50,6 +43,31 @@ namespace Backend.DBContext
                 );
                 context.SaveChanges();
             }
+        }
+
+        public static void SeedImageLocations(WardrobeDBContext context)
+        {
+            if (!context.ImageLocations.Any())
+            {
+                context.ImageLocations.AddRange(
+                    new ImageLocation(null, @".\Resources\Images\BlackPant.jpg", "BlackPant.jpg"),
+                    new ImageLocation(null, @".\Resources\Images\blacktshirtnike.jpg", "blacktshirtnike.jpg"),
+                    new ImageLocation(null, @".\Resources\Images\Hoodie.jpg", "Hoodie.jpg"),
+                    new ImageLocation(null, @".\Resources\Images\pinkfrock-sleeveless.jpg", "pinkfrock-sleeveless.jpg"),
+                    new ImageLocation(null, @".\Resources\Images\PoloBrown.jpg", "PoloBrown.jpg"),
+                    new ImageLocation(null, @".\Resources\Images\PoloYellowwhite.jpg", "PoloYellowwhite.jpg"),
+                    new ImageLocation(null, @".\Resources\Images\RainJacket.jpg", "RainJacket.jpg"),
+                    new ImageLocation(null, @".\Resources\Images\tshirt-sports.jpg", "tshirt-sports.jpg")
+                );
+                context.SaveChanges();
+            };
+        }
+
+        public static void SeedDatabase(WardrobeDBContext context)
+        {
+            SeedClothingItems(context);
+            SeedImageLocations(context);
+            SeedLogins(context);
         }
     }
 }
