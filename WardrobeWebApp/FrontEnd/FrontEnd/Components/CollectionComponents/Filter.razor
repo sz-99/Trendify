@@ -1,45 +1,128 @@
-﻿@rendermode InteractiveServer
+﻿<div class="container w-full h-8 flex flex-row items-center justify-center mt-8 space-x-4">
 
-<div class="container w-full h-8 flex flex-row items-center justify-center mt-8 space-x-4">
-
-    @foreach(var keyValue in dropdownStates)
+    @foreach(var filterKeyValue in dropdownStates)
     {
         <div class="flex flex-col relative h-full">
 
-            <button @onclick="() => ToggleDropdownStates(keyValue.Key)" id="@keyValue.Key" class="h-full text-white bg-stone-400 hover:bg-stone-500 font-medium rounded-xl text-sm px-5 text-center inline-flex items-center" type="button">
-                @keyValue.Key <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+            <!--Button-->
+            <button 
+            @onclick="() => ToggleDropdownStates(filterKeyValue.Key)" 
+            id="@filterKeyValue.Key" 
+            class="h-full 
+                        text-white 
+                        bg-stone-400 
+                        hover:bg-stone-500 
+                        font-medium 
+                        rounded-xl 
+                        text-sm 
+                        px-5 
+                        text-center 
+                        inline-flex 
+                        items-center" 
+            type="button">
+
+                @filterKeyValue.Key: @radioBoxActiveButtons[filterKeyValue.Key]
+                <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
                 </svg>
             </button>
 
-
-            <!-- Dropdown menu -->
-            <div id="Category-dropdown" class="z-10 absolute left-0 mt-2 @(dropdownStates[keyValue.Key] ? "" : "hidden") bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700">
+            <!--Dropdown Hidden/Visible-->
+            <div @onclick:stopPropagation="true" id="Category-dropdown" class="z-10 absolute left-0 mt-2 @(dropdownStates[filterKeyValue.Key] ? "" : "hidden") bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 filter-dropdowns">
                 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-                    @foreach (var option in FindEnumValues(keyValue.Key))
-                    {
-                        <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 bg-gray-900 dark:hover:bg-gray-600 dark:hover:text-white">@option</a>
-                        </li>
+
+                    @{
+                        int index = 0;
                     }
-                 
-                   
-                </ul>
+
+                    @foreach (var option in GetEnumValues(filterKeyValue.Key))
+                    {
+                        string queryOptionButton = filterKeyValue.Key.ToLower() + "=" + index;
+
+                        string inputID = queryOptionButton + "Input";
+                        string labelID = queryOptionButton + "Label";
+
+                        <li tabindex="-1" @onfocusout=HideAllDropdowns>
+                            <input type="radio" id="@inputID" name="@filterKeyValue.Key" class="hidden" @bind="@radioBoxActiveButtons[filterKeyValue.Key]">
+
+                            <label id="@labelID" 
+                            for="@inputID"
+                            @onclick="() => HandleFilterButtonClick(queryOptionButton, (int)option, filterKeyValue.Key)"
+                            class="common-style @(radioBoxActiveButtons[filterKeyValue.Key] == string.Empty ? "nonActive" : "active")">
+                                @option
+                            </label>
+                        </li>
+
+                        index++;
+                    }
+                </ul> 
             </div>
+
         </div>
     }
 
 </div>
 
+<style>
+    .common-style {
+    display: block;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    cursor: pointer;
+    }
+
+    .common-style:hover {
+    background-color: #505661;
+    }
+
+    .active {
+    background-color: #005866;
+    }
+
+    .nonActive {
+    background-color: #6B7280;
+    }
+</style>
+
 @code {
+    [Parameter]
+    public EventCallback<string> ChangeFilterQuery { get; set; }
+
     private Dictionary<string, bool> dropdownStates = new()
     {
         {"Category", false },
         {"Size", false },
         {"Season", false },
         {"Occasion", false }
-
     };
+
+    private Dictionary<string, string> radioBoxActiveButtons = new();
+
+    protected override void OnInitialized() {
+        radioBoxActiveButtons = new()
+        {
+            {"Category", string.Empty },
+            {"Size", string.Empty },
+            {"Season", string.Empty },
+            {"Occasion", string.Empty }
+        };
+    }
+
+    private void HideAllDropdowns() {
+        foreach (var (key, value) in dropdownStates) {
+            dropdownStates[key] = false;
+        }
+    }
+
+
+
+    private void HandleFilterButtonClick(string queryOptionButton, int option, string filterKey) {
+        ChangeFilterQuery.InvokeAsync(queryOptionButton);
+        radioBoxActiveButtons[filterKey] = option.ToString();
+        HideAllDropdowns();
+    }
 
     private void ToggleDropdownStates(string key)
     {
@@ -49,17 +132,13 @@
         }
     }
 
-    private Array FindEnumValues(string key)
+    private Array GetEnumValues(string key) => key switch
     {
-        return key switch
-        {
-            "Category" => Enum.GetValues(typeof(Backend.Models.Enums.ClothingCategory)),
-            "Size" => Enum.GetValues(typeof(Backend.Models.Enums.ClothingSize)),
-            "Season" => Enum.GetValues(typeof(Backend.Models.Enums.Season)),
-            "Occasion" => Enum.GetValues(typeof(Backend.Models.Enums.Occasion)),
-            _ => throw new ArgumentException("Enum not recognised.")
-        };
-       
-    }
+        "Category" => Enum.GetValues(typeof(Backend.Models.Enums.ClothingCategory)),
+        "Size" => Enum.GetValues(typeof(Backend.Models.Enums.ClothingSize)),
+        "Season" => Enum.GetValues(typeof(Backend.Models.Enums.Season)),
+        "Occasion" => Enum.GetValues(typeof(Backend.Models.Enums.Occasion)),
+        _ => throw new ArgumentException("Enum not recognised.")
+    };
 
 }
