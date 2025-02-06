@@ -1,10 +1,10 @@
 ﻿@using Backend.Models
 @rendermode InteractiveServer
-<div>
+<div class="transition-transform duration-300 ease-in-out transition-transform duration-300 ease-in-outrelative @(isHidden ? "" : "scale-105 z-10")" @onmouseover="() => isHidden = false" @onmouseleave="() => isHidden = true">
 
-    <div class="max-w-sm w-full bg-amber-700 border border-gray-200 rounded-lg shadow-sm dark:bg-grey-800 dark:border-grey-700">
+    <div class="max-w-sm w-full rounded-t-lg shadow-sm dark:bg-grey-800 dark:border-grey-700">
 
-        <div class="relative group w-full">
+        <div class="relative w-full">
             <figure class="w-full">
                 @if (FileDataUrl == null)
                 {
@@ -12,13 +12,11 @@
                 }
                 else
                 {
-                    <img src="@FileDataUrl" alt="@imageAlt" class="w-full object-cover rounded-lg shadow-md" />
+                    <img src="@FileDataUrl" alt="@imageAlt" class="w-full object-cover @(isHidden ? "rounded-lg" : "rounded-t-lg") shadow-md" />
                 }
             </figure>
 
-            <button @onclick="ToggleVisibility" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 w-full">
-                Click Me
-            </button>
+           
         </div>
 
     </div>
@@ -26,18 +24,21 @@
 
     @if (!isHidden)
     {
-        <div class="w-full max-w-sm pt-4 bg-gray-200">
-            <h1 class="text-xl font-bold text-center">@clothing.Name</h1>
+        <div class="w-full max-w-sm pt-4 bg-white absolute top-100 left-0 rounded-b-lg z-10">
+            <h1 class="p-2 text-xl font-bold">@clothing.Name</h1>
             <div class="w-full">
                 <ul class="w-full space-y-2">
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Category: @clothing.Category</li>
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Colour: @clothing.Colour</li>
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Season: @clothing.Season</li>
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Occasion: @clothing.Occasion</li>
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Brand: @clothing.Brand</li>
+                    <li class=" p-2 rounded-lg w-full">Category: @clothing.Category</li>
+                    <li class=" p-2 rounded-lg w-full">Colour: @clothing.Colour</li>
+                    <li class=" p-2 rounded-lg w-full">Season: @clothing.Season</li>
+                    <li class=" p-2 rounded-lg w-full">Occasion: @clothing.Occasion</li>
+                    <li class=" p-2 rounded-lg w-full">Brand: @clothing.Brand</li>
                 </ul>
             </div>
         </div>
+
+        <button class="absolute top-4 right-4 bg-black/50 hover:bg-black text-white px-4 py-2 rounded-[50%] w-[25px] h-[30px] text-center">
+        </button>
     }
 
 </div>
@@ -52,12 +53,6 @@
 @code {
 
     private bool isHidden { get; set; } = true;
-
-    private async Task ToggleVisibility()
-    {
-        isHidden = !isHidden;
-        StateHasChanged(); 
-    }
 
 
     [Parameter]
