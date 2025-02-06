@@ -283,6 +283,42 @@ namespace FrontEnd.Http
             return result;
         }
 
+        public static async Task<Response<UserLogin>> PostUserLogin(UserLogin UserLogin)
+        {
 
+            var result = new Response<UserLogin>();
+            try
+            {
+                HttpResponseMessage response = await HttpClient.PostAsJsonAsync("Login", UserLogin);
+                result.StatusCode = response.StatusCode;
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    result.HasError = true;
+                    result.ErrorMessage = $"Http Error: {response.StatusCode}";
+                }
+                string httpContent = await response.Content.ReadAsStringAsync();
+                var userLogin = JsonSerializer.Deserialize<UserLogin>(httpContent);
+
+                result.ResponseObject = userLogin;
+            }
+
+
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Http Request Failed: {ex.Message}");
+                result.HasError = true;
+                result.ErrorMessage = ex.Message;
+                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unknown Exception: {ex.Message}");
+                result.HasError = true;
+                result.ErrorMessage = ex.Message;
+                result.StatusCode = System.Net.HttpStatusCode.NotFound;
+            }
+            return result;
+        }
     }
 }

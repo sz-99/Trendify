@@ -1,0 +1,20 @@
+﻿@page "/login"
+@using FrontEnd.Components.LoginComponents
+@using FrontEnd.Components.Utils
+
+
+<PageTitle>Login</PageTitle>
+@if(isLogin)
+{
+    <Login />
+}
+else
+{
+    <SignUp/>
+}
+
+
+@code {
+    public bool isLogin { get; set; } = true;
+
+}
