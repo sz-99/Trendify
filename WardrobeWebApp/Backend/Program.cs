@@ -52,7 +52,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<WardrobeDBContext>();
-    //Backend.DBContext.DatabaseSeeding.SeedDatabase(context);
+    Backend.DBContext.DatabaseSeeding.SeedDatabase(context);
 }
 
 // Configure the HTTP request pipeline.
