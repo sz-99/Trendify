@@ -1,0 +1,10 @@
+﻿@if (!string.IsNullOrEmpty(Message))
+{
+    <ErrorMessage Message="@Message"/>
+}
+
+@code {
+
+    [Parameter]
+    public string? Message { get; set; }
+}

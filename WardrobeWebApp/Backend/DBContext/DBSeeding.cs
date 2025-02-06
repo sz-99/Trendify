@@ -39,6 +39,17 @@ namespace Backend.DBContext
                     );
                 context.SaveChanges();
             }
+
+            if (!context.UserLogins.Any())
+            {
+                context.UserLogins.AddRange(
+                     new UserLogin() { UserId = 1, UserName = "testuser1@wardrobe.com", Password = "helloworld" },
+                     new UserLogin() { UserId = 2, UserName = "testuser2@wardrobe.com", Password = "goodbyeworld" },
+                     new UserLogin() { UserId = 3, UserName = "testuser3@wardrobe.com", Password = "hello" },
+                     new UserLogin() { UserId = 4, UserName = "testuser4@wardrobe.com", Password = "password" }
+                );
+                context.SaveChanges();
+            }
         }
     }
 }
