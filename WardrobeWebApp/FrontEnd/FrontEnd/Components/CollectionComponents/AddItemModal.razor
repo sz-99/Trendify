@@ -1,6 +1,4 @@
-﻿
-@page "/AddClothing"
-@using Backend.Models
+﻿@using Backend.Models
 @using Backend.Models.Enums
 @using FrontEnd.FrontendModels
 @using FrontEnd.Components.ClothingItemComponents.AddClothingItemComponents
@@ -8,8 +6,11 @@
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
-<div id="crud-modal" class="fixed inset-0 flex items-center justify-center bg-cover bg-center bg-no-repeat bg-opacity-50" style="background-image: url('/images/winter.png');">
-    <div class=" bg-opacity-75 p-6 rounded-lg shadow-lg w-1/2 grid grid-cols-2 items-center gap-4">
+<div class="@(_hidden ? "hidden" : "") fixed top-0 left-0 z-10 bg-gray-500 bg-opacity-50 h-full w-full flex items-center justify-center">
+    <div id="crud-modal" class="z-20 bg-white w-1/2 rounded-xl p-6 shadow-lg">
+    <div class=" bg-opacity-75 p-6 rounded-lg w-1/2 grid grid-cols-2 items-center gap-4 w-full relative">
+            <span class="absolute top-0 right-4 text-2xl cursor-pointer text-gray-500 hover:text-gray-600" @onclick="() => HideModal.InvokeAsync()">&times;</span>
+        <!--Image Container-->
         <div class="flex justify-center items-center h-full">
             @if (!string.IsNullOrEmpty(FileDataUrl))
             {
@@ -20,9 +21,10 @@
                 <p class="text-gray-500">No Image Uploaded</p>
             }
         </div>
+        <!--Input Container-->
         <div>
             <h4 class="text-lg font-semibold mb-3 text-[#4b4b4b]">Please enter details for the new clothing item:</h4>
-            <EditForm  Model="NewClothingItem" OnValidSubmit="HandleValidSubmit">
+            <EditForm Model="NewClothingItem" OnValidSubmit="HandleValidSubmit">
                 <DataAnnotationsValidator />
                 <ErrorMessageAlert Message="@ErrorMessage" />
                 <SuccessMessage Message="@SuccessMessage" />
@@ -94,16 +96,23 @@
                         <ValidationMessage For="@(() => NewClothingItem.Season)" />
                     </div>
                 </div>
-                <button type="submit" class="mt-3 w-full bg-gray-100 hover:bg-blue-800 text-gray-900 p-2 rounded-lg">Submit</button>
+                <button type="submit" class="mt-3 w-full bg-gray-500 hover:bg-blue-800 text-white p-2 rounded-lg">Submit</button>
             </EditForm>
-            <button @onclick="ClearAll" class="my-1 w-full bg-gray-100 hover:bg-blue-800 text-gray-900 p-2 rounded-lg">Clear</button>
+            <button @onclick="ClearAll" class="my-1 w-full bg-gray-500 hover:bg-blue-800 text-white p-2 rounded-lg">Clear</button>
             <button @onclick="NavigateHome" class="my-1 w-full bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-lg">Finish</button>
         </div>
     </div>
 
 </div>
+</div>
 
 @code {
+
+    [Parameter]
+    public bool _hidden { get; set; }
+
+    [Parameter]
+    public EventCallback HideModal { get; set; }
 
     private ClothingItem NewClothingItem { get; set; } = new();
 
@@ -150,12 +159,12 @@
 
         var response = await HttpManager.PostClothingItem(NewClothingItem, SelectedFile);
 
-        if (response.HasError) 
+        if (response.HasError)
         {
             ErrorMessage = $"{response.ErrorMessage}";
             return;
         }
-        else 
+        else
         {
             SuccessMessage = $"Successfully added '{NewClothingItem.Name}' to your Wardrobe";
         }
@@ -172,7 +181,8 @@
         }
     }
 
-    private void ClearMessages() {
+    private void ClearMessages()
+    {
         ClearErrorMessage();
         ClearSuccessMessage();
     }
@@ -181,13 +191,15 @@
 
     private void ClearSuccessMessage() => SuccessMessage = String.Empty;
 
-    private void ClearFields() {
+    private void ClearFields()
+    {
         NewClothingItem = new();
         FileDataUrl = String.Empty;
         SelectedFile = null;
     }
 
-    private void ClearAll() {
+    private void ClearAll()
+    {
         ClearFields();
         ClearMessages();
     }
