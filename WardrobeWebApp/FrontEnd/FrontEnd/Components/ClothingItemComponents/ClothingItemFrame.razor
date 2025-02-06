@@ -1,10 +1,19 @@
-﻿<div>
+﻿@using Backend.Models
+@rendermode InteractiveServer
+<div>
 
     <div class="max-w-sm w-full bg-amber-700 border border-gray-200 rounded-lg shadow-sm dark:bg-grey-800 dark:border-grey-700">
 
         <div class="relative group w-full">
             <figure class="w-full">
-                <img class="rounded-lg w-full" src="https://images.unsplash.com/photo-1619622337420-72cf77fac199?q=80&w=2126&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+                @if (FileDataUrl == null)
+                {
+                     <p>Loading image...</p>
+                }
+                else
+                {
+                    <img src="@FileDataUrl" alt="@imageAlt" class="w-full object-cover rounded-lg shadow-md" />
+                }
             </figure>
 
             <button @onclick="ToggleVisibility" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 w-full">
@@ -50,8 +59,38 @@
         StateHasChanged(); 
     }
 
+
     [Parameter]
-    public Backend.Models.ClothingItem clothing { get; set; }
+    public ClothingItem clothing { get; set; }
+    public string FileDataUrl { get; set; }
+    string imageAlt = string.Empty;
+    protected async override Task OnInitializedAsync()
+    {
+
+        try
+        {
+            Console.WriteLine("Image ID " + clothing.ImageId);
+            var response = await HttpManager.GetClothingImageById(clothing.ImageId);
+            if (response.HasError)
+            {
+                Console.WriteLine($"Failed to get the image  {response.StatusCode.ToString()}: {response.ErrorMessage}");              
+
+                imageAlt = $"{response.StatusCode.ToString()}: {response.ErrorMessage}";
+            }
+            else
+            {
+                FileDataUrl =  response.ResponseObject;
+               // Console.WriteLine("Image Base64 string " + FileDataUrl);
+                imageAlt = clothing.Name;
+                StateHasChanged();
+            }
+
+        }
+        catch (Exception e)
+        {
+            imageAlt = $"{e.Message}";
+        }
+    }
 
 }
 

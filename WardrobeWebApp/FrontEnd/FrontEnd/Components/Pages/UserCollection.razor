@@ -5,18 +5,19 @@
 @using FrontEnd.Components.CollectionComponents
 
 <PageTitle>My Collection</PageTitle>
-
-<CollectionsTopMenu ChangeFilterQuery="UpdateQueryParameters"></CollectionsTopMenu>
-<ClothingDataLoader FilterQuery="@QueryParameters"></ClothingDataLoader>
- 
-
+<CollectionsTopMenu _hidden="@_hidden" ShowModal="DisplayModal"></CollectionsTopMenu>
+<AddItemModal _hidden="_hidden" HideModal="HideModal"></AddItemModal>
+<ClothingDataLoader></ClothingDataLoader>
 
 @code {
-    public string QueryParameters = string.Empty;
+    private bool _hidden = true;
 
-    public void UpdateQueryParameters(string query)
+    private void DisplayModal()
     {
-        QueryParameters = query;
+        _hidden = false;
     }
-
+    public void HideModal()
+    {
+        _hidden = true;
+    }
 }

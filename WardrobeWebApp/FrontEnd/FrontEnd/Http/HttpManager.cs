@@ -1,8 +1,10 @@
-﻿using Backend.Models;
+﻿
+using Backend.Models;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Net;
 using System.Net.Http.Headers;
 using static System.Net.Mime.MediaTypeNames;
+using Azure;
 
 namespace FrontEnd.Http
 {
@@ -29,11 +31,11 @@ namespace FrontEnd.Http
                 {
                     result.HasError = true;
                     result.ErrorMessage = $"Http Error: {response.StatusCode}";
+                    return result;
                 }
 
                 string httpContent = await response.Content.ReadAsStringAsync();
-                var list = JsonSerializer.Deserialize<List<ClothingItem>>(httpContent);
-
+                var list = JsonSerializer.Deserialize<List<ClothingItem>>(httpContent);               
                 result.ResponseObject = list ?? new List<ClothingItem>();
             }
 
@@ -43,7 +45,7 @@ namespace FrontEnd.Http
 
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = HttpStatusCode.ServiceUnavailable;
+                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
 
             }
             catch (Exception ex)
@@ -54,6 +56,7 @@ namespace FrontEnd.Http
                     result.HasError = true;
                     result.ErrorMessage = ex.Message;
                     result.StatusCode = System.Net.HttpStatusCode.NotFound;
+                    return result;
                 };
             }
             return result;
@@ -114,6 +117,7 @@ namespace FrontEnd.Http
                 {
                     result.HasError = true;
                     result.ErrorMessage = $"Http Error: {response.StatusCode}";
+                    return result;
                 }
                 string httpContent = await response.Content.ReadAsStringAsync();
                 var item = JsonSerializer.Deserialize<ClothingItem>(httpContent);
@@ -126,17 +130,16 @@ namespace FrontEnd.Http
 
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = HttpStatusCode.ServiceUnavailable;
+                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Unknown Exception: {ex.Message}");
 
-                {
-                    result.HasError = true;
-                    result.ErrorMessage = ex.Message;
-                    result.StatusCode = HttpStatusCode.NotFound;
-                };
+                result.HasError = true;
+                result.ErrorMessage = ex.Message;
+                result.StatusCode = System.Net.HttpStatusCode.NotFound;
+
             }
             return result;
         }
@@ -144,6 +147,7 @@ namespace FrontEnd.Http
 
         public static async Task<Response<ClothingItem>> PostClothingItem(ClothingItem newClothingItem, IBrowserFile? imageFile)
         {           
+
             var result = new Response<ClothingItem>();
             try
             {
@@ -154,8 +158,10 @@ namespace FrontEnd.Http
                     result.ErrorMessage = imageUploadResponse.ErrorMessage;
                     return result;
                 }
-                                
+
                 newClothingItem.ImageId = imageUploadResponse.ResponseObject;
+
+
 
                 HttpResponseMessage response = await HttpClient.PostAsJsonAsync("ClothingItems", newClothingItem);
                 result.StatusCode = response.StatusCode;
@@ -177,18 +183,18 @@ namespace FrontEnd.Http
                 Console.WriteLine($"Http Request Failed: {ex.Message}");
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = HttpStatusCode.ServiceUnavailable;
+                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Unknown Exception: {ex.Message}");
                 result.HasError = true;
                 result.ErrorMessage = ex.Message;
-                result.StatusCode = HttpStatusCode.InternalServerError;
+                result.StatusCode = System.Net.HttpStatusCode.NotFound;
             }
             return result;
         }
-        public static async Task<Response<int>> UploadImageAsync(IBrowserFile? file)
+        public static async Task<Response<int>> UploadImageAsync(IBrowserFile file)
         {
             var result = new Response<int>();
 
@@ -222,8 +228,6 @@ namespace FrontEnd.Http
                     result.HasError = true;
                     result.ErrorMessage = $"Http Error: {response.StatusCode}";
                     result.ResponseObject = 0;
-
-                    Console.WriteLine("Image Upload Attempt Failure : " + result.ErrorMessage);
                 }
                 else
                 {
@@ -326,6 +330,41 @@ namespace FrontEnd.Http
             }
             return result;
         }
+        public static async Task<Response<string>> GetClothingImageById(int imageId)
+        {
+            string imageSrc;
+            var result = new Response<string>();
+            try
+            {
+                HttpResponseMessage response = await HttpClient.GetAsync($"ClothingItems/Image/imageId/{imageId}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    result.HasError = true;
+                    result.ErrorMessage = $"Http Error: {response.StatusCode}";
+                    return result;
+                }
+                var imageBytes = await response.Content.ReadAsByteArrayAsync();
+                var base64String = Convert.ToBase64String(imageBytes);
+                var contentType = response.Content.Headers.ContentType?.ToString() ?? "image/jpeg";
+                imageSrc = $"data:{contentType};base64,{base64String}";
+                result.ResponseObject = imageSrc;
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Http Request Failed: {ex.Message}");
+                result.HasError = true;
+                result.ErrorMessage = ex.Message;
+                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unknown Exception: {ex.Message}");
+                result.HasError = true;
+                result.ErrorMessage = ex.Message;
+                result.StatusCode = System.Net.HttpStatusCode.NotFound;
+            }
+            return result;
+        }
 
         public static async Task<Response<UserLogin>> PostUserLogin(UserLogin UserLogin)
         {
@@ -346,8 +385,6 @@ namespace FrontEnd.Http
 
                 result.ResponseObject = userLogin;
             }
-
-
             catch (HttpRequestException ex)
             {
                 Console.WriteLine($"Http Request Failed: {ex.Message}");
