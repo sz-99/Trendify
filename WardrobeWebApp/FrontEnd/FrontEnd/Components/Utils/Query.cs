@@ -6,6 +6,8 @@
         string Size { get; set; }   
         string Occasion { get; set; }   
 
+        string Season { get; set; }
+
         public string CombinedQuery { get => String.Join("&", Values.Where(value => value != "" && value is not null)); }
 
         public void SetQueryParameter (string key, string? value)
@@ -21,12 +23,15 @@
                 case "Occasion":
                     Occasion = value is null ? "" : value; 
                     break;
+                case "Season":
+                    Occasion = value is null ? "" : value;
+                    break;
                 default:
                     throw new ArgumentException($"No key {key}");
             }
 
         }
 
-        public IEnumerable<string> Values { get => [Category, Size, Occasion]; }
+        public IEnumerable<string> Values { get => [Category, Size, Occasion, Season]; }
     }
 }
