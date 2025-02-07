@@ -2,10 +2,8 @@
 using Backend.Models;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Net;
-using System.Text.Json;
 using System.Net.Http.Headers;
-using static System.Net.Mime.MediaTypeNames;
-using Azure;
+using System.Text.Json;
 
 namespace FrontEnd.Http
 {
@@ -36,7 +34,7 @@ namespace FrontEnd.Http
                 }
 
                 string httpContent = await response.Content.ReadAsStringAsync();
-                var list = JsonSerializer.Deserialize<List<ClothingItem>>(httpContent);               
+                var list = JsonSerializer.Deserialize<List<ClothingItem>>(httpContent);
                 result.ResponseObject = list ?? new List<ClothingItem>();
             }
 
@@ -104,7 +102,7 @@ namespace FrontEnd.Http
 
 
         public static async Task<Response<ClothingItem>> PostClothingItem(ClothingItem newClothingItem, IBrowserFile? imageFile)
-        {           
+        {
 
             var result = new Response<ClothingItem>();
             try
@@ -256,7 +254,7 @@ namespace FrontEnd.Http
             var result = new Response<bool>();
             try
             {
-                HttpResponseMessage response = await HttpClient.DeleteAsync($"clothing/{id}");
+                HttpResponseMessage response = await HttpClient.DeleteAsync($"ClothingItems/{id}");
                 result.StatusCode = response.StatusCode;
 
                 if (!response.IsSuccessStatusCode)
