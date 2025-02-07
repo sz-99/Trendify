@@ -1,7 +1,12 @@
-﻿<div class="container flex flex-row mb-8 items-center">
-    <Filter></Filter>
-    <button type="button" @onclick="() => ShowModal.InvokeAsync()" class="mx-auto text-white relative bg-stone-400 h-3/4 font-medium rounded-lg text-sm px-4 py-2 hover:bg-stone-500">Add Item</button>
+﻿<div class="container h-[2rem] flex flex-row items-center gap-4 mb-8">
+    <div class="w-auto h-full flex-none"><Filter></Filter></div>
+    <button type="button" @onclick="() => ShowModal.InvokeAsync()"
+            class="ml-[5rem] h-full text-white bg-stone-400 font-medium rounded-full text-sm 
+ hover:bg-stone-500  px-5 text-center inline-flex items-center">
+        Add Item
+    </button>
 </div>
+
 
 @code {
     [Parameter]
