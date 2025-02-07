@@ -36,7 +36,7 @@ namespace Backend.Tests.ControllerTests
                 MinTemp = 10.5f,
                 MaxTemp = 20.2f,
                 AvgTemp = 15.3f,
-                Precipication = 5.0f,
+                 Precipitation = 5.0f,
                 Condition = "Sunny"
             };
 
@@ -62,7 +62,7 @@ namespace Backend.Tests.ControllerTests
                 MinTemp = 10.5f,
                 MaxTemp = 20.2f,
                 AvgTemp = 15.3f,
-                Precipication = 5.0f,
+                Precipitation = 5,
                 Condition = "Sunny"
             };
 

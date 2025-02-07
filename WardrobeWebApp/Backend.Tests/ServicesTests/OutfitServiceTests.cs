@@ -17,7 +17,7 @@ namespace Backend.Tests.ServicesTests
         private OutfitService _service;
         private Mock<IWeatherService> _mockWeatherService;
         private WeatherInfo newWeather = new WeatherInfo() 
-                                { Id = 1, Location = "City", MinTemp = 5, AvgTemp = 6, MaxTemp = 7, Condition = "cloudy", Precipication = 0 };
+                                { Id = 1, Location = "City", MinTemp = 5, AvgTemp = 6, MaxTemp = 7, Condition = "cloudy", Precipitation = 0};
         [SetUp]
         public void SetUp()
         {
@@ -48,7 +48,7 @@ namespace Backend.Tests.ServicesTests
             {
                 AvgTemp = 15,
                 MaxTemp = 18,
-                Precipication = 1.5f
+                Precipitation = 1.5f
             };
 
             _mockWeatherService.Setup(s => s.GetWeatherForecast("London"))
