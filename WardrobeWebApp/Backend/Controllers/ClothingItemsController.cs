@@ -6,7 +6,7 @@ namespace Backend.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ClothingItemsController : Controller
+    public class ClothingItemsController : ControllerBase
     {
         IClothingItemsService _clothingItemsService;
         public ClothingItemsController(IClothingItemsService clothingItemsService) 
