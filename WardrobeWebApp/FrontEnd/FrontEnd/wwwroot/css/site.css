@@ -1189,12 +1189,12 @@ video {
   padding-inline-start: 0.75rem;
 }
 
-.pt-16 {
-  padding-top: 4rem;
-}
-
 .pt-4 {
   padding-top: 1rem;
+}
+
+.pt-8 {
+  padding-top: 2rem;
 }
 
 .text-center {
