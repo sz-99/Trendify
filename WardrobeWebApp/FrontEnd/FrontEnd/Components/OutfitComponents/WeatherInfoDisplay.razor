@@ -4,8 +4,10 @@
 <div class="weather-container p-1 bg-gray-100 rounded shadow-md w-full max-w-7xl mx-auto">
     <div class="flex justify-between items-center bg-white p-2 rounded shadow">
         
-        <input value="@Location" @onchange="LocationChanged" placeholder="Enter Location..."
-               class="border p-2 rounded w-48" />
+        <div class="flex items-center space-x-2">
+            <input @bind="Location" placeholder="Location" class="border p-2 rounded w-48" />
+            <button @onclick="LocationChanged" class="bg-blue text-gray-800 px-4 py-2 rounded shadow">Go</button>
+        </div>
 
         @if (Weather != null)
         {
@@ -34,7 +36,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Location = "Chennai";
+        Location = "London";
         await GetWeather();
         await GetOutfits(); 
     }
@@ -42,20 +44,13 @@
     {
         if (string.IsNullOrWhiteSpace(Location)) return;
 
-        // cts?.Cancel();
-        // cts = new CancellationTokenSource();
-
         try
         {
-           // await Task.Delay(500, cts.Token); 
-            Console.WriteLine($"Fetching weather for: {Location}");
-
             var response = await HttpManager.GetWeatherByLocation(Location);
 
             if (response?.ResponseObject != null)
             {
                 Weather = response.ResponseObject;
-                Console.WriteLine("Weather data updated successfully.");
                 await InvokeAsync(StateHasChanged);
             }
             else
@@ -78,7 +73,6 @@
             {
                 outfit = response.ResponseObject;
                 OutfitImageUrls = await mapOutfitToImageUrls(outfit);
-                Console.WriteLine("Outfit Genereated successfully.");
                 await InvokeAsync(StateHasChanged);
             }
             else
@@ -94,18 +88,15 @@
 
     private async Task<List<string>> mapOutfitToImageUrls(List<ClothingItem> clothingItems)
     {
-        Console.WriteLine("Count  " + clothingItems.Count);
         List<string> clothingUrls = new();
         try
         {
             foreach(ClothingItem clothing in clothingItems)
             {
-                Console.WriteLine("id  " + clothing.Name);
                 var response = await HttpManager.GetImageUrlByClothingId(clothing.Id);
                 if (response?.ResponseObject != null)
                 {
                     clothingUrls.Add(response.ResponseObject);
-                    Console.WriteLine("Image url fetched for the clothing successfully.");
                 }
                 else
                 {
@@ -121,9 +112,8 @@
         return clothingUrls;
     }
 
-    private async Task LocationChanged(ChangeEventArgs e)
-    {
-        Location = e.Value.ToString();        
+    private async Task LocationChanged()
+    {           
         await GetWeather();
         await GetOutfits();
     }

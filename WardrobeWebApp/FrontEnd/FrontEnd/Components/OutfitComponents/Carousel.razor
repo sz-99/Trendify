@@ -79,13 +79,11 @@
     protected override void OnParametersSet()
     {
         numberOfItems = OutfitImageUrls?.Count ?? 0;
-        Console.WriteLine($"Number of outfits: {numberOfItems}");
         StateHasChanged(); 
     }
     private string GenerateDynamicStyles()
     {
         numberOfItems = OutfitImageUrls.Count;
-        Console.WriteLine("Number Of clothes : " + numberOfItems);
         string css = "<style>";
 
         for (int i = 0; i < numberOfItems; i++)

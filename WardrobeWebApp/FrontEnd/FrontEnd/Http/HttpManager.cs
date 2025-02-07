@@ -361,7 +361,6 @@ namespace FrontEnd.Http
         public static async Task<Response<string>> GetImageUrlByClothingId(int clothingId)
         {
             string imageSrc;
-            Console.WriteLine(clothingId);
             var result = new Response<string>();
             try
             {
@@ -370,7 +369,6 @@ namespace FrontEnd.Http
                 {
                     result.HasError = true;
                     result.ErrorMessage = $"Http Error: {response.StatusCode}";
-                    Console.WriteLine("Errrrrrrrrrrrrror");
                     return result;
                 }
                 var imageBytes = await response.Content.ReadAsByteArrayAsync();
