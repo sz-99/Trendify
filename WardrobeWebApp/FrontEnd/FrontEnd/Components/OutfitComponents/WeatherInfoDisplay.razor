@@ -1,0 +1,72 @@
+﻿@using Backend.Models
+@rendermode InteractiveServer
+
+<div class="weather-container p-1 bg-gray-100 rounded shadow-md w-full max-w-7xl mx-auto">
+    <div class="flex justify-between items-center bg-white p-2 rounded shadow">
+        
+        <input value="@Location" @oninput="LocationChanged" placeholder="Enter Location..."
+               class="border p-2 rounded w-48" />
+
+        @if (Weather != null)
+        {
+            <div class="flex items-center space-x-4">
+                <p class="text-gray-700 text-sm">🌡 Min: @Weather.MinTemp°C | Max: @Weather.MaxTemp°C</p>
+                <p class="text-gray-700 text-sm">🌧 @Weather.Precipitation mm</p>
+
+                <div class="flex items-center space-x-2">
+                    <img src="@Weather.ConditionIconUrl" alt="@Weather.Condition" class="w-12 h-12" />
+                    <p class="text-gray-800 text-lg">@Weather.Condition</p>
+                </div>
+            </div>
+        }
+    </div>
+        <Carousel />
+</div>
+
+@code {
+    private string Location { get; set; } = "";
+    private WeatherInfo? Weather { get; set; }
+    private CancellationTokenSource? cts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Location = "London";
+        await GetWeather();
+    }
+    private async Task GetWeather()
+    {
+        if (string.IsNullOrWhiteSpace(Location)) return;
+        
+        cts?.Cancel();
+        cts = new CancellationTokenSource();
+
+        try
+        {
+            await Task.Delay(500, cts.Token); 
+            Console.WriteLine($"Fetching weather for: {Location}");
+
+            var response = await HttpManager.GetWeatherByLocation(Location);
+
+            if (response?.ResponseObject != null)
+            {
+                Weather = response.ResponseObject;
+                Console.WriteLine("Weather data updated successfully.");
+                StateHasChanged(); 
+            }
+            else
+            {
+                Console.WriteLine("Error: " + response?.ErrorMessage);
+            }
+        }
+        catch (TaskCanceledException)
+        {
+            Console.WriteLine("API Call Canceled (Debounced)");
+        }
+    }
+
+    private async Task LocationChanged(ChangeEventArgs e)
+    {
+        Location = e.Value.ToString();        
+        await GetWeather();
+    }
+}
