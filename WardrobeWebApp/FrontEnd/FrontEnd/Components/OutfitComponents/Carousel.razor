@@ -65,6 +65,9 @@
 </style>
 
 @code {
+    [Parameter]
+    public string Location { get; set; }
+
     int numberOfItems = 5;
 
     private string defaultInputName = "input-";
