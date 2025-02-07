@@ -1,4 +1,5 @@
 ﻿@using FrontEnd.Components.Utils
+@inject NavigationManager Navigation
 
 @if (ClothingList == null)
 {
@@ -10,7 +11,7 @@
 }
 else
 {
-    <ClothingItemList clothesList="@ClothingList"></ClothingItemList>
+    <ClothingItemList clothesList="@clothingList" DeleteClothingItem="DeleteClothingItem"></ClothingItemList>
 }
 
 @code {
@@ -23,6 +24,16 @@ else
 
     protected async override Task OnInitializedAsync()
     {
+        await FetchClothingItems();
+    }
+     
+    protected async override Task OnParametersSetAsync()
+    {
+        await FetchFilteredClothingItems(); 
+    }
+      
+    private async Task FetchClothingItems()
+    {
         try
         {
             var response = await HttpManager.GetAllClothing();
@@ -33,17 +44,16 @@ else
             }
             else
             {
-                ClothingList = response.ResponseObject;
+                clothingList = response.ResponseObject;
             }
-
-        } catch(Exception)
+        }
+        catch (Exception e)
         {
             dbError = true;
         }
-
     }
-
-    protected async override Task OnParametersSetAsync()
+      
+    private async Task FetchFilteredClothingItems()
     {
         if (string.IsNullOrEmpty(FilterQuery))
         {
@@ -68,8 +78,33 @@ else
         catch (Exception)
         {
             dbError = true;
-        }
+        } 
+    }
 
-        StateHasChanged();
+    public async Task DeleteClothingItem(int id)
+    {
+        Console.WriteLine("Delete clicked at item " + (id - 1));
+        try
+        {
+
+            var response = await HttpManager.DeleteClothingItem(id);
+            if (response.HasError)
+            {
+                statuscode = response.StatusCode.ToString();
+                Console.WriteLine(statuscode);
+
+            }
+            else
+            {
+                await FetchClothingItems();
+                Navigation.NavigateTo("/mycollection", forceLoad: true);
+            }
+
+
+        }
+        catch (Exception e)
+        {
+            dbError = true;
+        }
     }
 }

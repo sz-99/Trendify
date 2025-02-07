@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using System.IO;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Backend.Controllers
 {
@@ -30,14 +31,14 @@ namespace Backend.Controllers
                 _ => StatusCode(500, "Unknown Internal Server Error. Try again Later")
             };
 
-        [HttpGet("clothingId/{clothingItemId}")]
-        public IActionResult GetImageByClothingId(int clothingItemId) => _imageService.FindImageByClothingItemId(clothingItemId) switch
-        {
-            (ExecutionStatus.SUCCESS, string path, string originalFilename) => Ok(FileUtils.FileResultFromFilePath(path, originalFilename)),
-            (ExecutionStatus.INTERNAL_SERVER_ERROR, _, _) => StatusCode(500, "Internal server error. Please try again later."),
-            (ExecutionStatus.NOT_FOUND, _, _) => NotFound($"No image found for {clothingItemId}"),
-            (_, _, _) => BadRequest($"Unknown error dealing with clothing item {clothingItemId}")
-        };
+        //[HttpGet("clothingId/{clothingItemId}")]
+        //public IActionResult GetImageByClothingId(int clothingItemId) => _imageService.FindImageByClothingItemId(clothingItemId) switch
+        //{
+        //    (ExecutionStatus.SUCCESS, string path, string originalFilename) => Ok(FileUtils.FileResultFromFilePath(path, originalFilename)),
+        //    (ExecutionStatus.INTERNAL_SERVER_ERROR, _, _) => StatusCode(500, "Internal server error. Please try again later."),
+        //    (ExecutionStatus.NOT_FOUND, _, _) => NotFound($"No image found for {clothingItemId}"),
+        //    (_, _, _) => BadRequest($"Unknown error dealing with clothing item {clothingItemId}")
+        //};
 
         //[HttpGet("imageId/{imageId}")]
         //public IActionResult GetImageByImageId(int imageId) =>
@@ -48,6 +49,28 @@ namespace Backend.Controllers
         //        (ExecutionStatus.NOT_FOUND, _, _) => NotFound($"No image found for {imageId}"),
         //        (_, _, _) => BadRequest($"Unknown error dealing with clothing item {imageId}")
         //    };
+
+        [HttpGet("clothingId/{clothingItemId}")]
+        public IActionResult GetImageByClothingId(int clothingItemId) 
+        {
+            var (status, path, originalFilename) = _imageService.FindImageByClothingItemId(clothingItemId);
+
+            if (status == ExecutionStatus.SUCCESS)
+            {
+
+                var absoluteFilePath = Path.Combine(Directory.GetCurrentDirectory(), path);
+
+                return PhysicalFile(absoluteFilePath, GetMimeType(absoluteFilePath), originalFilename);
+             }
+
+            return status switch
+            {
+                ExecutionStatus.INTERNAL_SERVER_ERROR => StatusCode(500, "Internal server error. Please try again later."),
+                ExecutionStatus.NOT_FOUND => NotFound($"No image found for the clothing {clothingItemId}"),
+                _ => BadRequest($"Unknown error dealing with clothing item {clothingItemId}")
+            };
+}
+
 
         [HttpGet("imageId/{imageId}")]
         public IActionResult GetImageByImageId(int imageId)

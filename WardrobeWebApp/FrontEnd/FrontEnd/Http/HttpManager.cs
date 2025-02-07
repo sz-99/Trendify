@@ -34,7 +34,7 @@ namespace FrontEnd.Http
                 }
 
                 string httpContent = await response.Content.ReadAsStringAsync();
-                var list = JsonSerializer.Deserialize<List<ClothingItem>>(httpContent);               
+                var list = JsonSerializer.Deserialize<List<ClothingItem>>(httpContent);
                 result.ResponseObject = list ?? new List<ClothingItem>();
             }
 
@@ -151,7 +151,7 @@ namespace FrontEnd.Http
 
 
         public static async Task<Response<ClothingItem>> PostClothingItem(ClothingItem newClothingItem, IBrowserFile? imageFile)
-        {           
+        {
 
             var result = new Response<ClothingItem>();
             try
@@ -305,7 +305,7 @@ namespace FrontEnd.Http
             var result = new Response<bool>();
             try
             {
-                HttpResponseMessage response = await HttpClient.DeleteAsync($"clothing/{id}");
+                HttpResponseMessage response = await HttpClient.DeleteAsync($"ClothingItems/{id}");
                 result.StatusCode = response.StatusCode;
 
                 if (!response.IsSuccessStatusCode)
@@ -336,6 +336,7 @@ namespace FrontEnd.Http
             }
             return result;
         }
+
         public static async Task<Response<string>> GetClothingImageById(int imageId)
         {
             string imageSrc;
@@ -389,6 +390,78 @@ namespace FrontEnd.Http
                 var weather = JsonSerializer.Deserialize<WeatherInfo>(httpContent);
 
                 result.ResponseObject = weather;
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Http Request Failed: {ex.Message}");
+                result.HasError = true;
+                result.ErrorMessage = ex.Message;
+                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unknown Exception: {ex.Message}");
+                result.HasError = true;
+                result.ErrorMessage = ex.Message;
+                result.StatusCode = System.Net.HttpStatusCode.NotFound;
+            }
+            return result;
+        }
+
+        public static async Task<Response<string>> GetImageUrlByClothingId(int clothingId)
+        {
+            string imageSrc;
+            var result = new Response<string>();
+            try
+            {
+                HttpResponseMessage response = await HttpClient.GetAsync($"ClothingItems/Image/clothingId/{clothingId}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    result.HasError = true;
+                    result.ErrorMessage = $"Http Error: {response.StatusCode}";
+                    return result;
+                }
+                var imageBytes = await response.Content.ReadAsByteArrayAsync();
+                var base64String = Convert.ToBase64String(imageBytes);
+                var contentType = response.Content.Headers.ContentType?.ToString() ?? "image/jpeg";
+                imageSrc = $"data:{contentType};base64,{base64String}";
+                result.ResponseObject = imageSrc;
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Http Request Failed: {ex.Message}");
+                result.HasError = true;
+                result.ErrorMessage = ex.Message;
+                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unknown Exception: {ex.Message}");
+                result.HasError = true;
+                result.ErrorMessage = ex.Message;
+                result.StatusCode = System.Net.HttpStatusCode.NotFound;
+            }
+            return result;
+
+        }
+        public static async Task<Response<List<ClothingItem>>> GenerateOutfitByLocation(string location)
+        {
+            var result = new Response<List<ClothingItem>>();
+            try
+            {
+                HttpResponseMessage response = await HttpClient.GetAsync($"Outfit/{location}");
+                result.StatusCode = response.StatusCode;
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    result.HasError = true;
+                    result.ErrorMessage = $"Http Error: {response.StatusCode}";
+                    return result;
+                }
+                string httpContent = await response.Content.ReadAsStringAsync();
+                var outfit = JsonSerializer.Deserialize<List<ClothingItem>>(httpContent);
+
+                result.ResponseObject = outfit;
             }
             catch (HttpRequestException ex)
             {

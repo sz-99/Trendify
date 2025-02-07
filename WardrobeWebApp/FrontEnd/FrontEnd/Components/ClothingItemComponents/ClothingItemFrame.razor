@@ -1,51 +1,76 @@
 ﻿@using Backend.Models
 @rendermode InteractiveServer
-<div>
 
-    <div class="max-w-sm w-full bg-amber-700 border border-gray-200 rounded-lg shadow-sm dark:bg-grey-800 dark:border-grey-700">
+@if (displayDeleteModal)
+{
+    <DeleteItemModal HideModal="ToggleDeleteModalDisplay" DeleteItem="ModalBtnDelete"></DeleteItemModal>
+}
 
-        <div class="relative group w-full">
+
+<div class="transition-transform duration-300 ease-in-out relative @(isHidden ? "" : "scale-105 z-10")" @onmouseover="() => isHidden = false" @onmouseleave="() => isHidden = true">
+
+    <div class="max-w-sm w-full rounded-lg shadow-sm dark:bg-grey-800 dark:border-grey-700">
+
+        <div class="relative w-full">
             <figure class="w-full">
                 @if (FileDataUrl == null)
                 {
-                     <p>Loading image...</p>
+                    <p>Loading image...</p>
                 }
                 else
                 {
                     <img src="@FileDataUrl" alt="@imageAlt" class="w-full object-cover rounded-lg shadow-md" />
                 }
             </figure>
-
-            <button @onclick="ToggleVisibility" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 w-full">
-                Click Me
-            </button>
         </div>
 
     </div>
 
-
     @if (!isHidden)
     {
-        <div class="w-full max-w-sm pt-4 bg-gray-200">
-            <h1 class="text-xl font-bold text-center">@Clothing.Name</h1>
-            <div class="w-full">
-                <ul class="w-full space-y-2">
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Category: @Clothing.Category</li>
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Colour: @Clothing.Colour</li>
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Season: @Clothing.Season</li>
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Occasion: @Clothing.Occasion</li>
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Brand: @Clothing.Brand</li>
+        <div class="overlayContainer w-full absolute bottom-0 left-0 rounded-lg h-full p-4 flex flex-col justify-between">
+
+            <button @onclick="ToggleDeleteModalDisplay"
+                    class="group self-end bg-white hover:bg-[#c75858] transition-colors duration-300 rounded-full w-[35px] h-[35px] flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-white transition-colors duration-300">
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                    <line x1="10" x2="10" y1="11" y2="17"></line>
+                    <line x1="14" x2="14" y1="11" y2="17"></line>
+                </svg>
+            </button>
+
+
+            <div class="w-full text-white mt-auto">
+                <ul class="flex flex-wrap relative">
+                    <li class="text-xs m-1 border-white border-1 border-full rounded-full px-2">Category: @clothing.Category</li>
+                    <li class="text-xs m-1 border-white border-1 border-full rounded-full px-2">Colour: @clothing.Colour</li>
+                    <li class="text-xs m-1 border-white border-1 border-full rounded-full px-2">Season: @clothing.Season</li>
+                    <li class="text-xs m-1 border-white border-1 border-full rounded-full px-2">Occasion: @clothing.Occasion</li>
+                    <li class="text-xs m-1 border-white border-1 border-full rounded-full px-2">Brand: @clothing.Brand </li>
                 </ul>
             </div>
         </div>
-    }
 
+
+    }
 </div>
 
+
 <style>
-    .item-container{
+    .item-container {
         width: 10rem;
         height: auto;
+    }
+
+    .overlayContainer{
+        background-color: rgba(73, 61, 56, 0.5);
+    
+    }
+
+    .border-1{
+        border-width: 1px;
     }
 </style>
 
@@ -53,20 +78,31 @@
 
     private bool isHidden { get; set; } = true;
 
-    [Parameter]
-    public ClothingItem Clothing { get; set; }
 
-    public string FileDataUrl { get; set; }
-    
-    string imageAlt = string.Empty;
-    
-    private async Task ToggleVisibility()
+    private bool displayDeleteModal = false;
+
+    public void ToggleDeleteModalDisplay()
     {
-        isHidden = !isHidden;
-        StateHasChanged();
+        isHidden = true;
+        displayDeleteModal = !displayDeleteModal;
     }
 
+    [Parameter]
+    public ClothingItem clothing { get; set; }
+
+    [Parameter]
+    public EventCallback<int> DeleteClothingItem { get; set; }
+
+    public void ModalBtnDelete()
+    {
+        Console.WriteLine("Delete Clicked");
+        DeleteClothingItem.InvokeAsync(clothing.ImageId);
+    }
+
+    public string FileDataUrl { get; set; }
+    string imageAlt = string.Empty;
     protected async override Task OnParametersSetAsync()
+
     {
 
         try
@@ -82,7 +118,9 @@
             {
                 FileDataUrl = response.ResponseObject;
                 // Console.WriteLine("Image Base64 string " + FileDataUrl);
-                imageAlt = Clothing.Name;
+
+                imageAlt = clothing.Name;
+
                 StateHasChanged();
             }
 
@@ -94,4 +132,3 @@
     }
 
 }
-

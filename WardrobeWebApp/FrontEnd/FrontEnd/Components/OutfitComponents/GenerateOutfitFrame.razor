@@ -1,0 +1,120 @@
+﻿@using Backend.Models
+@rendermode InteractiveServer
+
+<div class="weather-container p-1 bg-gray-100 rounded shadow-md w-full max-w-7xl mx-auto">
+    <div class="flex justify-between items-center bg-white p-2 rounded shadow">
+        
+        <div class="flex items-center space-x-2">
+            <input @bind="Location" placeholder="Location" class="border p-2 rounded w-48" />
+            <button @onclick="LocationChanged" class="bg-blue text-gray-800 px-4 py-2 rounded shadow">Go</button>
+        </div>
+
+        @if (Weather != null)
+        {
+            <div class="flex items-center space-x-4">
+                <p class="text-gray-700 text-sm">🌡 Min: @Weather.MinTemp°C | Max: @Weather.MaxTemp°C</p>
+                <p class="text-gray-700 text-sm">🌧 @Weather.Precipitation mm</p>
+
+                <div class="flex items-center space-x-2">
+                    <img src="@Weather.ConditionIconUrl" alt="@Weather.Condition" class="w-12 h-12" />
+                    <p class="text-gray-800 text-lg">@Weather.Condition</p>
+                </div>
+            </div>
+        }
+    </div>
+    <Carousel Location="@Location" OutfitImageUrls="@OutfitImageUrls" />
+</div>
+
+@code {
+    private string Location { get; set; } = "";
+    private WeatherInfo? Weather { get; set; }
+    private List<ClothingItem>? outfit { get; set; }
+
+    private List<string> OutfitImageUrls { get; set; } = new();
+
+    private CancellationTokenSource? cts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Location = "London";
+        await GetWeather();
+        await GetOutfits(); 
+    }
+    private async Task GetWeather()
+    {
+        if (string.IsNullOrWhiteSpace(Location)) return;
+
+        try
+        {
+            var response = await HttpManager.GetWeatherByLocation(Location);
+
+            if (response?.ResponseObject != null)
+            {
+                Weather = response.ResponseObject;
+                await InvokeAsync(StateHasChanged);
+            }
+            else
+            {
+                Console.WriteLine("Error: " + response?.ErrorMessage);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error : {ex.Message}" );
+        }
+    }
+
+    private async Task GetOutfits()
+    {
+        try
+        {
+            var response = await HttpManager.GenerateOutfitByLocation(Location);
+            if (response?.ResponseObject != null)
+            {
+                outfit = response.ResponseObject;
+                OutfitImageUrls = await mapOutfitToImageUrls(outfit);
+                await InvokeAsync(StateHasChanged);
+            }
+            else
+            {
+                Console.WriteLine("Error generating outfit : " + response?.ErrorMessage);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error fetching outfits: " + ex.Message);
+        }
+    }
+
+    private async Task<List<string>> mapOutfitToImageUrls(List<ClothingItem> clothingItems)
+    {
+        List<string> clothingUrls = new();
+        try
+        {
+            foreach(ClothingItem clothing in clothingItems)
+            {
+                var response = await HttpManager.GetImageUrlByClothingId(clothing.Id);
+                if (response?.ResponseObject != null)
+                {
+                    clothingUrls.Add(response.ResponseObject);
+                }
+                else
+                {
+                    Console.WriteLine("Error Fetching Image url for clothing: " + response?.ErrorMessage);
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error fetching outfits: " + ex.Message);
+        }
+        return clothingUrls;
+    }
+
+    private async Task LocationChanged()
+    {           
+        await GetWeather();
+        await GetOutfits();
+    }
+}
