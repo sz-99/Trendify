@@ -69,7 +69,6 @@
 
         try
         {
-            Console.WriteLine("Image ID " + clothing.ImageId);
             var response = await HttpManager.GetClothingImageById(clothing.ImageId);
             if (response.HasError)
             {

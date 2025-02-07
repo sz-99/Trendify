@@ -227,6 +227,7 @@ namespace FrontEnd.Http
                 {
                     result.HasError = true;
                     result.ErrorMessage = $"Http Error: {response.StatusCode}";
+                    return result;
                 }
                 string httpContent = await response.Content.ReadAsStringAsync();
                 var clothingItem = JsonSerializer.Deserialize<ClothingItem>(httpContent);
@@ -304,6 +305,41 @@ namespace FrontEnd.Http
                 var contentType = response.Content.Headers.ContentType?.ToString() ?? "image/jpeg";
                 imageSrc = $"data:{contentType};base64,{base64String}";
                 result.ResponseObject = imageSrc;
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Http Request Failed: {ex.Message}");
+                result.HasError = true;
+                result.ErrorMessage = ex.Message;
+                result.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unknown Exception: {ex.Message}");
+                result.HasError = true;
+                result.ErrorMessage = ex.Message;
+                result.StatusCode = System.Net.HttpStatusCode.NotFound;
+            }
+            return result;
+        }
+        public static async Task<Response<WeatherInfo>> GetWeatherByLocation(string location)
+        {
+            var result = new Response<WeatherInfo>();
+            try
+            {
+                HttpResponseMessage response = await HttpClient.GetAsync($"Weather/{location}");
+                result.StatusCode = response.StatusCode;
+               
+                if (!response.IsSuccessStatusCode)
+                {
+                    result.HasError = true;
+                    result.ErrorMessage = $"Http Error: {response.StatusCode}";
+                    return result;
+                }
+                string httpContent = await response.Content.ReadAsStringAsync();
+                var weather = JsonSerializer.Deserialize<WeatherInfo>(httpContent);
+
+                result.ResponseObject = weather;
             }
             catch (HttpRequestException ex)
             {
