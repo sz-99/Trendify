@@ -1,5 +1,7 @@
-﻿<div class="container flex flex-row mb-8 items-center">
-    <Filter></Filter>
+@using FrontEnd.Components.Utils
+
+<div class="container flex flex-row mb-8 items-center">
+    <FilterBar ChangeFilterQuery="ChangeFilterQuery" Query="Query"></FilterBar>
     <button type="button" @onclick="() => ShowModal.InvokeAsync()" class="mx-auto text-white relative bg-stone-400 h-3/4 font-medium rounded-lg text-sm px-4 py-2 hover:bg-stone-500">Add Item</button>
 </div>
 
@@ -9,4 +11,10 @@
 
     [Parameter]
     public EventCallback ShowModal { get; set; }
+
+    [Parameter]
+    public Query Query { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<Query> ChangeFilterQuery { get; set; }
 }

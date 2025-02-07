@@ -44,11 +44,11 @@
 
             <div class="w-full text-white mt-auto">
                 <ul class="flex flex-wrap relative">
-                    <li class="text-xs m-1 border-white border-1 border-full rounded-full px-2">Category: @clothing.Category</li>
-                    <li class="text-xs m-1 border-white border-1 border-full rounded-full px-2">Colour: @clothing.Colour</li>
-                    <li class="text-xs m-1 border-white border-1 border-full rounded-full px-2">Season: @clothing.Season</li>
-                    <li class="text-xs m-1 border-white border-1 border-full rounded-full px-2">Occasion: @clothing.Occasion</li>
-                    <li class="text-xs m-1 border-white border-1 border-full rounded-full px-2">Brand: @clothing.Brand </li>
+                    <li class="text-xs m-1 border-white border-1 border-full rounded-full px-2">Category: @Clothing.Category</li>
+                    <li class="text-xs m-1 border-white border-1 border-full rounded-full px-2">Colour: @Clothing.Colour</li>
+                    <li class="text-xs m-1 border-white border-1 border-full rounded-full px-2">Season: @Clothing.Season</li>
+                    <li class="text-xs m-1 border-white border-1 border-full rounded-full px-2">Occasion: @Clothing.Occasion</li>
+                    <li class="text-xs m-1 border-white border-1 border-full rounded-full px-2">Brand: @Clothing.Brand </li>
                 </ul>
             </div>
         </div>
@@ -78,6 +78,7 @@
 
     private bool isHidden { get; set; } = true;
 
+
     private bool displayDeleteModal = false;
 
     public void ToggleDeleteModalDisplay()
@@ -87,7 +88,7 @@
     }
 
     [Parameter]
-    public ClothingItem clothing { get; set; }
+    public ClothingItem Clothing { get; set; }
 
     [Parameter]
     public EventCallback<int> DeleteClothingItem { get; set; }
@@ -95,17 +96,18 @@
     public void ModalBtnDelete()
     {
         Console.WriteLine("Delete Clicked");
-        DeleteClothingItem.InvokeAsync(clothing.ImageId);
+        DeleteClothingItem.InvokeAsync(Clothing.ImageId);
     }
 
     public string FileDataUrl { get; set; }
     string imageAlt = string.Empty;
-    protected async override Task OnInitializedAsync()
+    protected async override Task OnParametersSetAsync()
+
     {
 
         try
         {
-            var response = await HttpManager.GetClothingImageById(clothing.ImageId);
+            var response = await HttpManager.GetClothingImageById(Clothing.ImageId);
             if (response.HasError)
             {
                 Console.WriteLine($"Failed to get the image  {response.StatusCode.ToString()}: {response.ErrorMessage}");
@@ -115,8 +117,9 @@
             else
             {
                 FileDataUrl = response.ResponseObject;
-                // Console.WriteLine("Image Base64 string " + FileDataUrl);
-                imageAlt = clothing.Name;
+
+                imageAlt = Clothing.Name;
+
                 StateHasChanged();
             }
 
