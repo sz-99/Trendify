@@ -20,7 +20,7 @@
                         items-center" 
             type="button">
 
-        @DropdownLabel: @DropdownWrapper
+            @DropdownLabel: @DropdownEnumWrapper
 
         <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
@@ -28,9 +28,8 @@
     </button>
 
     <!--Dropdown Hidden/Visible-->
-    <div @onclick:stopPropagation="true" id="Category-dropdown" class="z-10 absolute left-0 mt-2 @(DropdownClicked ? "" : "hidden") bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 filter-dropdowns">
+    <div @onfocusout="UnclickDropdown" id ="Category-dropdown" class="z-10 absolute left-0 mt-2 @(DropdownClicked ? "" : "hidden") bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 filter-dropdowns">
         <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-
 
             @for (var i = 0; i < EnumValues.Count; i++)
             {
@@ -40,7 +39,7 @@
                 string inputID = queryOptionButton + "Input";
                 string labelID = queryOptionButton + "Label";
 
-                <li tabindex="-1" @onblur=UnclickDropdown>
+                <li tabindex="-1" @onfocusout=UnclickDropdown>
                     <input type="radio" id="@inputID" name="@DropdownLabel" class="hidden">
 
                     <label id="@labelID" 
@@ -86,33 +85,26 @@
     public EventCallback<Query> ChangeFilterQuery { get; set; }
 
     [Parameter]
-    public string? DropdownLabel { get; set; }
+    public string DropdownLabel { get; set; } = "Category";
 
     [Parameter]
-    public Query Query { get; set; }
+    public Query Query { get; set; } = new();
 
-    private EnumWrapper<TEnum> DropdownWrapper 
-    { 
-        get; 
-        set; 
-    } = new();
-
-    private int? DropdownValueInt { get; set; }
+    private EnumWrapper<TEnum> DropdownEnumWrapper { get; set; } = new();
 
     private string DropdownValueString { get; set; } = "-";
 
     private bool DropdownClicked { get; set; }
 
-    private List<string> EnumValues { get => DropdownWrapper.StringValues; }
-
+    private List<string> EnumValues { get => DropdownEnumWrapper.StringValues; }
 
     private void UnclickDropdown() => DropdownClicked = false;
 
     private void ToggleDropdownClicked() => DropdownClicked = !DropdownClicked;
 
     private void HandleFilterButtonClick(string key) {
-        DropdownWrapper = new(DropdownLabel, key);
-        Query.SetQueryParameter(DropdownLabel, DropdownWrapper.QueryString);
+        DropdownEnumWrapper = new(DropdownLabel, key);
+        Query.SetQueryParameter(DropdownLabel, DropdownEnumWrapper.QueryString);
         ChangeFilterQuery.InvokeAsync(Query);
         UnclickDropdown();
     }

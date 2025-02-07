@@ -64,6 +64,12 @@ namespace FrontEnd.Http
         public static async Task<Response<List<ClothingItem>>> GetFilteredClothing(string query)
         {
             Console.WriteLine($"ClothingItems?{query}");
+
+            if (query == "all")
+            {
+                return await GetAllClothing();
+            }
+
             var result = new Response<List<ClothingItem>>();
             try
             {

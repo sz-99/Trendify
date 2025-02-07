@@ -1,6 +1,6 @@
 ﻿@using FrontEnd.Components.Utils
 
-@if (clothingList == null)
+@if (ClothingList == null)
 {
     <div class="d-flex align-items-center">
         <div class="spinner-border text-primary" role="status">
@@ -10,16 +10,16 @@
 }
 else
 {
-    <ClothingItemList clothesList="@clothingList"></ClothingItemList>
+    <ClothingItemList clothesList="@ClothingList"></ClothingItemList>
 }
 
 
 
 @code {
     [Parameter]
-    public string FilterQuery { get; set; } = string.Empty;
+    public string FilterQuery { get; set; }
 
-    private List<ClothingItem> clothingList { get; set; }
+    private List<ClothingItem> ClothingList { get; set; }
     private string statuscode;
     private bool dbError;
 
@@ -33,12 +33,10 @@ else
             if (response.HasError)
             {
                 statuscode = response.StatusCode.ToString();
-
             }
             else
             {
-                clothingList = response.ResponseObject;
-
+                ClothingList = response.ResponseObject;
             }
 
         }catch(Exception e)
@@ -63,12 +61,10 @@ else
             if (response.HasError)
             {
                 statuscode = response.StatusCode.ToString();
-
             }
             else
             {
-                clothingList = response.ResponseObject;
-
+                ClothingList = response.ResponseObject;
             }
 
         }

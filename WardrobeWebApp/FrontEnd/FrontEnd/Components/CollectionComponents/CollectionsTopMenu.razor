@@ -13,7 +13,7 @@
     public EventCallback ShowModal { get; set; }
 
     [Parameter]
-    public Query Query { get; set; }
+    public Query Query { get; set; } = new();
 
     [Parameter]
     public EventCallback<Query> ChangeFilterQuery { get; set; }

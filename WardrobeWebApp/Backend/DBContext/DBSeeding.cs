@@ -25,7 +25,7 @@ namespace Backend.DBContext
                     new Models.ClothingItem()
                     { ImageId = 7, UserId = 2, Name = "Rain Jacket", Brand = "Levi's", Category = ClothingCategory.Coat, Colour = "Blue", Occasion = Occasion.Sport, Season = Season.Winter, Size = ClothingSize.M },
                     new Models.ClothingItem()
-                    { ImageId = 8, UserId = 2, Name = "SPorts T-shirt", Brand = "MaxMara", Category = ClothingCategory.Coat, Colour = "Orange", Occasion = Occasion.Sport, Season = Season.Winter, Size = ClothingSize.M }
+                    { ImageId = 8, UserId = 2, Name = "Sports T-shirt", Brand = "MaxMara", Category = ClothingCategory.TShirt, Colour = "Orange", Occasion = Occasion.Sport, Season = Season.Winter, Size = ClothingSize.M }
                     );
                 context.SaveChanges();
             }

@@ -2,12 +2,10 @@
 {
     public class Query
     {
-        string Category { get; set; }
-        string Size { get; set; }   
-        string Occasion { get; set; }   
-
-        string Season { get; set; }
-
+        string Category { get; set; } = "";
+        string Size { get; set; } = "";
+        string Occasion { get; set; } = ""; 
+        string Season { get; set; } = "";
         public string CombinedQuery { get => String.Join("&", Values.Where(value => value != "" && value is not null)); }
 
         public void SetQueryParameter (string key, string? value)
@@ -29,7 +27,6 @@
                 default:
                     throw new ArgumentException($"No key {key}");
             }
-
         }
 
         public IEnumerable<string> Values { get => [Category, Size, Occasion, Season]; }

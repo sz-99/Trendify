@@ -13,7 +13,7 @@
 @code {
     private bool _hidden = true;
 
-    public string QueryParameters { get; set; } = string.Empty;
+    public string QueryParameters { get; set; } = String.Empty;
 
     public Query Query { get; set; } = new();
 
@@ -26,9 +26,12 @@
     {
         _hidden = true;
     }
-    
+
     public void UpdateQueryParameters(Query query)
     {
-         QueryParameters = query.CombinedQuery;
+        QueryParameters = query.CombinedQuery;
+        if (QueryParameters == "") {
+            QueryParameters = "all";
+        }
     }
 }
