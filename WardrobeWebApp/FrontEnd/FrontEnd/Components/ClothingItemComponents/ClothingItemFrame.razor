@@ -24,20 +24,20 @@
 
     @if (!isHidden)
     {
-        <div class="w-full max-w-sm pt-4 bg-white absolute top-100 left-0 rounded-b-lg z-10">
-            <h1 class="p-2 text-xl font-bold">@clothing.Name</h1>
+        <div class="w-full max-w-sm bg-stone-400 bg-opacity-50 absolute bottom-0 left-0 rounded-b-lg z-10">
             <div class="w-full">
                 <ul class="w-full space-y-2">
-                    <li class=" p-2 rounded-lg w-full">Category: @clothing.Category</li>
-                    <li class=" p-2 rounded-lg w-full">Colour: @clothing.Colour</li>
-                    <li class=" p-2 rounded-lg w-full">Season: @clothing.Season</li>
-                    <li class=" p-2 rounded-lg w-full">Occasion: @clothing.Occasion</li>
-                    <li class=" p-2 rounded-lg w-full">Brand: @clothing.Brand</li>
+                    <li class=" rounded-lg w-full">Category: @clothing.Category</li>
+                    <li class="  rounded-lg w-full">Colour: @clothing.Colour</li>
+                    <li class="  rounded-lg w-full">Season: @clothing.Season</li>
+                    <li class=" rounded-lg w-full">Occasion: @clothing.Occasion</li>
+                    <li class="  rounded-lg w-full">Brand: @clothing.Brand </li>
                 </ul>
             </div>
         </div>
 
-        <button class="absolute top-4 right-4 bg-black/50 hover:bg-black text-white px-4 py-2 rounded-[50%] w-[25px] h-[30px] text-center">
+        <button @onclick="() => DeleteClothingItem.InvokeAsync(clothing.ImageId)"
+            class="absolute top-4 right-4 bg-black/50 hover:bg-black text-white px-4 py-2 rounded-[50%] w-[25px] h-[30px] text-center">D
         </button>
     }
 
@@ -47,7 +47,7 @@
     .item-container{
         width: 10rem;
         height: auto;
-    }
+    
 </style>
 
 @code {
@@ -57,6 +57,10 @@
 
     [Parameter]
     public ClothingItem clothing { get; set; }
+
+    [Parameter]
+    public EventCallback<int> DeleteClothingItem { get; set; }
+
     public string FileDataUrl { get; set; }
     string imageAlt = string.Empty;
     protected async override Task OnInitializedAsync()

@@ -10,7 +10,7 @@
 }
 else
 {
-    <ClothingItemList clothesList="@clothingList"></ClothingItemList>
+    <ClothingItemList clothesList="@clothingList" DeleteClothingItem="DeleteClothingItem"></ClothingItemList>
 }
 
 
@@ -23,25 +23,57 @@ else
 
     protected async override Task OnInitializedAsync()
     {
+        await FetchClothingItems();
+
+    }
+
+    private async Task FetchClothingItems()
+    {
         try
         {
-
             var response = await HttpManager.GetAllClothing();
             if (response.HasError)
             {
                 statuscode = response.StatusCode.ToString();
-
             }
             else
             {
                 clothingList = response.ResponseObject;
-               
             }
-
-        }catch(Exception e)
+        }
+        catch (Exception e)
         {
             dbError = true;
         }
 
+
+    }
+
+    public async Task DeleteClothingItem(int id)
+    {
+        Console.WriteLine("Delete clicked at item " + (id - 1));
+        try
+        {
+
+            var response = await HttpManager.DeleteClothingItem(id);
+            if (response.HasError)
+            {
+                statuscode = response.StatusCode.ToString();
+                Console.WriteLine(statuscode);
+
+            }
+            else
+            {
+                await FetchClothingItems();
+                await InvokeAsync(StateHasChanged);
+            }
+
+
+        }
+        catch (Exception e)
+        {
+            dbError = true;
+        }
+   
     }
 }
