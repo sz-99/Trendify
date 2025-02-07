@@ -20,7 +20,7 @@
                         items-center" 
             type="button">
 
-        @DropdownLabel: @DropdownValue
+        @DropdownLabel: @DropdownWrapper
 
         <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
@@ -31,29 +31,26 @@
     <div @onclick:stopPropagation="true" id="Category-dropdown" class="z-10 absolute left-0 mt-2 @(DropdownClicked ? "" : "hidden") bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 filter-dropdowns">
         <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
 
-            @{
-                int index = 0;
-            }
 
-            @foreach (var option in EnumValues)
+            @for (var i = 0; i < EnumValues.Count; i++)
             {
-                string queryOptionButton = DropdownLabel + "=" + DropdownValue?.ToString();
+                string label = EnumValues[i];
+                string queryOptionButton = DropdownLabel + "=" + EnumValues[i];
 
                 string inputID = queryOptionButton + "Input";
                 string labelID = queryOptionButton + "Label";
 
                 <li tabindex="-1" @onblur=UnclickDropdown>
-                    <input type="radio" id="@inputID" name="@DropdownLabel" class="hidden" @bind="@DropdownValue">
+                    <input type="radio" id="@inputID" name="@DropdownLabel" class="hidden">
 
                     <label id="@labelID" 
                     for="@inputID"
-                    @onclick="() => HandleFilterButtonClick()"
+                    @onclick="() => HandleFilterButtonClick(label)"
                     class="common-style">
-                        @option
+                        @EnumValues[i]
                     </label>
                 </li>
 
-                index++;
             }
         </ul> 
     </div>
@@ -86,25 +83,37 @@
 
 @code {
     [Parameter]
-    public EventCallback<string> ChangeFilterQuery { get; set; }
+    public EventCallback<Query> ChangeFilterQuery { get; set; }
 
     [Parameter]
     public string? DropdownLabel { get; set; }
 
-    private EnumWrapper<TEnum>? DropdownValue { get; set; }
+    [Parameter]
+    public Query Query { get; set; }
+
+    private EnumWrapper<TEnum> DropdownWrapper 
+    { 
+        get; 
+        set; 
+    } = new();
+
+    private int? DropdownValueInt { get; set; }
+
+    private string DropdownValueString { get; set; } = "-";
 
     private bool DropdownClicked { get; set; }
 
-    private List<TEnum> EnumValues { get => Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToList(); }
+    private List<string> EnumValues { get => DropdownWrapper.StringValues; }
 
-    private string? QueryString { get => DropdownValue is null ? null : $"{DropdownLabel}={DropdownValue.AsInt}"; }
 
     private void UnclickDropdown() => DropdownClicked = false;
 
     private void ToggleDropdownClicked() => DropdownClicked = !DropdownClicked;
 
-    private void HandleFilterButtonClick() {
-        ChangeFilterQuery.InvokeAsync(QueryString);
+    private void HandleFilterButtonClick(string key) {
+        DropdownWrapper = new(DropdownLabel, key);
+        Query.SetQueryParameter(DropdownLabel, DropdownWrapper.QueryString);
+        ChangeFilterQuery.InvokeAsync(Query);
         UnclickDropdown();
     }
 

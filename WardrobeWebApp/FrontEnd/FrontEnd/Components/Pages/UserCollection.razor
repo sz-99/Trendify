@@ -3,9 +3,10 @@
 @using FrontEnd.Components
 @using FrontEnd.Components.ClothingItemComponents
 @using FrontEnd.Components.CollectionComponents
+@using FrontEnd.Components.Utils
 
 <PageTitle>My Collection</PageTitle>
-<CollectionsTopMenu _hidden="@_hidden" ShowModal="DisplayModal" ChangeFilterQuery="UpdateQueryParameters"></CollectionsTopMenu>
+<CollectionsTopMenu _hidden="@_hidden" ShowModal="DisplayModal" ChangeFilterQuery="UpdateQueryParameters" Query="Query"></CollectionsTopMenu>
 <AddItemModal _hidden="_hidden" HideModal="HideModal"></AddItemModal>
 <ClothingDataLoader FilterQuery="@QueryParameters"></ClothingDataLoader>
 
@@ -13,6 +14,8 @@
     private bool _hidden = true;
 
     public string QueryParameters { get; set; } = string.Empty;
+
+    public Query Query { get; set; } = new();
 
     private void DisplayModal()
     {
@@ -24,8 +27,8 @@
         _hidden = true;
     }
     
-    public void UpdateQueryParameters(string query)
+    public void UpdateQueryParameters(Query query)
     {
-         QueryParameters = query;
+         QueryParameters = query.CombinedQuery;
     }
 }
