@@ -1,0 +1,17 @@
+﻿@using Backend.Models.Enums;
+@using FrontEnd.Components.Utils
+
+<div class="container w-full h-8 flex flex-row items-center justify-center mt-8 space-x-4">
+    <Filter TEnum="ClothingCategory" DropdownLabel="Category" Query="Query" ChangeFilterQuery="ChangeFilterQuery" />
+    <Filter TEnum="ClothingSize" DropdownLabel="Size" Query="Query" ChangeFilterQuery="ChangeFilterQuery" />
+    <Filter TEnum="Occasion" DropdownLabel="Occasion" Query="Query" ChangeFilterQuery="ChangeFilterQuery" />
+    <Filter TEnum="Season" DropdownLabel="Season" Query="Query" ChangeFilterQuery="ChangeFilterQuery" />
+</div>
+
+@code {
+    [Parameter]
+    public Query Query { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<Query> ChangeFilterQuery { get; set; }
+}

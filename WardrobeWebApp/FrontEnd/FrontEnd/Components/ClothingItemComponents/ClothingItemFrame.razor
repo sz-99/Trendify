@@ -78,6 +78,7 @@
 
     private bool isHidden { get; set; } = true;
 
+
     private bool displayDeleteModal = false;
 
     public void ToggleDeleteModalDisplay()
@@ -100,12 +101,13 @@
 
     public string FileDataUrl { get; set; }
     string imageAlt = string.Empty;
-    protected async override Task OnInitializedAsync()
+    protected async override Task OnParametersSetAsync()
+
     {
 
         try
         {
-            var response = await HttpManager.GetClothingImageById(clothing.ImageId);
+            var response = await HttpManager.GetClothingImageById(Clothing.ImageId);
             if (response.HasError)
             {
                 Console.WriteLine($"Failed to get the image  {response.StatusCode.ToString()}: {response.ErrorMessage}");
@@ -116,7 +118,9 @@
             {
                 FileDataUrl = response.ResponseObject;
                 // Console.WriteLine("Image Base64 string " + FileDataUrl);
+
                 imageAlt = clothing.Name;
+
                 StateHasChanged();
             }
 
