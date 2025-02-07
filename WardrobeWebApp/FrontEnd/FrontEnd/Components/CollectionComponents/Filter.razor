@@ -28,8 +28,8 @@
     </button>
 
     <!--Dropdown Hidden/Visible-->
-    <div @onfocusout="UnclickDropdown" id ="Category-dropdown" class="z-10 absolute left-0 mt-2 @(DropdownClicked ? "" : "hidden") bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 filter-dropdowns">
-        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+    <div @id="Category-dropdown" class="z-10 absolute left-0 mt-2 @(DropdownClicked ? "" : "hidden") bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 filter-dropdowns">
+        <ul @onfocus="HandleFocus" @onfocusout="HandleFocusOut" @ref="DropdownList" class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
 
             @for (var i = 0; i < EnumValues.Count; i++)
             {
@@ -39,12 +39,13 @@
                 string inputID = queryOptionButton + "Input";
                 string labelID = queryOptionButton + "Label";
 
-                <li tabindex="-1" @onfocusout=UnclickDropdown>
+                <li tabindex="-1">
                     <input type="radio" id="@inputID" name="@DropdownLabel" class="hidden">
 
                     <label id="@labelID" 
                     for="@inputID"
                     @onclick="() => HandleFilterButtonClick(label)"
+                    @onfocusout=UnclickDropdown
                     class="common-style">
                         @EnumValues[i]
                     </label>
@@ -100,12 +101,28 @@
 
     private void UnclickDropdown() => DropdownClicked = false;
 
-    private void ToggleDropdownClicked() => DropdownClicked = !DropdownClicked;
+    private ElementReference DropdownList;
+
+    private void ToggleDropdownClicked() {
+        DropdownClicked = !DropdownClicked;
+
+        if (DropdownClicked) {
+            DropdownList.FocusAsync();
+        }
+    }
 
     private void HandleFilterButtonClick(string key) {
         DropdownEnumWrapper = new(DropdownLabel, key);
         Query.SetQueryParameter(DropdownLabel, DropdownEnumWrapper.QueryString);
         ChangeFilterQuery.InvokeAsync(Query);
+        UnclickDropdown();
+    }
+
+    private void HandleFocus() {
+        Console.WriteLine("Hello");
+    }
+
+    private void HandleFocusOut() {
         UnclickDropdown();
     }
 
