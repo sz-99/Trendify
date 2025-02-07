@@ -1,4 +1,4 @@
-﻿
+﻿@rendermode InteractiveServer
 <div class="transform-3d flex flex-col justify-center items-center p-6" id="container" >
 
     @for(int i = 0; i < numberOfItems; i++)
@@ -22,7 +22,7 @@
             string inputTarget = defaultInputName + i;
             string lName = defaultFrameID + i;
             <label class="absolute w-1/2 h-full card" for=@inputTarget id=@lName>
-                <img class="rounded-xl w-auto h-full shadow-lg" src="@imgs[i]">
+                <img class="rounded-xl w-auto h-full shadow-lg" src="@OutfitImageUrls[i]">
             </label>
         }
     
@@ -66,17 +66,26 @@
 
 @code {
     [Parameter]
-    public string Location { get; set; }
+    public string? Location { get; set; }
+    [Parameter]
+    public List<string>? OutfitImageUrls { get; set; }
 
-    int numberOfItems = 5;
+    int numberOfItems;
 
     private string defaultInputName = "input-";
     private string defaultFrameID = "frame-";
 
     private string DynamicStyles => GenerateDynamicStyles();
-
+    protected override void OnParametersSet()
+    {
+        numberOfItems = OutfitImageUrls?.Count ?? 0;
+        Console.WriteLine($"Number of outfits: {numberOfItems}");
+        StateHasChanged(); 
+    }
     private string GenerateDynamicStyles()
     {
+        numberOfItems = OutfitImageUrls.Count;
+        Console.WriteLine("Number Of clothes : " + numberOfItems);
         string css = "<style>";
 
         for (int i = 0; i < numberOfItems; i++)
@@ -138,13 +147,4 @@
         css += "</style>";
         return css; 
     }
-
-    private List<string> imgs = [
-    "https://images.unsplash.com/photo-1620799139652-715e4d5b232d?q=80&w=1972&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://images.unsplash.com/photo-1620799139507-2a76f79a2f4d?q=80&w=1972&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?q=80&w=1972&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=1972&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://images.unsplash.com/photo-1521498542256-5aeb47ba2b36?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-    ];
 }
- 

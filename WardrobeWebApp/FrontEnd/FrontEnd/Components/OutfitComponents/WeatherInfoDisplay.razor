@@ -4,7 +4,7 @@
 <div class="weather-container p-1 bg-gray-100 rounded shadow-md w-full max-w-7xl mx-auto">
     <div class="flex justify-between items-center bg-white p-2 rounded shadow">
         
-        <input value="@Location" @oninput="LocationChanged" placeholder="Enter Location..."
+        <input value="@Location" @onchange="LocationChanged" placeholder="Enter Location..."
                class="border p-2 rounded w-48" />
 
         @if (Weather != null)
@@ -20,29 +20,34 @@
             </div>
         }
     </div>
-        <Carousel Location="@Location"/>
+    <Carousel Location="@Location" OutfitImageUrls="@OutfitImageUrls" />
 </div>
 
 @code {
     private string Location { get; set; } = "";
     private WeatherInfo? Weather { get; set; }
+    private List<ClothingItem>? outfit { get; set; }
+
+    private List<string> OutfitImageUrls { get; set; } = new();
+
     private CancellationTokenSource? cts;
 
     protected override async Task OnInitializedAsync()
     {
-        Location = "London";
+        Location = "Chennai";
         await GetWeather();
+        await GetOutfits(); 
     }
     private async Task GetWeather()
     {
         if (string.IsNullOrWhiteSpace(Location)) return;
-        
-        cts?.Cancel();
-        cts = new CancellationTokenSource();
+
+        // cts?.Cancel();
+        // cts = new CancellationTokenSource();
 
         try
         {
-            await Task.Delay(500, cts.Token); 
+           // await Task.Delay(500, cts.Token); 
             Console.WriteLine($"Fetching weather for: {Location}");
 
             var response = await HttpManager.GetWeatherByLocation(Location);
@@ -51,22 +56,75 @@
             {
                 Weather = response.ResponseObject;
                 Console.WriteLine("Weather data updated successfully.");
-                StateHasChanged(); 
+                await InvokeAsync(StateHasChanged);
             }
             else
             {
                 Console.WriteLine("Error: " + response?.ErrorMessage);
             }
         }
-        catch (TaskCanceledException)
+        catch (Exception ex)
         {
-            Console.WriteLine("API Call Canceled (Debounced)");
+            Console.WriteLine($"Error : {ex.Message}" );
         }
+    }
+
+    private async Task GetOutfits()
+    {
+        try
+        {
+            var response = await HttpManager.GenerateOutfitByLocation(Location);
+            if (response?.ResponseObject != null)
+            {
+                outfit = response.ResponseObject;
+                OutfitImageUrls = await mapOutfitToImageUrls(outfit);
+                Console.WriteLine("Outfit Genereated successfully.");
+                await InvokeAsync(StateHasChanged);
+            }
+            else
+            {
+                Console.WriteLine("Error generating outfit : " + response?.ErrorMessage);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error fetching outfits: " + ex.Message);
+        }
+    }
+
+    private async Task<List<string>> mapOutfitToImageUrls(List<ClothingItem> clothingItems)
+    {
+        Console.WriteLine("Count  " + clothingItems.Count);
+        List<string> clothingUrls = new();
+        try
+        {
+            foreach(ClothingItem clothing in clothingItems)
+            {
+                Console.WriteLine("id  " + clothing.Name);
+                var response = await HttpManager.GetImageUrlByClothingId(clothing.Id);
+                if (response?.ResponseObject != null)
+                {
+                    clothingUrls.Add(response.ResponseObject);
+                    Console.WriteLine("Image url fetched for the clothing successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("Error Fetching Image url for clothing: " + response?.ErrorMessage);
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error fetching outfits: " + ex.Message);
+        }
+        return clothingUrls;
     }
 
     private async Task LocationChanged(ChangeEventArgs e)
     {
         Location = e.Value.ToString();        
         await GetWeather();
+        await GetOutfits();
     }
 }
