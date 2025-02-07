@@ -1,65 +1,113 @@
-﻿@rendermode InteractiveServer
+﻿@using Backend.Models.Enums
+@using FrontEnd.Components.Utils
+@typeparam TEnum where TEnum : Enum
 
-<div class="container w-full h-8 flex flex-row items-center justify-center mt-8 space-x-4">
+<div class="flex flex-col relative h-full">
 
-    @foreach(var keyValue in dropdownStates)
-    {
-        <div class="flex flex-col relative h-full">
+    <!--Button-->
+    <button @onclick="() => ToggleDropdownClicked()"
+            id="@DropdownLabel"
+            class="h-full
+                        text-white
+                        bg-stone-400
+                        hover:bg-stone-500
+                        font-medium
+                        rounded-xl
+                        text-sm
+                        px-5
+                        text-center
+                        inline-flex
+                        items-center"
+            type="button">
 
-            <button @onclick="() => ToggleDropdownStates(keyValue.Key)" id="@keyValue.Key" class="h-full text-white bg-stone-400 hover:bg-stone-500 font-medium rounded-xl text-sm px-5 text-center inline-flex items-center" type="button">
-                @keyValue.Key <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
-                </svg>
-            </button>
+        @DropdownLabel: @DropdownEnumWrapper
 
+        <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+        </svg>
+    </button>
 
-            <!-- Dropdown menu -->
-            <div id="Category-dropdown" class="z-10 absolute left-0 mt-2 @(dropdownStates[keyValue.Key] ? "" : "hidden") bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700">
-                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-                    @foreach (var option in FindEnumValues(keyValue.Key))
-                    {
-                        <li>
-                            <a href="#" class="block px-4 py-2 hover:bg-gray-100 bg-gray-900 dark:hover:bg-gray-600 dark:hover:text-white">@option</a>
-                        </li>
-                    }
-                 
-                   
-                </ul>
-            </div>
-        </div>
-    }
+    <!--Dropdown Hidden/Visible-->
+    <div @onfocusout="UnclickDropdown" id="Category-dropdown" class="z-10 absolute left-0 mt-2 @(DropdownClicked ? "" : "hidden") bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 filter-dropdowns">
+        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+
+            @for (var i = 0; i < EnumValues.Count; i++)
+            {
+                string label = EnumValues[i];
+                string queryOptionButton = DropdownLabel + "=" + EnumValues[i];
+
+                string inputID = queryOptionButton + "Input";
+                string labelID = queryOptionButton + "Label";
+
+                <li tabindex="-1" @onfocusout=UnclickDropdown>
+                    <input type="radio" id="@inputID" name="@DropdownLabel" class="hidden">
+
+                    <label id="@labelID"
+                           for="@inputID"
+                           @onclick="() => HandleFilterButtonClick(label)"
+                           class="common-style">
+                        @EnumValues[i]
+                    </label>
+                </li>
+
+            }
+        </ul>
+    </div>
 
 </div>
 
-@code {
-    private Dictionary<string, bool> dropdownStates = new()
-    {
-        {"Category", false },
-        {"Size", false },
-        {"Season", false },
-        {"Occasion", false }
 
-    };
-
-    private void ToggleDropdownStates(string key)
-    {
-        foreach(var keyValue in dropdownStates)
-        {
-            dropdownStates[keyValue.Key] = keyValue.Key == key ? !dropdownStates[keyValue.Key] : false;
-        }
+<style>
+    .common-style {
+        display: block;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        cursor: pointer;
     }
 
-    private Array FindEnumValues(string key)
+        .common-style:hover {
+            background-color: #505661;
+        }
+
+    .active {
+        background-color: #005866;
+    }
+
+    .nonActive {
+        background-color: #6B7280;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public EventCallback<Query> ChangeFilterQuery { get; set; }
+
+    [Parameter]
+    public string DropdownLabel { get; set; } = "Category";
+
+    [Parameter]
+    public Query Query { get; set; } = new();
+
+    private EnumWrapper<TEnum> DropdownEnumWrapper { get; set; } = new();
+
+    private string DropdownValueString { get; set; } = "-";
+
+    private bool DropdownClicked { get; set; }
+
+    private List<string> EnumValues { get => DropdownEnumWrapper.StringValues; }
+
+    private void UnclickDropdown() => DropdownClicked = false;
+
+    private void ToggleDropdownClicked() => DropdownClicked = !DropdownClicked;
+
+    private void HandleFilterButtonClick(string key)
     {
-        return key switch
-        {
-            "Category" => Enum.GetValues(typeof(Backend.Models.Enums.ClothingCategory)),
-            "Size" => Enum.GetValues(typeof(Backend.Models.Enums.ClothingSize)),
-            "Season" => Enum.GetValues(typeof(Backend.Models.Enums.Season)),
-            "Occasion" => Enum.GetValues(typeof(Backend.Models.Enums.Occasion)),
-            _ => throw new ArgumentException("Enum not recognised.")
-        };
-       
+        DropdownEnumWrapper = new(DropdownLabel, key);
+        Query.SetQueryParameter(DropdownLabel, DropdownEnumWrapper.QueryString);
+        ChangeFilterQuery.InvokeAsync(Query);
+        UnclickDropdown();
     }
 
 }

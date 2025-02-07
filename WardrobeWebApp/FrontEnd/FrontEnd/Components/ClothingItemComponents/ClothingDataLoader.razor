@@ -1,6 +1,6 @@
 ﻿@using FrontEnd.Components.Utils
 
-@if (clothingList == null)
+@if (ClothingList == null)
 {
     <div class="d-flex align-items-center">
         <div class="spinner-border text-primary" role="status">
@@ -10,14 +10,16 @@
 }
 else
 {
-    <ClothingItemList clothesList="@clothingList"></ClothingItemList>
+    <ClothingItemList clothesList="@ClothingList"></ClothingItemList>
 }
 
 
 
 @code {
+    [Parameter]
+    public string FilterQuery { get; set; }
 
-    private List<ClothingItem> clothingList { get; set; }
+    private List<ClothingItem> ClothingList { get; set; }
     private string statuscode;
     private bool dbError;
 
@@ -27,15 +29,14 @@ else
         {
 
             var response = await HttpManager.GetAllClothing();
+
             if (response.HasError)
             {
                 statuscode = response.StatusCode.ToString();
-
             }
             else
             {
-                clothingList = response.ResponseObject;
-               
+                ClothingList = response.ResponseObject;
             }
 
         }catch(Exception e)
@@ -43,5 +44,35 @@ else
             dbError = true;
         }
 
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        if (string.IsNullOrEmpty(FilterQuery))
+        {
+            return;
+        }
+
+        try
+        {
+
+            var response = await HttpManager.GetFilteredClothing(FilterQuery);
+
+            if (response.HasError)
+            {
+                statuscode = response.StatusCode.ToString();
+            }
+            else
+            {
+                ClothingList = response.ResponseObject;
+            }
+
+        }
+        catch (Exception e)
+        {
+            dbError = true;
+        }
+
+        StateHasChanged();
     }
 }
