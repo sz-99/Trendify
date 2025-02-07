@@ -40,7 +40,7 @@ namespace Backend.Controllers
 
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(404);
-            result.Value.Should().Be("No image found for 1");
+            result.Value.Should().Be("No image found for the clothing 1");
         }
 
         [Test]
