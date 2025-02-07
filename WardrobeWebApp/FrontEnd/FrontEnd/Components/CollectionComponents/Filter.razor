@@ -1,5 +1,6 @@
 ﻿@using Backend.Models.Enums
-@typeparam TEnum
+@using FrontEnd.Components.Utils
+@typeparam TEnum where TEnum : Enum
 
 <div class="flex flex-col relative h-full">
 
@@ -36,7 +37,7 @@
 
             @foreach (var option in EnumValues)
             {
-                string queryOptionButton = DropdownLabel + "=" + DropdownValue;
+                string queryOptionButton = DropdownLabel + "=" + DropdownValue?.ToString();
 
                 string inputID = queryOptionButton + "Input";
                 string labelID = queryOptionButton + "Label";
@@ -90,13 +91,13 @@
     [Parameter]
     public string? DropdownLabel { get; set; }
 
-    private TEnum? DropdownValue { get; set; }
+    private EnumWrapper<TEnum>? DropdownValue { get; set; }
 
     private bool DropdownClicked { get; set; }
 
     private List<TEnum> EnumValues { get => Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToList(); }
 
-    private string? QueryString { get => DropdownValue is null ? null : $"{DropdownLabel}={Convert.ToInt32(DropdownValue)}"; }
+    private string? QueryString { get => DropdownValue is null ? null : $"{DropdownLabel}={DropdownValue.AsInt}"; }
 
     private void UnclickDropdown() => DropdownClicked = false;
 

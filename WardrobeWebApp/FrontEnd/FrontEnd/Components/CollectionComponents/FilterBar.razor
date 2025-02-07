@@ -1,10 +1,8 @@
 ﻿@using Backend.Models.Enums;
+@using FrontEnd.Components.Utils
 
 <div class="container w-full h-8 flex flex-row items-center justify-center mt-8 space-x-4">
-    <Filter TEnum="@ClothingCategory" DropdownLabel="Category" ChangeFilterQuery="ChangeFilterQuery" />
-    <Filter TEnum="@ClothingCategory" DropdownLabel="Category" ChangeFilterQuery="ChangeFilterQuery" />
-    <Filter TEnum="@ClothingCategory" DropdownLabel="Category" ChangeFilterQuery="ChangeFilterQuery" />
-    <Filter TEnum="@ClothingCategory" DropdownLabel="Category" ChangeFilterQuery="ChangeFilterQuery" />
+    <Filter TEnum="ClothingCategory" DropdownLabel="Category" ChangeFilterQuery="ChangeFilterQuery" />
 </div>
 
 @code {
