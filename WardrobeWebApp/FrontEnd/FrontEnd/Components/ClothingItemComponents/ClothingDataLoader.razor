@@ -13,8 +13,6 @@ else
     <ClothingItemList clothesList="@ClothingList"></ClothingItemList>
 }
 
-
-
 @code {
     [Parameter]
     public string FilterQuery { get; set; }
@@ -27,7 +25,6 @@ else
     {
         try
         {
-
             var response = await HttpManager.GetAllClothing();
 
             if (response.HasError)
@@ -39,7 +36,7 @@ else
                 ClothingList = response.ResponseObject;
             }
 
-        }catch(Exception e)
+        } catch(Exception)
         {
             dbError = true;
         }
@@ -55,7 +52,6 @@ else
 
         try
         {
-
             var response = await HttpManager.GetFilteredClothing(FilterQuery);
 
             if (response.HasError)
@@ -64,11 +60,12 @@ else
             }
             else
             {
+                ClothingList = [];
                 ClothingList = response.ResponseObject;
             }
 
         }
-        catch (Exception e)
+        catch (Exception)
         {
             dbError = true;
         }

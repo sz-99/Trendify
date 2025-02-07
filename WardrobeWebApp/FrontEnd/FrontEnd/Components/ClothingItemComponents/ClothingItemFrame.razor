@@ -27,14 +27,14 @@
     @if (!isHidden)
     {
         <div class="w-full max-w-sm pt-4 bg-gray-200">
-            <h1 class="text-xl font-bold text-center">@clothing.Name</h1>
+            <h1 class="text-xl font-bold text-center">@Clothing.Name</h1>
             <div class="w-full">
                 <ul class="w-full space-y-2">
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Category: @clothing.Category</li>
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Colour: @clothing.Colour</li>
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Season: @clothing.Season</li>
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Occasion: @clothing.Occasion</li>
-                    <li class="bg-gray-200 p-2 rounded-lg w-full">Brand: @clothing.Brand</li>
+                    <li class="bg-gray-200 p-2 rounded-lg w-full">Category: @Clothing.Category</li>
+                    <li class="bg-gray-200 p-2 rounded-lg w-full">Colour: @Clothing.Colour</li>
+                    <li class="bg-gray-200 p-2 rounded-lg w-full">Season: @Clothing.Season</li>
+                    <li class="bg-gray-200 p-2 rounded-lg w-full">Occasion: @Clothing.Occasion</li>
+                    <li class="bg-gray-200 p-2 rounded-lg w-full">Brand: @Clothing.Brand</li>
                 </ul>
             </div>
         </div>
@@ -53,34 +53,36 @@
 
     private bool isHidden { get; set; } = true;
 
+    [Parameter]
+    public ClothingItem Clothing { get; set; }
+
+    public string FileDataUrl { get; set; }
+    
+    string imageAlt = string.Empty;
+    
     private async Task ToggleVisibility()
     {
         isHidden = !isHidden;
-        StateHasChanged(); 
+        StateHasChanged();
     }
 
-
-    [Parameter]
-    public ClothingItem clothing { get; set; }
-    public string FileDataUrl { get; set; }
-    string imageAlt = string.Empty;
-    protected async override Task OnInitializedAsync()
+    protected async override Task OnParametersSetAsync()
     {
 
         try
         {
-            var response = await HttpManager.GetClothingImageById(clothing.ImageId);
+            var response = await HttpManager.GetClothingImageById(Clothing.ImageId);
             if (response.HasError)
             {
-                Console.WriteLine($"Failed to get the image  {response.StatusCode.ToString()}: {response.ErrorMessage}");              
+                Console.WriteLine($"Failed to get the image  {response.StatusCode.ToString()}: {response.ErrorMessage}");
 
                 imageAlt = $"{response.StatusCode.ToString()}: {response.ErrorMessage}";
             }
             else
             {
-                FileDataUrl =  response.ResponseObject;
-               // Console.WriteLine("Image Base64 string " + FileDataUrl);
-                imageAlt = clothing.Name;
+                FileDataUrl = response.ResponseObject;
+                // Console.WriteLine("Image Base64 string " + FileDataUrl);
+                imageAlt = Clothing.Name;
                 StateHasChanged();
             }
 
