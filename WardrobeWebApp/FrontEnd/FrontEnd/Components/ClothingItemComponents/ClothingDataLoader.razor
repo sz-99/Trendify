@@ -11,7 +11,7 @@
 }
 else
 {
-    <ClothingItemList clothesList="@clothingList" DeleteClothingItem="DeleteClothingItem"></ClothingItemList>
+    <ClothingItemList clothesList="@ClothingList" DeleteClothingItem="DeleteClothingItem"></ClothingItemList>
 }
 
 @code {
@@ -44,7 +44,7 @@ else
             }
             else
             {
-                clothingList = response.ResponseObject;
+                ClothingList = response.ResponseObject;
             }
         }
         catch (Exception e)
