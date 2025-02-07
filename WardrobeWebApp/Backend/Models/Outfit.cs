@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Backend.Models
 {
@@ -6,7 +7,7 @@ namespace Backend.Models
     {
         [Key]
         public int OutfitId { get; set; }
-
+        [JsonPropertyName("clothingItemsIds")]
         public List<int> ClothingItemsIds { get; set; }
 
 
