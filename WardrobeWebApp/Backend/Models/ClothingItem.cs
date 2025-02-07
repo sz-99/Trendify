@@ -9,8 +9,10 @@ namespace Backend.Models
     public class ClothingItem
     {
         [Key]
+        [JsonPropertyName("id")]
         public int Id { get; set; }
         [Required]
+        [JsonPropertyName("userId")]
         public int UserId { get; set; }
 
         [Required]

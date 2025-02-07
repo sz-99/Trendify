@@ -1,7 +1,9 @@
-﻿<div class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 w-full gap-2 space-y-4 p-4">
+﻿<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
     @foreach (var item in clothesList)
     {
-        <ClothingItemFrame clothing="@item"></ClothingItemFrame>
+
+        <ClothingItemFrame clothing="@item" DeleteClothingItem="DeleteClothingItem"></ClothingItemFrame>
+
     }
 </div>
 
@@ -9,5 +11,8 @@
 
     [Parameter]
     public List<ClothingItem> clothesList { get; set; }
+
+    [Parameter]
+    public EventCallback<int> DeleteClothingItem { get; set; }
 
 }

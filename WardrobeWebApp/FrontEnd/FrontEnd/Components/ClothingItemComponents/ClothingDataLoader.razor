@@ -1,6 +1,7 @@
 ﻿@using FrontEnd.Components.Utils
+@inject NavigationManager Navigation
 
-@if (clothingList == null)
+@if (ClothingList == null)
 {
     <div class="d-flex align-items-center">
         <div class="spinner-border text-primary" role="status">
@@ -10,38 +11,100 @@
 }
 else
 {
-    <ClothingItemList clothesList="@clothingList"></ClothingItemList>
+    <ClothingItemList clothesList="@ClothingList" DeleteClothingItem="DeleteClothingItem"></ClothingItemList>
 }
 
-
-
 @code {
+    [Parameter]
+    public string FilterQuery { get; set; }
 
-    private List<ClothingItem> clothingList { get; set; }
+    private List<ClothingItem> ClothingList { get; set; }
     private string statuscode;
     private bool dbError;
 
     protected async override Task OnInitializedAsync()
     {
+        await FetchClothingItems();
+    }
+     
+    protected async override Task OnParametersSetAsync()
+    {
+        await FetchFilteredClothingItems(); 
+    }
+      
+    private async Task FetchClothingItems()
+    {
         try
         {
-
             var response = await HttpManager.GetAllClothing();
+
             if (response.HasError)
             {
                 statuscode = response.StatusCode.ToString();
+            }
+            else
+            {
+                ClothingList = response.ResponseObject;
+            }
+        }
+        catch (Exception e)
+        {
+            dbError = true;
+        }
+    }
+      
+    private async Task FetchFilteredClothingItems()
+    {
+        if (string.IsNullOrEmpty(FilterQuery))
+        {
+            return;
+        }
+
+        try
+        {
+            var response = await HttpManager.GetFilteredClothing(FilterQuery);
+
+            if (response.HasError)
+            {
+                statuscode = response.StatusCode.ToString();
+            }
+            else
+            {
+                ClothingList = [];
+                ClothingList = response.ResponseObject;
+            }
+
+        }
+        catch (Exception)
+        {
+            dbError = true;
+        } 
+    }
+
+    public async Task DeleteClothingItem(int id)
+    {
+        Console.WriteLine("Delete clicked at item " + (id - 1));
+        try
+        {
+
+            var response = await HttpManager.DeleteClothingItem(id);
+            if (response.HasError)
+            {
+                statuscode = response.StatusCode.ToString();
+                Console.WriteLine(statuscode);
 
             }
             else
             {
-                clothingList = response.ResponseObject;
-               
+                await FetchClothingItems();
+                Navigation.NavigateTo("/mycollection", forceLoad: true);
             }
 
-        }catch(Exception e)
+
+        }
+        catch (Exception e)
         {
             dbError = true;
         }
-
     }
 }
