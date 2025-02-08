@@ -1,43 +1,112 @@
 ﻿@rendermode InteractiveServer
 @page "/"
+@using FrontEnd.Components.HomeComponents
 
 <PageTitle>Wardrobe App</PageTitle>
+<div class="flex flex-col min-h-screen">
+    
+    <div class="flex-grow flex flex-col items-center justify-center px-6 pt-8">
+        <h1 class="text-4xl font-bold text-gray-900 mb-8 mt-12">Welcome to Trendify</h1>
 
-<div class="max-w-7xl">
-    <h1 class="text-4xl font-bold text-gray-900 mb-8">Welcome to WardrobeApp</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full h-full max-w-7xl">
 
-    <!-- Dashboard Layout -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl">
+        <!-- MyCollection (Left) -->
+        <a href="/mycollection" class="bg-white rounded-xl shadow-lg p-6 flex flex-col justify-center items-center text-center hover:bg-gray-200 h-full w-full hover:scale-105 hover:bg-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4 p-4">Browse My Collection</h2>
 
-        <!-- Left Column: User Profile -->
-        <a href="/" class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 hover:bg-gray-200">
-            <h2 class="text-xl font-semibold text-gray-800 ">User Profile</h2>
-            <p class="text-gray-600 mt-2">Username</p>
+            <!-- Grid Layout: 2x2 -->
+            <div class="grid grid-cols-2 gap-4 w-full h-full">
+                @foreach(var item in clothingToDisplay)
+                {
+                    <div class=" rounded-lg p-4  h-full flex flex-col justify-center items-center">
+                        <ClothingFrameWODetails clothing="item"/>
+                    </div>
+                }
+
+            </div>
         </a>
 
+
+
         <!-- Right Column: Stacked Tiles -->
-        <div class="flex flex-col gap-6">
+        <div class="grid grid-rows-3 gap-6 h-full">
 
-            <!-- Generate Outfit (Top) -->
-            <a href="/generateoutfit" class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 hover:bg-gray-200">
-                <h2 class="text-xl font-semibold text-gray-800">Generate Outfit</h2>
-                <p class="text-gray-600 mt-2">Weather Display</p>
-                <img src="https://picsum.photos/300?grayscale" alt="Weather Icon" class="w-16 h-16 mt-3" />
+            <!-- Generate Outfit -->
+            <a href="/generateoutfit" class="bg-white rounded-xl shadow-lg p-6 flex flex-col justify-center items-center text-center transition-transform transform hover:scale-105 hover:bg-gray-200 w-full">
+                <h2 class="text-xl font-semibold text-gray-800">Give me an outfit for today...</h2>
+
+                <div class="flex justify-center gap-4 mt-4">
+                    <div class="bg-gray-100 rounded-lg shadow p-4 flex flex-col items-center w-35">
+                        <span class="text-4xl">👕</span>
+                    </div>
+
+                    <div class="bg-gray-100 rounded-lg shadow p-4 flex flex-col items-center w-35">
+                        <span class="text-4xl">👖</span>
+                    </div>
+
+                    <div class="bg-gray-100 rounded-lg shadow p-4 flex flex-col items-center w-35">
+                        <span class="text-4xl">❓</span>
+                    </div>
+                </div>
             </a>
 
-            <!-- My Collection (Bottom) -->
-            <a href="/mycollection" class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 hover:bg-gray-200">
-                <h2 class="text-xl font-semibold text-gray-800 ">My Collection</h2>
-                <img src="https://picsum.photos/300?grayscale" alt="My Collection" class="w-16 h-16 mt-3" />
+
+            <!-- Weather -->
+            <a href="/generateoutfit" class="bg-white rounded-xl shadow-lg p-6 flex flex-col justify-center items-center text-center transition-transform transform hover:scale-105 hover:bg-gray-200">
+                <h3 class="text-xl font-semibold text-gray-800">What is the weather like today...</h3>
+                <div class="flex justify-center gap-4 mt-4">
+                    <div class="bg-gray-100 rounded-lg shadow p-4 flex flex-col items-center w-24">
+                        <span class="text-4xl">🌞</span>
+                    </div>
+
+                    <div class="bg-gray-100 rounded-lg shadow p-4 flex flex-col items-center w-24">
+                        <span class="text-4xl">🌧</span>
+                    </div>
+
+                    <div class="bg-gray-100 rounded-lg shadow p-4 flex flex-col items-center w-24">
+                        <span class="text-4xl">❓</span>
+                    </div>
+                </div>
             </a>
-            <!-- Add new clothing to the Collection -->
-            <a href="/AddClothing" class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 hover:bg-gray-200">
-                <h2 class="text-xl font-semibold text-gray-800 ">Add new Clothing</h2>               
+
+            <!-- Add New Clothing Item -->
+            <a href="/AddClothing" class="bg-white rounded-xl shadow-lg p-6 flex flex-col justify-center items-center text-center transition-transform transform hover:scale-105 hover:bg-gray-200">
+                <h2 class="text-xl font-semibold text-gray-800">Add a New Item</h2>
             </a>
         </div>
-
     </div>
 </div>
+</div>
+@code{
+    private List<ClothingItem> allClothingList { get; set; } = new();
+    private string statuscode;
+    private bool dbError;
 
+    private List<ClothingItem> clothingToDisplay { get; set; } = new();
 
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
 
+            var response = await HttpManager.GetAllClothing();
+            if (response.HasError)
+            {
+                statuscode = response.StatusCode.ToString();
+
+            }
+            else
+            {
+                allClothingList = response.ResponseObject;
+                clothingToDisplay = allClothingList.Take(6).ToList();
+
+            }
+
+        }
+        catch (Exception e)
+        {
+            dbError = true;
+        }
+
+    }
+}

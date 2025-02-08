@@ -1,0 +1,68 @@
+﻿@using Backend.Models
+@rendermode InteractiveServer
+<div>
+
+    <div class="max-w-sm w-full bg-amber-700 border border-gray-200 rounded-lg shadow-sm dark:bg-grey-800 dark:border-grey-700">
+
+        <div class="relative group w-full">
+            <figure class="w-full">
+                @if (FileDataUrl == null)
+                {
+                    <p>Loading image...</p>
+                }
+                else
+                {
+                    <img src="@FileDataUrl" alt="@imageAlt" class="w-full object-cover rounded-lg shadow-md" />
+                }
+            </figure>
+
+        </div>
+
+    </div>
+
+
+
+</div>
+
+<style>
+    .item-container{
+        width: 10rem;
+        height: auto;
+    }
+</style>
+
+@code {
+
+    [Parameter]
+    public ClothingItem clothing { get; set; }
+    public string FileDataUrl { get; set; }
+    string imageAlt = string.Empty;
+    protected async override Task OnInitializedAsync()
+    {
+
+        try
+        {
+            var response = await HttpManager.GetClothingImageById(clothing.ImageId);
+            if (response.HasError)
+            {
+                Console.WriteLine($"Failed to get the image  {response.StatusCode.ToString()}: {response.ErrorMessage}");
+
+                imageAlt = $"{response.StatusCode.ToString()}: {response.ErrorMessage}";
+            }
+            else
+            {
+                FileDataUrl = response.ResponseObject;
+                // Console.WriteLine("Image Base64 string " + FileDataUrl);
+                imageAlt = clothing.Name;
+                StateHasChanged();
+            }
+
+        }
+        catch (Exception e)
+        {
+            imageAlt = $"{e.Message}";
+        }
+    }
+
+}
+
