@@ -11,9 +11,9 @@ Trendify allows the user to:
 ## Application structure
 
 The repository is divided into the following projects:
-- [Backend](tree/main/WardrobeWebApp/Backend) 
-- [Backend.Tests](tree/main/WardrobeWebApp/Backend.Tests)
-- [FrontEnd](tree/main/WardrobeWebApp/FrontEnd/FrontEnd)
+- [Backend](WardrobeWebApp/Backend) 
+- [Backend.Tests](WardrobeWebApp/Backend.Tests)
+- [FrontEnd](WardrobeWebApp/FrontEnd/FrontEnd)
 
 The overall structure can be visualised in the following chart:
 
