@@ -54,6 +54,10 @@ subgraph "Frontend"
     S[UserCollection]
     T[GenerateOutfit]
     U[Home]
+
+    U --> R
+    U --> S
+    U --> T
 end
 
 A --> B
