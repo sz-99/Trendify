@@ -84,3 +84,5 @@ Trendify was produced as a group project assignment for a [Northcoders](https://
 ## Dependencies
 
 - The frontend project uses [Tailwind](https://github.com/tailwindlabs/tailwindcss) for CSS processing, licensed under [MIT](https://github.com/tailwindlabs/tailwindcss?tab=MIT-1-ov-file#readme)
+
+- The weather service is designed to use  [_weather api_](https://www.weatherapi.com/). To obtain your own API key, you will need to create an account with _weather api_.
