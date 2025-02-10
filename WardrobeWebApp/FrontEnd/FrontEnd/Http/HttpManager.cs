@@ -214,7 +214,7 @@ namespace FrontEnd.Http
 
 
                 var content = new MultipartFormDataContent();
-                var fileContent = new StreamContent(file.OpenReadStream(maxAllowedSize: 10_000_000)) // Image size set to 10MB
+                var fileContent = new StreamContent(file.OpenReadStream(maxAllowedSize: 10_000_000))
                 {
                     Headers =
                     {
