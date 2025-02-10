@@ -1,5 +1,5 @@
-﻿using Backend.Models.Enums;
-using Backend.Models;
+﻿using Backend.Models;
+using Backend.Models.Enums;
 
 namespace Backend.DBContext
 {
@@ -50,14 +50,14 @@ namespace Backend.DBContext
             if (!context.ImageLocations.Any())
             {
                 context.ImageLocations.AddRange(
-                    new ImageLocation(null, @".\Resources\Images\BlackPant.jpg", "BlackPant.jpg"),
-                    new ImageLocation(null, @".\Resources\Images\blacktshirtnike.jpg", "blacktshirtnike.jpg"),
-                    new ImageLocation(null, @".\Resources\Images\Hoodie.jpg", "Hoodie.jpg"),
-                    new ImageLocation(null, @".\Resources\Images\pinkfrock-sleeveless.jpg", "pinkfrock-sleeveless.jpg"),
-                    new ImageLocation(null, @".\Resources\Images\PoloBrown.jpg", "PoloBrown.jpg"),
-                    new ImageLocation(null, @".\Resources\Images\PoloYellowwhite.jpg", "PoloYellowwhite.jpg"),
-                    new ImageLocation(null, @".\Resources\Images\RainJacket.jpg", "RainJacket.jpg"),
-                    new ImageLocation(null, @".\Resources\Images\tshirt-sports.jpg", "tshirt-sports.jpg")
+                        new ImageLocation(null, @".\Resources\Images\BlackJumper.jpg.jpg", "BlackJumper.jpg.jpg"),
+    new ImageLocation(null, @".\Resources\Images\blackSkirt.jpg.jpg", "blackSkirt.jpg.jpg"),
+    new ImageLocation(null, @".\Resources\Images\BlueJacket.jpg.jpg", "BlueJacket.jpg.jpg"),
+    new ImageLocation(null, @".\Resources\Images\BrownSkirt.jpg.jpg", "BrownSkirt.jpg.jpg"),
+    new ImageLocation(null, @".\Resources\Images\DarkGreyJeans.jpg.jpg", "DarkGreyJeans.jpg.jpg"),
+    new ImageLocation(null, @".\Resources\Images\DenimTop.jpg.jpg", "DenimTop.jpg.jpg"),
+    new ImageLocation(null, @".\Resources\Images\GreyCoat.jpg.jpg", "GreyCoat.jpg.jpg"),
+    new ImageLocation(null, @".\Resources\Images\NavyDungaree.jpg.jpg", "NavyDungaree.jpg.jpg")
                 );
                 context.SaveChanges();
             };
