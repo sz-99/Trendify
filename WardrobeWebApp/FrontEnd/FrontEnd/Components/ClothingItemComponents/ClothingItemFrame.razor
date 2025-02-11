@@ -9,7 +9,7 @@
 
 <div class="transition-transform duration-300 ease-in-out relative @(isHidden ? "" : "scale-105 z-10")" @onmouseover="() => isHidden = false" @onmouseleave="() => isHidden = true">
 
-    <div class="max-w-sm w-full rounded-lg shadow-sm dark:bg-grey-800 dark:border-grey-700">
+    <div class="max-w-sm w-full rounded-full shadow-sm dark:bg-grey-800 dark:border-grey-700">
 
         <div class="relative w-full">
             <figure class="w-full">
@@ -31,7 +31,7 @@
         <div class="overlayContainer w-full absolute bottom-0 left-0 rounded-lg h-full p-4 flex flex-col justify-between">
 
             <button @onclick="ToggleDeleteModalDisplay"
-                    class="group self-end bg-white hover:bg-[#c75858] transition-colors duration-300 rounded-full w-[35px] h-[35px] flex items-center justify-center">
+            class="group self-end bg-white hover:bg-[#c75858] transition-colors duration-300 rounded-full w-[35px] h-[35px] flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-white transition-colors duration-300">
                     <path d="M3 6h18"></path>
                     <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
@@ -60,17 +60,17 @@
 
 <style>
     .item-container {
-        width: 10rem;
-        height: auto;
+    width: 10rem;
+    height: auto;
     }
 
     .overlayContainer{
-        background-color: rgba(73, 61, 56, 0.5);
-    
+    background-color: rgba(73, 61, 56, 0.5);
+
     }
 
     .border-1{
-        border-width: 1px;
+    border-width: 1px;
     }
 </style>
 
@@ -99,12 +99,15 @@
         DeleteClothingItem.InvokeAsync(Clothing.ImageId);
     }
 
-    public string FileDataUrl { get; set; }
+    public string FileDataUrl { get; set; } = "";
+
     string imageAlt = string.Empty;
+
+
     protected async override Task OnParametersSetAsync()
 
     {
-
+        FileDataUrl = "";
         try
         {
             var response = await HttpManager.GetClothingImageById(Clothing.ImageId);

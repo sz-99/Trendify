@@ -18,20 +18,22 @@ else
     [Parameter]
     public string FilterQuery { get; set; }
 
-    private List<ClothingItem> ClothingList { get; set; }
+    private List<ClothingItem> ClothingList { get; set; } = new();
     private string statuscode;
     private bool dbError;
 
     protected async override Task OnInitializedAsync()
     {
+        ClothingList = new();
         await FetchClothingItems();
     }
-     
+
     protected async override Task OnParametersSetAsync()
     {
+        ClothingList = new();
         await FetchFilteredClothingItems(); 
     }
-      
+
     private async Task FetchClothingItems()
     {
         try
@@ -49,14 +51,15 @@ else
         }
         catch (Exception e)
         {
-            dbError = true;
+            dbError = true; 
         }
     }
-      
+
     private async Task FetchFilteredClothingItems()
     {
         if (string.IsNullOrEmpty(FilterQuery))
         {
+            await FetchClothingItems();
             return;
         }
 
@@ -86,7 +89,6 @@ else
         Console.WriteLine("Delete clicked at item " + (id - 1));
         try
         {
-
             var response = await HttpManager.DeleteClothingItem(id);
             if (response.HasError)
             {
@@ -97,10 +99,7 @@ else
             else
             {
                 await FetchClothingItems();
-                Navigation.NavigateTo("/mycollection", forceLoad: true);
             }
-
-
         }
         catch (Exception e)
         {

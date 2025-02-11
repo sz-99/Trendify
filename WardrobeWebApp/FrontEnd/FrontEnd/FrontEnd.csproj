@@ -19,7 +19,7 @@
     <None Include="wwwroot\images\winter.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Update="wwwroot\images\Trendify.png">
+    <Content Update="wwwroot\images\TrendifyLogoNav.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
