@@ -2,10 +2,10 @@
 @using FrontEnd.Components.Utils
 
 <div class="container h-full flex flex-row space-x-4">
-    <Filter TEnum="ClothingCategory" DropdownLabel="Category" Query="Query" ChangeFilterQuery="ChangeFilterQuery" DropdownAlert="DropdownAlert" DropdownClicked="@DropdownClicked" />
-    <Filter TEnum="ClothingSize" DropdownLabel="Size" Query="Query" ChangeFilterQuery="ChangeFilterQuery" DropdownAlert="DropdownAlert" DropdownClicked="@DropdownClicked" />
-    <Filter TEnum="Occasion" DropdownLabel="Occasion" Query="Query" ChangeFilterQuery="ChangeFilterQuery" DropdownAlert="DropdownAlert" DropdownClicked="@DropdownClicked" />
-    <Filter TEnum="Season" DropdownLabel="Season" Query="Query" ChangeFilterQuery="ChangeFilterQuery" DropdownAlert="DropdownAlert" DropdownClicked="@DropdownClicked" />
+    <Filter TEnum="ClothingCategory" DropdownLabel="Category" Query="Query" ChangeFilterQuery="ChangeFilterQuery" DropdownClicked="@DropdownClicked" ChangeDropdownClicked="ChangeDropdownClicked" />
+    <Filter TEnum="ClothingSize" DropdownLabel="Size" Query="Query" ChangeFilterQuery="ChangeFilterQuery" DropdownClicked="@DropdownClicked" ChangeDropdownClicked="ChangeDropdownClicked" />
+    <Filter TEnum="Occasion" DropdownLabel="Occasion" Query="Query" ChangeFilterQuery="ChangeFilterQuery" DropdownClicked="@DropdownClicked" ChangeDropdownClicked="ChangeDropdownClicked" />
+    <Filter TEnum="Season" DropdownLabel="Season" Query="Query" ChangeFilterQuery="ChangeFilterQuery" DropdownClicked="@DropdownClicked" ChangeDropdownClicked="ChangeDropdownClicked" />
 </div>
 
 @code {
@@ -17,9 +17,5 @@
 
     public string? DropdownClicked { get; set; }
 
-    private bool AnotherDropdownOpen { get; set; }
-
-    private void DropdownAlert(string label) {
-        DropdownClicked = label;
-    }
+    private void ChangeDropdownClicked(string label) => DropdownClicked = label;
 }

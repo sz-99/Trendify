@@ -92,7 +92,7 @@
     public Query Query { get; set; } = new();
 
     [Parameter]
-    public EventCallback<string?> DropdownAlert { get; set; }
+    public EventCallback<string?> ChangeDropdownClicked { get; set; }
 
     [Parameter]
     public string? DropdownClicked { get; set; } = null;
@@ -103,16 +103,16 @@
 
     private List<string> EnumValues { get => DropdownEnumWrapper.StringValues; }
 
-    private async Task UnclickDropdown() => await DropdownAlert.InvokeAsync(null);
+    private async Task UnclickDropdown() => await ChangeDropdownClicked.InvokeAsync(null);
 
     private async Task ToggleDropdownClicked() {
         if (DropdownClicked == DropdownLabel) 
         {
-            await DropdownAlert.InvokeAsync(null);
+            await ChangeDropdownClicked.InvokeAsync(null);
         }
         else 
         {
-            await DropdownAlert.InvokeAsync(DropdownLabel);
+            await ChangeDropdownClicked.InvokeAsync(DropdownLabel);
         }
     }
 
