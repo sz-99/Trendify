@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
 using Backend.Models.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class ClothingItemsController : ControllerBase

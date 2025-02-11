@@ -9,6 +9,8 @@ namespace FrontEnd.Http
 {
     public static class HttpManager
     {
+        private static string? _token;
+
         public static readonly SocketsHttpHandler socketsHandler = new SocketsHttpHandler()
         {
             PooledConnectionLifetime = TimeSpan.FromSeconds(5)
@@ -17,13 +19,19 @@ namespace FrontEnd.Http
         {
             BaseAddress = new Uri("https://localhost:7062/")
         };
+        public static void SetToken(string token)
+        {
+            _token = token;
+            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        }
 
         public static async Task<Response<List<ClothingItem>>> GetAllClothing()
         {
             var result = new Response<List<ClothingItem>>();
             try
             {
-                HttpResponseMessage response = await HttpClient.GetAsync("ClothingItems/all");
+                 HttpResponseMessage response = await HttpClient.GetAsync("ClothingItems/all");
+                //HttpResponseMessage response = await SendRequestAsync(() => new HttpRequestMessage(HttpMethod.Get, "ClothingItems/all"));
                 result.StatusCode = response.StatusCode;
 
                 if (!response.IsSuccessStatusCode)
@@ -480,13 +488,13 @@ namespace FrontEnd.Http
             return result;
         }
 
-        public static async Task<Response<UserLogin>> PostUserLogin(UserLogin UserLogin)
+        public static async Task<Response<UserLogin>> PostUserLogin(UserLogin userInfo)
         {
 
             var result = new Response<UserLogin>();
             try
             {
-                HttpResponseMessage response = await HttpClient.PostAsJsonAsync("Login", UserLogin);
+                HttpResponseMessage response = await HttpClient.PostAsJsonAsync("Login", userInfo);
                 result.StatusCode = response.StatusCode;
 
                 if (!response.IsSuccessStatusCode)
@@ -497,7 +505,13 @@ namespace FrontEnd.Http
                 string httpContent = await response.Content.ReadAsStringAsync();
                 var userLogin = JsonSerializer.Deserialize<UserLogin>(httpContent);
 
+                if (userLogin?.Token != null)
+                {
+                   SetToken(userLogin.Token);
+                }
+
                 result.ResponseObject = userLogin;
+
             }
             catch (HttpRequestException ex)
             {

@@ -2,6 +2,7 @@
 using Backend.Models.Enums;
 using Backend.Services;
 using Backend.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
@@ -10,6 +11,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Backend.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("ClothingItems/[controller]")]
     public class ImageController : ControllerBase

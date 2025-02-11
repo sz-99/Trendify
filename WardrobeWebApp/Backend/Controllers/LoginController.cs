@@ -21,13 +21,13 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetUserValidationResult( UserLogin userLogin)
+        public IActionResult GetUserValidationResult(UserLogin userLogin)
         {
             var isValid = _loginService.ValidateUser(userLogin.UserName, userLogin.Password);
             if(isValid)
             {
                 var token = GenerateJwtToken(string.Concat(userLogin.UserId,userLogin.UserName));
-                //return Ok(new { Token = token });
+                userLogin.Token = token;
                 return Ok(userLogin);
 
             }
@@ -41,7 +41,8 @@ namespace Backend.Controllers
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user)
+                new Claim(JwtRegisteredClaimNames.Sub, user),
+                new Claim("role", "User")
 
             };
 
