@@ -124,10 +124,6 @@
         await UnclickDropdown();
     }
 
-    private async Task HandleFocusOut() {
-        await JSRuntime.InvokeVoidAsync("consoleLog", null);
-    }
-
     private string GetHidden() {
         if (DropdownClicked == DropdownLabel)
         {
