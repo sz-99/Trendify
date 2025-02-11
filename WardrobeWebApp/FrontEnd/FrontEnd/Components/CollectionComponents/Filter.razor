@@ -3,12 +3,12 @@
 @inject IJSRuntime JSRuntime
 @typeparam TEnum where TEnum : Enum
 
-<div class="flex flex-col relative h-full">
+<div @onclick:stopPropagation="true" class="flex flex-col relative h-full">
 
     <!--Button-->
-    <button @onclick:stopPropagation="true" @onclick="ToggleDropdownClicked"
+    <button @onclick="ToggleDropdownClicked"
             id="@DropdownLabel"
-            class="h-full
+            class="category-filter-button h-full
                         text-white
                         bg-stone-400
                         hover:bg-stone-500
@@ -30,7 +30,7 @@
 
     <!--Dropdown Hidden/Visible-->
     <div id="Category-dropdown" class="z-10 absolute left-0 mt-3 @(GetHidden()) bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 filter-dropdowns">
-        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+        <ul id="ul-dropdown" class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
 
             @for (var i = 0; i < EnumValues.Count; i++)
             {
@@ -50,7 +50,6 @@
                         @EnumValues[i]
                     </label>
                 </li>
-
             }
         </ul>
     </div>
