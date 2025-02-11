@@ -1,5 +1,5 @@
 ﻿@rendermode InteractiveServer
-<div class="transform-3d flex flex-col justify-center items-center p-6" id="container" >
+<div class="w-full h-full transform-3d flex flex-col justify-center items-center p-6" id="container" >
 
     @for(int i = 0; i < numberOfItems; i++)
     {
@@ -21,7 +21,7 @@
         {
             string inputTarget = defaultInputName + i;
             string lName = defaultFrameID + i;
-            <label class="absolute w-1/2 h-full card" for=@inputTarget id=@lName>
+            <label class="absolute w-1/2 h-full card flex justify-center" for=@inputTarget id=@lName>
                 <img class="rounded-xl w-auto h-full shadow-lg" src="@OutfitImageUrls[i]">
             </label>
         }
