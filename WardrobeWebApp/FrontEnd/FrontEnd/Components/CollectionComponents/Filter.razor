@@ -1,11 +1,12 @@
 ﻿@using Backend.Models.Enums
 @using FrontEnd.Components.Utils
+@inject IJSRuntime JSRuntime
 @typeparam TEnum where TEnum : Enum
 
 <div class="flex flex-col relative h-full">
 
     <!--Button-->
-    <button @onclick="() => ToggleDropdownClicked()"
+    <button @onclick:stopPropagation="true" @onclick="ToggleDropdownClicked"
             id="@DropdownLabel"
             class="h-full
                         text-white
@@ -28,7 +29,7 @@
     </button>
 
     <!--Dropdown Hidden/Visible-->
-    <div @onfocusout="UnclickDropdown" id="Category-dropdown" class="z-10 absolute left-0 mt-2 @(DropdownClicked ? "" : "hidden") bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 filter-dropdowns">
+    <div id="Category-dropdown" class="z-10 absolute left-0 mt-3 @(GetHidden()) bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 filter-dropdowns">
         <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
 
             @for (var i = 0; i < EnumValues.Count; i++)
@@ -43,9 +44,9 @@
                     <input type="radio" id="@inputID" name="@DropdownLabel" class="hidden">
 
                     <label id="@labelID"
-                           for="@inputID"
-                           @onclick="() => HandleFilterButtonClick(label)"
-                           class="common-style">
+                    for="@inputID"
+                    @onclick="() => HandleFilterButtonClick(label)"
+                    class="common-style">
                         @EnumValues[i]
                     </label>
                 </li>
@@ -59,24 +60,24 @@
 
 <style>
     .common-style {
-        display: block;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
-        cursor: pointer;
+    display: block;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    cursor: pointer;
     }
 
-        .common-style:hover {
-            background-color: #505661;
-        }
+    .common-style:hover {
+    background-color: #505661;
+    }
 
     .active {
-        background-color: #005866;
+    background-color: #005866;
     }
 
     .nonActive {
-        background-color: #6B7280;
+    background-color: #6B7280;
     }
 </style>
 
@@ -90,24 +91,45 @@
     [Parameter]
     public Query Query { get; set; } = new();
 
+    [Parameter]
+    public EventCallback<string?> ChangeDropdownClicked { get; set; }
+
+    [Parameter]
+    public string? DropdownClicked { get; set; } = null;
+
     private EnumWrapper<TEnum> DropdownEnumWrapper { get; set; } = new();
 
     private string DropdownValueString { get; set; } = "-";
 
-    private bool DropdownClicked { get; set; }
-
     private List<string> EnumValues { get => DropdownEnumWrapper.StringValues; }
 
-    private void UnclickDropdown() => DropdownClicked = false;
+    private async Task UnclickDropdown() => await ChangeDropdownClicked.InvokeAsync(null);
 
-    private void ToggleDropdownClicked() => DropdownClicked = !DropdownClicked;
+    private async Task ToggleDropdownClicked() {
+        if (DropdownClicked == DropdownLabel) 
+        {
+            await ChangeDropdownClicked.InvokeAsync(null);
+        }
+        else 
+        {
+            await ChangeDropdownClicked.InvokeAsync(DropdownLabel);
+        }
+    }
 
-    private void HandleFilterButtonClick(string key)
+    private async Task HandleFilterButtonClick(string key)
     {
         DropdownEnumWrapper = new(DropdownLabel, key);
         Query.SetQueryParameter(DropdownLabel, DropdownEnumWrapper.QueryString);
-        ChangeFilterQuery.InvokeAsync(Query);
-        UnclickDropdown();
+        await ChangeFilterQuery.InvokeAsync(Query);
+        await UnclickDropdown();
+    }
+
+    private string GetHidden() {
+        if (DropdownClicked == DropdownLabel)
+        {
+            return "";
+        }
+        return "hidden";
     }
 
 }
