@@ -35,7 +35,11 @@ namespace Backend.DBContext
                     new Models.ClothingItem()
                     { ImageId = 12, UserId = 2, Name = "Stripe Off-The-Shoulder Top", Brand = "Unknown", Category = ClothingCategory.TShirt, Colour = "Black", Occasion = Occasion.Evening, Season = Season.Summer, Size = ClothingSize.M },
                     new Models.ClothingItem()
-                    { ImageId = 13, UserId = 2, Name = "High-Waisted Trousers w/ Matching Belt", Brand = "Topshop", Category = ClothingCategory.Trousers, Colour = "Dark Grey", Occasion = Occasion.Home, Season = Season.Autumn, Size = ClothingSize.L }
+                    { ImageId = 13, UserId = 2, Name = "High-Waisted Trousers w/ Matching Belt", Brand = "Topshop", Category = ClothingCategory.Trousers, Colour = "Dark Grey", Occasion = Occasion.Home, Season = Season.Autumn, Size = ClothingSize.L },
+                      new Models.ClothingItem()
+                      { ImageId = 14, UserId = 2, Name = "Cowl-Neck Slip Dress", Brand = "AllSaints", Category = ClothingCategory.Dress, Colour = "White", Occasion = Occasion.Evening, Season = Season.Summer, Size = ClothingSize.L },
+                    new Models.ClothingItem()
+                    { ImageId = 15, UserId = 2, Name = "Straight-Leg Knit Trousers w/ Elastic Waistband", Brand = "Uniqlo", Category = ClothingCategory.Trousers, Colour = "White", Occasion = Occasion.Home, Season = Season.Spring, Size = ClothingSize.L }
                     );
                 context.SaveChanges();
             }
