@@ -7,9 +7,13 @@
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
+<PageTitle>Add Item</PageTitle>
 
-<div id="crud-modal" class="fixed inset-0 flex items-center justify-center bg-cover bg-center bg-no-repeat bg-opacity-50" style="background-image: url('/images/winter.png');">
+<h2 class="text-4xl text-center font-bold text-gray-900 mb-8">Add New Item</h2>
+
+<div id="crud-modal" class=" flex items-center justify-center bg-cover bg-center bg-no-repeat bg-opacity-50" >
     <div class=" bg-opacity-75 p-6 rounded-lg shadow-lg w-1/2 grid grid-cols-2 items-center gap-4">
+
         <div class="flex justify-center items-center h-full">
             @if (!string.IsNullOrEmpty(FileDataUrl))
             {
