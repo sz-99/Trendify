@@ -2,13 +2,14 @@
 
 <div class="container h-[2rem] flex flex-row items-center gap-4 mb-8">
     <div class="w-auto h-full flex-none">
-        <FilterBar ChangeFilterQuery="ChangeFilterQuery" Query="Query" ></FilterBar>
+        <FilterBar ChangeFilterQuery="ChangeFilterQuery" Query="Query" />
     </div>
     <button type="button" @onclick="() => ShowModal.InvokeAsync()"
-            class="ml-[5rem] h-full text-white bg-stone-400 font-medium rounded-full text-sm
+    class="ml-[5rem] h-full text-white bg-stone-400 font-medium rounded-full text-sm
  hover:bg-stone-500  px-5 text-center inline-flex items-center">
         Add Item
     </button>
+
 </div>
 
 
@@ -27,4 +28,6 @@
 
     [Parameter]
     public bool DropdownClicked { get; set; } = false;
+
+
 }

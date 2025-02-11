@@ -8,6 +8,25 @@
         string Season { get; set; } = "";
         public string CombinedQuery { get => String.Join("&", Values.Where(value => value != "" && value is not null)); }
 
+        public bool IsEmpty { get => CombinedQuery == ""; }
+
+        public string GetQueryParameter (string key)
+        {
+            switch (key)
+            {
+                case "Category":
+                    return Category;
+                case "Size":
+                    return Size;
+                case "Occasion":
+                    return Occasion;
+                case "Season":
+                    return Season;
+                default:
+                    throw new ArgumentException($"No key {key}");
+            }
+        }
+
         public void SetQueryParameter (string key, string? value)
         {
             switch (key)

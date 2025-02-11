@@ -97,9 +97,20 @@
     [Parameter]
     public string? DropdownClicked { get; set; } = null;
 
+    [Parameter]
+    public string DropdownValueString { get; set; } = "-";
+
+    protected async override Task OnParametersSetAsync()
+    {
+        if (Query.IsEmpty)
+        {
+            DropdownValueString = "-";
+        }
+    }
+
     private EnumWrapper<TEnum> DropdownEnumWrapper { get; set; } = new();
 
-    private string DropdownValueString { get; set; } = "-";
+
 
     private List<string> EnumValues { get => DropdownEnumWrapper.StringValues; }
 
