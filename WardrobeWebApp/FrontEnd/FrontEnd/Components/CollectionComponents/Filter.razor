@@ -95,7 +95,7 @@
     public EventCallback<string?> DropdownAlert { get; set; }
 
     [Parameter]
-    public string? WhichDropdownClicked { get; set; } = null;
+    public string? DropdownClicked { get; set; } = null;
 
     private EnumWrapper<TEnum> DropdownEnumWrapper { get; set; } = new();
 
@@ -106,7 +106,7 @@
     private async Task UnclickDropdown() => await DropdownAlert.InvokeAsync(null);
 
     private async Task ToggleDropdownClicked() {
-        if (WhichDropdownClicked == DropdownLabel) 
+        if (DropdownClicked == DropdownLabel) 
         {
             await DropdownAlert.InvokeAsync(null);
         }
@@ -121,7 +121,7 @@
         DropdownEnumWrapper = new(DropdownLabel, key);
         Query.SetQueryParameter(DropdownLabel, DropdownEnumWrapper.QueryString);
         await ChangeFilterQuery.InvokeAsync(Query);
-        UnclickDropdown();
+        await UnclickDropdown();
     }
 
     private async Task HandleFocusOut() {
@@ -129,7 +129,7 @@
     }
 
     private string GetHidden() {
-        if (WhichDropdownClicked == DropdownLabel)
+        if (DropdownClicked == DropdownLabel)
         {
             return "";
         }
