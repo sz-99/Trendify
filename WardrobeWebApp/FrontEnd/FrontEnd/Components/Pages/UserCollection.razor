@@ -13,6 +13,8 @@
 @code {
     private bool _hidden = true;
 
+    private bool DropdownClicked { get; set; } = false;
+
     public string QueryParameters { get; set; } = String.Empty;
 
     public Query Query { get; set; } = new();

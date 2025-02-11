@@ -2,10 +2,10 @@
 @using FrontEnd.Components.Utils
 
 <div class="container h-full flex flex-row space-x-4">
-    <Filter TEnum="ClothingCategory" DropdownLabel="Category" Query="Query" ChangeFilterQuery="ChangeFilterQuery" />
-    <Filter TEnum="ClothingSize" DropdownLabel="Size" Query="Query" ChangeFilterQuery="ChangeFilterQuery" />
-    <Filter TEnum="Occasion" DropdownLabel="Occasion" Query="Query" ChangeFilterQuery="ChangeFilterQuery" />
-    <Filter TEnum="Season" DropdownLabel="Season" Query="Query" ChangeFilterQuery="ChangeFilterQuery" />
+    <Filter TEnum="ClothingCategory" DropdownLabel="Category" Query="Query" ChangeFilterQuery="ChangeFilterQuery" DropdownAlert="DropdownAlert" WhichDropdownClicked="@WhichDropdownClicked" />
+    <Filter TEnum="ClothingSize" DropdownLabel="Size" Query="Query" ChangeFilterQuery="ChangeFilterQuery" DropdownAlert="DropdownAlert" WhichDropdownClicked="@WhichDropdownClicked" />
+    <Filter TEnum="Occasion" DropdownLabel="Occasion" Query="Query" ChangeFilterQuery="ChangeFilterQuery" DropdownAlert="DropdownAlert" WhichDropdownClicked="@WhichDropdownClicked" />
+    <Filter TEnum="Season" DropdownLabel="Season" Query="Query" ChangeFilterQuery="ChangeFilterQuery" DropdownAlert="DropdownAlert" WhichDropdownClicked="@WhichDropdownClicked" />
 </div>
 
 @code {
@@ -14,4 +14,12 @@
 
     [Parameter]
     public EventCallback<Query> ChangeFilterQuery { get; set; }
+
+    public string? WhichDropdownClicked { get; set; }
+
+    private bool AnotherDropdownOpen { get; set; }
+
+    private void DropdownAlert(string label) {
+        WhichDropdownClicked = label;
+    }
 }
