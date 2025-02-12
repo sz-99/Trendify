@@ -1,6 +1,7 @@
 ﻿
 using Backend.Models;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -10,6 +11,7 @@ namespace FrontEnd.Http
     public static class HttpManager
     {
         private static string? _token;
+        public static bool IsUserLoggedIn { get; private set; }
 
         public static readonly SocketsHttpHandler socketsHandler = new SocketsHttpHandler()
         {
@@ -508,6 +510,7 @@ namespace FrontEnd.Http
                 if (userLogin?.Token != null)
                 {
                    SetToken(userLogin.Token);
+                    IsUserLoggedIn = true;
                 }
 
                 result.ResponseObject = userLogin;
@@ -528,6 +531,13 @@ namespace FrontEnd.Http
                 result.StatusCode = HttpStatusCode.NotFound;
             }
             return result;
+        }
+        public static void LogoutUser()
+        {
+            _token = null;
+            HttpClient.DefaultRequestHeaders.Authorization = null;
+            IsUserLoggedIn = false;
+            Console.WriteLine("User Logged out");
         }
     }
 }
