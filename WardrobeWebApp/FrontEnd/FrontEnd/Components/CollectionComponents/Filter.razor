@@ -1,13 +1,14 @@
 ﻿@using Backend.Models.Enums
 @using FrontEnd.Components.Utils
+@using FrontEnd
 @inject IJSRuntime JSRuntime
 @typeparam TEnum where TEnum : Enum
 
-<div @onclick:stopPropagation="true" class="flex flex-col relative h-full">
+<div class="flex flex-col relative h-full">
 
     <!--Button-->
     <button @onclick="ToggleDropdownClicked"
-            id="@DropdownLabel"
+            id="@("btn" + DropdownLabel)"
             class="category-filter-button h-full
                         text-white
                         bg-stone-400
@@ -29,18 +30,18 @@
     </button>
 
     <!--Dropdown Hidden/Visible-->
-    <div id="Category-dropdown" class="z-10 absolute left-0 mt-3 @(GetHidden()) bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 filter-dropdowns">
-        <ul id="ul-dropdown" class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+    <div @ref="DropdownRef" id="@("dropdown" + DropdownLabel)" class="z-10 absolute left-0 mt-3 @(GetHidden()) bg-gray-100 divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 filter-dropdowns">
+        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
 
             @for (var i = 0; i < EnumValues.Count; i++)
             {
                 string label = EnumValues[i];
                 string queryOptionButton = DropdownLabel + "=" + EnumValues[i];
 
-                string inputID = queryOptionButton + "Input";
-                string labelID = queryOptionButton + "Label";
+                string inputID = "input" + DropdownLabel;
+                string labelID = "label" + DropdownLabel;
 
-                <li tabindex="-1" @onfocusout=UnclickDropdown>
+                <li tabindex="-1">
                     <input type="radio" id="@inputID" name="@DropdownLabel" class="hidden">
 
                     <label id="@labelID"
@@ -95,6 +96,10 @@
 
     [Parameter]
     public string? DropdownClicked { get; set; } = null;
+
+    private ElementReference DropdownRef;
+
+    private async Task<bool> GetDropdownHidden() =>  await JSRuntime.InvokeAsync<bool>("isHidden", new object[] { DropdownRef }); 
 
     private EnumWrapper<TEnum> DropdownEnumWrapper { get; set; } = new();
 
