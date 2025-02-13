@@ -8,14 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 var dbType = builder.Configuration["DbType"].ToDbType();
-string connectionString = builder.Configuration.GetConnectionString("WardrobeApp");
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 // Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+/*
 if (builder.Environment.IsDevelopment())
 {
     if (dbType == DbType.InMemory)
@@ -30,10 +30,10 @@ if (builder.Environment.IsDevelopment())
     }
 }
 else
-{
+{*/
     builder.Services.AddDbContext<WardrobeDBContext>(
                     options => options.UseSqlServer(connectionString));
-}
+//}
 
 builder.Services.AddScoped<IClothingItemsService, ClothingItemsService>();
 builder.Services.AddScoped<IClothingItemsRepository, ClothingItemsRepository>();
@@ -49,11 +49,11 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<WardrobeDBContext>();
-    Backend.DBContext.DatabaseSeeding.SeedDatabase(context);
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var context = scope.ServiceProvider.GetRequiredService<WardrobeDBContext>();
+//    Backend.DBContext.DatabaseSeeding.SeedDatabase(context);
+//}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
