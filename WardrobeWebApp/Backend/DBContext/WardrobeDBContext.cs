@@ -37,7 +37,16 @@ namespace Backend
                 new ImageUrl() { ImageId = 3, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/BlueJacket.jpg.jpg" },
                 new ImageUrl() { ImageId = 4, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/BrownSkirt.jpg.jpg" },
                 new ImageUrl() { ImageId = 5, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DarkGreyJeans.jpg.jpg" },
-                new ImageUrl() { ImageId = 6, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" }
+                new ImageUrl() { ImageId = 6, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" },
+                new ImageUrl() { ImageId = 7, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" },
+                new ImageUrl() { ImageId = 8, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" },
+                new ImageUrl() { ImageId = 9, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" },
+                new ImageUrl() { ImageId = 10, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" },
+                new ImageUrl() { ImageId = 11, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" },
+                new ImageUrl() { ImageId = 12, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" },
+                new ImageUrl() { ImageId = 13, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" },
+                new ImageUrl() { ImageId = 14, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" },
+                new ImageUrl() { ImageId = 15, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" }
                 );
             modelBuilder.Entity<ClothingItem>().HasData(
                  new Models.ClothingItem()

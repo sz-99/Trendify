@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(WardrobeDBContext))]
-    [Migration("20250213123201_FixForeignKeyIssue")]
-    partial class FixForeignKeyIssue
+    [Migration("20250213160445_FixImageForeignKey")]
+    partial class FixImageForeignKey
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -374,6 +374,51 @@ namespace Backend.Migrations
                         new
                         {
                             ImageId = 6,
+                            Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
+                        },
+                        new
+                        {
+                            ImageId = 7,
+                            Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
+                        },
+                        new
+                        {
+                            ImageId = 8,
+                            Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
+                        },
+                        new
+                        {
+                            ImageId = 9,
+                            Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
+                        },
+                        new
+                        {
+                            ImageId = 10,
+                            Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
+                        },
+                        new
+                        {
+                            ImageId = 11,
+                            Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
+                        },
+                        new
+                        {
+                            ImageId = 12,
+                            Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
+                        },
+                        new
+                        {
+                            ImageId = 13,
+                            Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
+                        },
+                        new
+                        {
+                            ImageId = 14,
+                            Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
+                        },
+                        new
+                        {
+                            ImageId = 15,
                             Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
                         });
                 });

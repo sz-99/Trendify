@@ -7,7 +7,7 @@
 namespace Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class FixForeignKeyIssue : Migration
+    public partial class FixImageForeignKey : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,7 +35,16 @@ namespace Backend.Migrations
                     { 3, "https://wadrobe-images.s3.eu-west-2.amazonaws.com/BlueJacket.jpg.jpg" },
                     { 4, "https://wadrobe-images.s3.eu-west-2.amazonaws.com/BrownSkirt.jpg.jpg" },
                     { 5, "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DarkGreyJeans.jpg.jpg" },
-                    { 6, "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" }
+                    { 6, "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" },
+                    { 7, "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" },
+                    { 8, "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" },
+                    { 9, "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" },
+                    { 10, "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" },
+                    { 11, "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" },
+                    { 12, "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" },
+                    { 13, "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" },
+                    { 14, "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" },
+                    { 15, "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" }
                 });
 
             migrationBuilder.CreateIndex(

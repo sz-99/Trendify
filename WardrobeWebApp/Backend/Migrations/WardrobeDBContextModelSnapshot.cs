@@ -372,6 +372,51 @@ namespace Backend.Migrations
                         {
                             ImageId = 6,
                             Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
+                        },
+                        new
+                        {
+                            ImageId = 7,
+                            Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
+                        },
+                        new
+                        {
+                            ImageId = 8,
+                            Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
+                        },
+                        new
+                        {
+                            ImageId = 9,
+                            Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
+                        },
+                        new
+                        {
+                            ImageId = 10,
+                            Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
+                        },
+                        new
+                        {
+                            ImageId = 11,
+                            Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
+                        },
+                        new
+                        {
+                            ImageId = 12,
+                            Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
+                        },
+                        new
+                        {
+                            ImageId = 13,
+                            Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
+                        },
+                        new
+                        {
+                            ImageId = 14,
+                            Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
+                        },
+                        new
+                        {
+                            ImageId = 15,
+                            Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg"
                         });
                 });
 
