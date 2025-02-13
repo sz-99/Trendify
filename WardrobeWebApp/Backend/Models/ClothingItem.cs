@@ -1,6 +1,7 @@
 using Backend.Models.Enums;
 using Backend.Models.Validation;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 
@@ -18,6 +19,8 @@ namespace Backend.Models
         [Required]
         [JsonPropertyName("imageId")]
         public int ImageId { get; set; }
+        [ForeignKey("ImageId")]
+        public ImageUrl? ImageUrl { get; set; }
 
         [Required]
         [JsonPropertyName("name")]

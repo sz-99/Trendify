@@ -18,6 +18,7 @@ namespace Backend
         public DbSet<Outfit> Outfits { get; set; }
 
         public DbSet<ImageLocation> ImageLocations { get; set; }
+        public DbSet<ImageUrl> ImageUrls { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -30,6 +31,14 @@ namespace Backend
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<ImageUrl>().HasData(
+                new ImageUrl() { ImageId = 1, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/BlackJumper.jpg.jpg" },
+                new ImageUrl() { ImageId = 2, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/blackSkirt.jpg.jpg" },
+                new ImageUrl() { ImageId = 3, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/BlueJacket.jpg.jpg" },
+                new ImageUrl() { ImageId = 4, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/BrownSkirt.jpg.jpg" },
+                new ImageUrl() { ImageId = 5, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DarkGreyJeans.jpg.jpg" },
+                new ImageUrl() { ImageId = 6, Url = "https://wadrobe-images.s3.eu-west-2.amazonaws.com/DenimTop.jpg.jpg" }
+                );
             modelBuilder.Entity<ClothingItem>().HasData(
                  new Models.ClothingItem()
                  { Id = 15, ImageId = 1, UserId = 1, Name = "Black Oversized Jumper", Brand = "Y/Project", Category = ClothingCategory.Jumper, Colour = "Black", Occasion = Occasion.Home, Season = Season.Autumn, Size = ClothingSize.M },
@@ -68,6 +77,8 @@ namespace Backend
                 new UserLogin() { UserId = 3, UserName = "testuser3@wardrobe.com", Password = "hello" },
                 new UserLogin() { UserId = 4, UserName = "testuser4@wardrobe.com", Password = "password" }
                 );
+            modelBuilder.Entity<ClothingItem>().HasOne(c => c.ImageUrl).WithOne().HasForeignKey<ClothingItem>(c => c.ImageId);
+
         }
 
     }
